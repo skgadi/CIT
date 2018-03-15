@@ -37,7 +37,7 @@
         <item>PID Controller</item>
         <item>Adaptive Controller</item>
         <item>First order identification</item>
-        <item>Second order identification</item>
+        <item>System identification of first order with controller</item>
     </string-array>
     <string name="BUTTON_SETTINGS">Settings</string>
     <string-array name="SETTINGS_WINDOW">
