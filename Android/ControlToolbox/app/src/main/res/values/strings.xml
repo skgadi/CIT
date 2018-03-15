@@ -1,0 +1,75 @@
+<resources>
+    <string name="app_name">Control Toolbox</string>
+    <string name="BUTTON_PID">PID Controller</string>
+    <string name="BUTTON_IDENIFICATION0">Zero order identification</string>
+    <string name="BUTTON_IDENIFICATION1">First order identification</string>
+    <string name="BUTTON_IDENIFICATION2">Second order identification</string>
+    <string name="SAMPLING_TIME">Sampling time</string>
+    <string name="GRAPH_CAPTION">Figure</string>
+    <string name="GRAPHS">Figures</string>
+    <string-array name="SIM_VIEW_HEADS">
+        <item>Diagram</item>
+        <item>Sampling time in milliseconds</item>
+        <item>Parameters</item>
+        <item>Signal generator</item>
+        <item>Figure</item>
+    </string-array>
+    <string-array name="AVAILABLE_SIGNALS">
+        <item>Step function</item>
+        <item>Sine wave</item>
+        <item>Sawtooth wave</item>
+        <item>Triangular wave</item>
+        <item>Square wave</item>
+        <item>Rectangular wave</item>
+    </string-array>
+    <string-array name="SIGNAL_GENERATOR_PARAMETERS">
+        <item>Frequency</item>
+        <item>| Amplitude</item>
+        <item>| Start at</item>
+        <item>| Duty cycle</item>
+        <item>| Offset</item>
+    </string-array>
+    <string name="INVERT_SIGNAL">Invert signal (0\' compliment)</string>
+    <string-array name="SCREENS_LIST">
+        <item>Main window</item>
+        <item>Settings</item>
+        <item>Open loop system</item>
+        <item>PID Controller</item>
+        <item>Adaptive Controller</item>
+        <item>First order identification</item>
+        <item>Second order identification</item>
+    </string-array>
+    <string name="BUTTON_SETTINGS">Settings</string>
+    <string-array name="SETTINGS_WINDOW">
+        <item>Simulation settings>>Sampling time in milli seconds</item>
+        <item>Graph settings>>Number of retained samples (Larger values may slowdown your device)</item>
+        <item>Default window zoom on the horizontal axis</item>
+        <item>Window\'s height for the figures</item>
+    </string-array>
+    <string name="BUTTON_SAVE">Save</string>
+    <string name="BUTTON_RESET">Reset to default values</string>
+    <string name="BUTTON_RESET_SAVE">Reset and Save</string>
+    <string name="BUTTON_CANCEL">Cancel</string>
+
+
+
+
+
+    <string-array name="TOASTS">
+        <item>Hit the Back button again to exit</item>
+        <item>Device is not pluged to the phone</item>
+        <item>Couldn\'t able to establish a connection. Try again with proper permissions.</item>
+        <item>Device is successfully connected.</item>
+        <item>Unable to open the port. Detach, re-attach the device to fix the problem.</item>
+        <item>Device is successfully disconnected.</item>
+        <item>Unknown error. Detach, re-attach the device to fix the problem.</item>
+        <item>Your android device is not having OTG enabled.</item>
+        <item>Simulation not available: No model is available in this window simulate.</item>
+        <item>You cannot exit to the Main menu while the simulation is running. Stop the simulation before proceeding to the main menu.</item>
+        <item>You cannot change settings while simulation is running.</item>
+        <item>This is not a valid integer number. Enter a number in the range</item>
+        <item>Please press any of the buttons to exit this window.</item>
+        <item></item>
+    </string-array>
+
+</resources>
