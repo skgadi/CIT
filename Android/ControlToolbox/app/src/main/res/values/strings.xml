@@ -5,6 +5,8 @@
     <string name="BUTTON_IDENIFICATION1">First order identification</string>
     <string name="BUTTON_IDENIFICATION2">Second order identification</string>
     <string name="SAMPLING_TIME">Sampling time</string>
+    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time</string>
+    <string name="TIME">Time</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
     <string-array name="SIM_VIEW_HEADS">
@@ -13,6 +15,7 @@
         <item>Parameters</item>
         <item>Signal generator</item>
         <item>Figure</item>
+        <item>Instantaneous values</item>
     </string-array>
     <string-array name="AVAILABLE_SIGNALS">
         <item>Step function</item>
@@ -36,7 +39,8 @@
         <item>Open loop system</item>
         <item>PID Controller</item>
         <item>Adaptive Controller</item>
-        <item>First order identification</item>
+        <item>Identification of a first order system</item>
+        <item>Identification of a second order system</item>
         <item>System identification of first order with controller</item>
     </string-array>
     <string name="BUTTON_SETTINGS">Settings</string>

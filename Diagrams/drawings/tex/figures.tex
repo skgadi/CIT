@@ -79,19 +79,38 @@
 \begin{figure}
 	\centering
 	\begin{tikzpicture}[node distance = 10mm, auto]
-		\node (Reference) [align=center] {Reference \\($R=R_1+R_2+R_3$)};
-		\node (SummingPoint) [draw,circle, thick, right = of Reference]  {+};
-		\node (Control) [block, text width = 2cm, right = of SummingPoint] {Control ($C$)};
-		\node (Plant) [block, text width = 2cm, right = of Control] {Plant ($G$)};
-		\node (PlantRight) [support, right = of Plant, right = 1cm] {};
+		\node (Input) [align=center] {Input\\($I=I_1+I_2+I_3$)};
+		\node (Plant) [block, text width = 2cm, right = 2cm of Input] {Plant ($G$)};
 		\node (Output) [right = of Plant, right = 2cm] {Output ($Y$)};
-		\draw [arrow] (Reference) -- node[anchor=south west]{+}(SummingPoint);
-		\draw [arrow] (SummingPoint) -- node[anchor=south]{$E$}(Control);
-		\draw [arrow] (Control) -- node[anchor=south]{$U$}(Plant);
+		\draw [arrow] (Input) -- (Plant);
 		\draw [arrow] (Plant) -- (Output);
-		\draw [arrow] (PlantRight) -- +(0, -2) -| (SummingPoint);
 	\end{tikzpicture}
-	\caption{PID Controller}
+	\caption{Open loop system}
+	\label{Fig:OpenLoop}
+\end{figure}
+
+\pagebreak
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[node distance = 10mm, auto]
+	\node (Reference) [align=center] {Reference\\($R=R_1+R_2+R_3$)};
+	\node (SummingPoint) [draw,circle, thick, right = of Reference]  {+};
+	\node (Control) [block, text width = 2cm, right = of SummingPoint] {Control ($C$)};
+	\node (Plant) [block, text width = 2cm, right = of Control] {Plant ($G$)};
+	\node (PlantRight) [support, right = of Plant, right = 1cm] {};
+	\node (Output) [right = of Plant, right = 2cm] {Output ($Y$)};
+	\draw [arrow] (Reference) -- node[anchor=south west]{+}(SummingPoint);
+	\draw [arrow] (SummingPoint) -- node[anchor=south]{$E$}(Control);
+	\draw [arrow] (Control) -- node[anchor=south]{$U$}(Plant);
+	\draw [arrow] (Plant) -- (Output);
+	\draw [arrow] (PlantRight) -- +(0, -2) -| (SummingPoint) node[below = 2mm, anchor=north east]{\bf\textendash};
+	\node (Equation000) [text width = 7cm, below = 2cm of SummingPoint, align = left] {
+		$C(s) = \frac{U(s)}{E(s)} = K_P + \frac{K_I}{s} + K_Ds$\\
+		$C(z) = \frac{U(z)}{E(z)} = K_P + \frac{K_IT_S(z+1)}{s(z-1)} + \frac{K_D(z-1)}{zT_S}$\\
+		$T_S$ is sampling time.
+	};
+	\end{tikzpicture}
+	\caption{Closed loop system with a PID Controller}
 	\label{Fig:PID}
 \end{figure}
 

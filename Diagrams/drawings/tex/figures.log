@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/W32TeX) (preloaded format=pdflatex 2017.7.31)  14 MAR 2018 15:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/W32TeX) (preloaded format=pdflatex 2017.7.31)  17 MAR 2018 17:03
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1029,9 +1029,22 @@ Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.14}).
 
 ===== Image 'figures-figure0' is up-to-date. ======
-===== Image 'figures-figure1' is up-to-date. ======
+\openout3 = `figures-figure1.md5'.
 
-LaTeX Warning: Float too large for page by 92.71164pt on input line 152.
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure1" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure1" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+===== Image 'figures-figure2' is up-to-date. ======
+
+LaTeX Warning: Float too large for page by 92.71164pt on input line 171.
 
 [1
 color push 0 g 0 G
@@ -1042,8 +1055,12 @@ color push 0 g 0 G
 color pop
 color pop
 color push 0 g 0 G
+color push 0 g 0 G
 color pop
- <./figures-figure0.pdf>] [2
+color pop
+color push 0 g 0 G
+color pop
+ <./figures-figure0.pdf> <./figures-figure1.pdf>] [2
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -1052,28 +1069,29 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
- <./figures-figure1.pdf>] (./figures.aux) ) 
+ <./figures-figure2.pdf>] (./figures.aux) ) 
 Here is how much of TeX's memory you used:
- 24632 strings out of 492995
- 634467 string characters out of 6136417
- 807174 words of memory out of 5000000
- 27769 multiletter control sequences out of 15000+600000
+ 24634 strings out of 492995
+ 634496 string characters out of 6136417
+ 808174 words of memory out of 5000000
+ 27770 multiletter control sequences out of 15000+600000
  3640 words of font info for 14 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  70i,5n,120p,736b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2017/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmmi10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmmi5.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7
-.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/t
-exlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2017
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2017/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2017/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy7.pfb>
-Output written on figures.pdf (2 pages, 94059 bytes).
+pe1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmex10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmmi10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+5.pfb><c:/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/
+texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/20
+17/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2017/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2017/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2017/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmsy7.pfb>
+Output written on figures.pdf (2 pages, 106811 bytes).
 PDF statistics:
- 83 PDF objects out of 1000 (max. 8388607)
- 67 compressed objects within 1 object stream
+ 109 PDF objects out of 1000 (max. 8388607)
+ 91 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 23 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

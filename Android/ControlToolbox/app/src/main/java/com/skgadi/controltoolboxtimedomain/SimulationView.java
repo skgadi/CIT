@@ -11,7 +11,8 @@ public abstract class SimulationView {
     public String[] SignalGenerators;
     public Figure Figures [];
     public Parameter[] Parameters;
-    public double T_S;
+    public double PlannedT_S;
+    public double ActualT_S;
     public double[] OutPut;
     public int NoOfInputs;
     public int NoOfOutputs;

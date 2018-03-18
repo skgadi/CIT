@@ -34,6 +34,7 @@ import com.warkiz.widget.IndicatorSeekBar;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
+import org.ejml.equation.Equation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ enum SCREENS {
     PID,
     ADAPTIVE_CONTROL,
     FIRST_ORDER_IDENTIFICATION,
+    SECOND_ORDER_IDENTIFICATION,
     IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER
 }
 
@@ -74,13 +76,21 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout ModelView;
     EditText[] ModelParams;
+    TextView InstantaneousValues;
     EditText ModelSamplingTime;
     GraphView[] ModelGraphs;
     int[] ColorTable = {
             Color.RED,
             Color.BLUE,
             Color.GREEN,
-            Color.BLACK
+            Color.rgb(128,0,0),
+            Color.rgb(128,128,0),
+            Color.rgb(0,128,0),
+            Color.rgb(128,0,128),
+            Color.rgb(0,128,128),
+            Color.rgb(0,0,128),
+            Color.YELLOW,
+            Color.MAGENTA
     };
 
     //--- Database Related
@@ -395,6 +405,9 @@ public class MainActivity extends AppCompatActivity {
                 case FIRST_ORDER_IDENTIFICATION:
                     PrepareFirstOrderIdentification();
                     break;
+                case SECOND_ORDER_IDENTIFICATION:
+                    PrepareSecondOrderIdentification();
+                    break;
                 case IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER:
                     PrepareFirstOrderWithControllerIdentification();
                     break;
@@ -661,6 +674,27 @@ public class MainActivity extends AppCompatActivity {
             DrawALine(ModelView);
         }
         DrawALine(ModelView);
+
+        //Instantaneous Values
+        TempLayout = new LinearLayout(getApplicationContext());
+        TempLayout.setOrientation(LinearLayout.VERTICAL);
+        TempSwitchForLayout = new Switch(getApplicationContext());
+        TempSwitchForLayout.setTextColor(Color.BLACK);
+        TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
+        TempSwitchForLayout.setChecked(true);
+        TempSwitchForLayout.setText(getResources().getStringArray(R.array.SIM_VIEW_HEADS)[5]);
+        TempSwitchForLayout.setTextSize(18);
+        TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
+        TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
+        InstantaneousValues = new TextView(getApplicationContext());
+        TempLayout.addView(InstantaneousValues);
+        ModelView.addView(TempSwitchForLayout);
+        ModelView.addView(TempLayout);
+        TempSwitchForLayout.setChecked(false);
+        DrawALine(ModelView);
+        DrawALine(ModelView);
+
+        //InstantaneousValues
     }
 
     private void PrepareOpenLoopModel() {
@@ -714,7 +748,7 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[1]= "Output y(t)";
         Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
         Model.Parameters = new Parameter [0];
-        Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
 
@@ -730,9 +764,9 @@ public class MainActivity extends AppCompatActivity {
                 double K_P = Parameters[0];
                 double K_I = Parameters[1];
                 double K_D = Parameters[2];
-                double a = K_P + K_I* T_S /2.0 + K_D/T_S;
-                double b = -K_P + K_I*T_S/2.0 - 2.0*K_D/T_S;
-                double c = K_D/T_S;
+                double a = K_P + K_I* ActualT_S /2.0 + K_D/ActualT_S;
+                double b = -K_P + K_I*ActualT_S/2.0 - 2.0*K_D/ActualT_S;
+                double c = K_D/ActualT_S;
                 double[] E = new double[3];
                 for (int i=0; i<3; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
@@ -791,7 +825,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 0.005);
         Model.Parameters[1] = new Parameter("K_I", 0, 10, 30);
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
-        Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareAdaptiveControlModel() {
@@ -822,8 +856,8 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<3; i++)
                     E[i] = (R[i] - Input[0][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[1] = Output[1][0] + Gamma*Model.T_S*(E[0]*R[0] + E[1]*R[1])/2.0;
-                OutSignals[2] = Output[2][0] + Gamma*Model.T_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
+                OutSignals[1] = Output[1][0] + Gamma*Model.ActualT_S*(E[0]*R[0] + E[1]*R[1])/2.0;
+                OutSignals[2] = Output[2][0] + Gamma*Model.ActualT_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
                 OutSignals[0] = PutBetweenRange(OutSignals[1]*R[0] + OutSignals[2]*Input[0][0], AnalogOutLimits[0], AnalogOutLimits[1]);
                 return OutSignals;
             }
@@ -881,7 +915,7 @@ public class MainActivity extends AppCompatActivity {
 
         Model.Parameters = new Parameter [1];
         Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03B3", 0, 1000, 1);
-        Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareFirstOrderIdentification() {
@@ -999,7 +1033,7 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[8][0];
                 Trajectories[3] = Output[5][0];
                 Trajectories[4] = Output[6][0];
-                Trajectories[5] = -Math.log(Output[5][0])/Model.T_S;
+                Trajectories[5] = -Math.log(Output[5][0])/Model.ActualT_S;
                 Trajectories[6] = Output[6][0]*Trajectories[5]/(1-Output[5][0]);
                 return Trajectories;
             }
@@ -1041,7 +1075,237 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters = new Parameter [2];
         Model.Parameters[0] = new Parameter("P", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
-        Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+    }
+
+    private void PrepareSecondOrderIdentification() {
+        Model = new SimulationView() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[00] --> u
+                    Output[01] --> P11
+                    Output[02] --> P12
+                    Output[03] --> P13
+                    Output[04] --> P14
+                    Output[05] --> P15
+                    Output[06] --> P21
+                    Output[07] --> P22
+                    Output[08] --> P23
+                    Output[09] --> P24
+                    Output[10] --> P25
+                    Output[11] --> P31
+                    Output[12] --> P32
+                    Output[13] --> P33
+                    Output[14] --> P34
+                    Output[15] --> P35
+                    Output[16] --> P41
+                    Output[17] --> P42
+                    Output[18] --> P43
+                    Output[19] --> P44
+                    Output[20] --> P45
+                    Output[21] --> P51
+                    Output[22] --> P52
+                    Output[23] --> P53
+                    Output[24] --> P54
+                    Output[25] --> P55
+                    Output[26] --> Theta_1
+                    Output[27] --> Theta_2
+                    Output[28] --> Theta_3
+                    Output[29] --> Theta_4
+                    Output[30] --> Theta_5
+                    Output[31] --> K
+                    Output[32] --> Y Cap Calculated
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> y
+                    E --> e
+                */
+                int MatrixSize = 5;
+                double Lambda = Parameters[1];
+                double K = Output[31][0];
+                double[] E = new double[3];
+                for (int i=0; i<3; i++)
+                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
+
+
+
+                DMatrixRMaj z = new DMatrixRMaj(1,1);
+                z.set(0, 0, Input[0][0]);
+                DMatrixRMaj Phi = new DMatrixRMaj(MatrixSize,1);
+                Phi.set(0, 0, Output[0][0]);
+                Phi.set(1, 0, Output[0][1]);
+                Phi.set(2, 0, Output[0][2]);
+                Phi.set(3, 0, -Input[0][1]);
+                Phi.set(4, 0, -Input[0][2]);
+                DMatrixRMaj Theta_1 = new DMatrixRMaj(MatrixSize,1);
+                for (int i=0; i<MatrixSize; i++)
+                    Theta_1.set(i,0, Output[i+26][0]);
+                DMatrixRMaj P_1 = new DMatrixRMaj(MatrixSize,MatrixSize);
+                if (K==0) {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, 0);
+                    for (int i=0; i<MatrixSize; i++)
+                        P_1.set(i, i, Parameters[0]);
+                } else {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, Output[(i*MatrixSize+j+1)][0]);
+                }
+                DMatrixRMaj P = new DMatrixRMaj(MatrixSize,MatrixSize);
+                DMatrixRMaj Theta = new DMatrixRMaj(MatrixSize,1);
+                DMatrixRMaj TempMatrix0, TempMatrix1, TempMatrix2, TempMatrix3;
+                DMatrixRMaj e = new DMatrixRMaj(1,1);
+                DMatrixRMaj PhiTranspose = new DMatrixRMaj(1,MatrixSize);
+                // Calculation of e
+                CommonOps_DDRM.transpose(Phi, PhiTranspose);
+                CommonOps_DDRM.mult(PhiTranspose, Theta_1, e);
+                CommonOps_DDRM.changeSign(e);
+                CommonOps_DDRM.addEquals(e,z);
+                // Calculation of P
+                TempMatrix0 = new DMatrixRMaj(MatrixSize,1);
+                TempMatrix1 = new DMatrixRMaj(1,1);
+                TempMatrix2 = new DMatrixRMaj(1,MatrixSize);
+                TempMatrix3 = new DMatrixRMaj(MatrixSize,1);
+                CommonOps_DDRM.mult(P_1,Phi,TempMatrix0);
+                CommonOps_DDRM.mult(PhiTranspose, TempMatrix0, TempMatrix1);
+                CommonOps_DDRM.add(TempMatrix1, Lambda);
+                CommonOps_DDRM.invert(TempMatrix1);
+
+                CommonOps_DDRM.mult(PhiTranspose, P_1, TempMatrix2);
+                CommonOps_DDRM.mult(P_1, Phi, TempMatrix3);
+                CommonOps_DDRM.mult(TempMatrix3, TempMatrix2, P);
+                CommonOps_DDRM.changeSign(P);
+                CommonOps_DDRM.scale(TempMatrix1.get(0,0), P);
+                CommonOps_DDRM.addEquals(P, P_1);
+                CommonOps_DDRM.scale(1/Lambda, P);
+                // Calculations of Theta
+                CommonOps_DDRM.mult(P, Phi, Theta);
+                CommonOps_DDRM.mult(Theta, e, Theta);
+                CommonOps_DDRM.addEquals(Theta, Theta_1);
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                for (int i=0; i<MatrixSize; i++)
+                    for (int j=0; j<MatrixSize; j++)
+                        OutSignals[1+i*MatrixSize+j] = P.get(i, j);
+                for (int i=0; i<MatrixSize; i++)
+                    OutSignals[i+26] = Theta.get(i,0);
+                OutSignals[31] = K+1;
+                OutSignals[32]
+                        = Theta.get(0,0 ) * Output[00][0]
+                        + Theta.get(1,0 ) * Output[00][1]
+                        + Theta.get(2,0 ) * Output[00][2]
+                        - Theta.get(3,0 ) * Output[32][0]
+                        - Theta.get(4,0 ) * Output[32][1];
+                Log.i("Algorithm", "Phi: " + Phi.toString());
+                Log.i("Algorithm", "Theta: "  + Theta.toString());
+                Log.i("Algorithm", "z: "  + z);
+                Log.i("Algorithm", "e: "  + e);
+                Log.i("Algorithm", "P_1: " + P_1.toString());
+                Log.i("Algorithm", "P: "  + P.toString());
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[8];
+                /*DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
+                Equation eq = new Equation();
+                A_D = new DMatrixRMaj(2,2);
+                B_D = new DMatrixRMaj(2,1);
+                C = new DMatrixRMaj(1,2);
+                D = new DMatrixRMaj(1,1);
+                A_C = new DMatrixRMaj(2,2);
+                B_C = new DMatrixRMaj(2,1);
+                //R = new DMatrixRMaj(2,2);
+
+                A_D.set(0, 0, 0);
+                A_D.set(0, 1, 1);
+                A_D.set(1, 0, -Output[25+5][0]);
+                A_D.set(1, 1, -Output[25+4][0]);
+
+                B_D.set(0,0,0);
+                B_D.set(1,0,1);
+
+                C.set(0,0, Output[25+3][0] - Output[25+5][0]*Output[25+1][0]);
+                C.set(0,1, Output[25+2][0] - Output[25+4][0]*Output[25+1][0]);
+
+                D.set(0,0, Output[25+1][0]);
+
+                eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
+                eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
+                eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
+                CommonOps_DDRM.scale(1/Model.ActualT_S, A_C);
+                eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
+
+                Log.i("Algorithm", "A_C: " + A_C);
+                Log.i("Algorithm", "B_C: " + B_C);
+                Log.i("Algorithm", "C_C: " + C);
+                Log.i("Algorithm", "D_C: " + D);*/
+
+
+
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Output[32][0];
+                for (int i=0; i<5; i++)
+                    Trajectories[3+i] = Output[i+26][0];
+                return Trajectories;
+            }
+        };
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=33;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 2;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.pid;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Identification of the first order system";
+        //Model.ImageNames[1] = "Reference Value details";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "R1(t)";
+        Model.SignalGenerators[1] = "R2(t)";
+        Model.SignalGenerators[2] = "R3(t)";
+
+        //Figures
+        Model.Figures = new Figure[2];
+        String[] TempTrajectories = new String[3];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        TempTrajectories[2]= "Validation Output of the system ycap(t)";
+        Model.Figures[0] = new Figure("Input output graph", TempTrajectories);
+        TempTrajectories = new String[5];
+        TempTrajectories[0]= "Theta_1 Cap";
+        TempTrajectories[1]= "Theta_2 Cap";
+        TempTrajectories[2]= "Theta_3 Cap";
+        TempTrajectories[3]= "Theta_4 Cap";
+        TempTrajectories[4]= "Theta_5 Cap";
+        Model.Figures[1] = new Figure("Identified parameters (Theta)", TempTrajectories);
+
+        Model.Parameters = new Parameter [2];
+        Model.Parameters[0] = new Parameter("Identification parameters>>P", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareFirstOrderWithControllerIdentification() {
@@ -1134,7 +1398,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[0] = Output[0][0] + K_I*Model.T_S/2.0 * (E[0] + E[1]);
+                OutSignals[0] = Output[0][0] + K_I*Model.ActualT_S/2.0 * (E[0] + E[1]);
                 OutSignals[1] = P.get(0,0);
                 OutSignals[2] = P.get(0,1);
                 OutSignals[3] = P.get(1,0);
@@ -1142,18 +1406,18 @@ public class MainActivity extends AppCompatActivity {
                 OutSignals[5] = Theta.get(0,0);
                 OutSignals[6] = Theta.get(1,0);
                 OutSignals[7] = K+1;
-                OutSignals[8] = Output[8][0]* (Theta.get(1,0) + 1 - Theta.get(0,0))
-                    - Output[8][1]*(Theta.get(1,0) + Theta.get(0,0))
-                    + Theta.get(0,0)* (
+                /*OutSignals[8] = Output[8][0]* (Theta.get(1,0) + 1 - Theta.get(0,0))
+                        - Output[8][1]*(Theta.get(1,0) + Theta.get(0,0))
+                        + Theta.get(0,0)* (
                         (Generated[0][1] + Generated[1][1] + Generated[2][1])
-                        + (Generated[0][2] + Generated[1][2] + Generated[2][2])
-                        );
+                                + (Generated[0][2] + Generated[1][2] + Generated[2][2])
+                );*/
                 OutSignals[8] = Output[8][0]
-                        + Theta.get(1,0) * (
+                        + Theta.get(0,0) * (
                         (Generated[0][1] + Generated[1][1] + Generated[2][1])
-                        + (Generated[0][2] + Generated[1][2] + Generated[2][2])
-                        - Output[8][0] - Output[8][1]
-                        )
+                                + (Generated[0][2] + Generated[1][2] + Generated[2][2])
+                                - Output[8][0] - Output[8][1]
+                )
                         + Theta.get(1,0) * (Output[8][0] - Output[8][1]);
                 Log.i("Algorithm", "Phi: " + Phi.toString());
                 Log.i("Algorithm", "Theta: "  + Theta.toString());
@@ -1177,8 +1441,8 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[8][0];
                 Trajectories[3] = Output[5][0];
                 Trajectories[4] = Output[6][0];
-                Trajectories[5] = -Math.log(Output[6][0])/Model.T_S;
-                Trajectories[6] = 2*Output[5][0]*Trajectories[5]/((1-Output[6][0])*Model.T_S*Parameters[0]);
+                Trajectories[5] = -Math.log(Output[6][0])/Model.ActualT_S;
+                Trajectories[6] = 2*Output[5][0]*Trajectories[5]/((1-Output[6][0])*Model.ActualT_S*Parameters[0]);
                 return Trajectories;
             }
         };
@@ -1220,7 +1484,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Control parameters>>K_I", 0, 1000, 10);
         Model.Parameters[1] = new Parameter("Identification parameters>>P", 0, 10000, 1000);
         Model.Parameters[2] = new Parameter("\u03BB", 0, 1, 0.9);
-        Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     public class OnMainWindowButton implements View.OnClickListener {
@@ -1415,7 +1679,7 @@ public class MainActivity extends AppCompatActivity {
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
                 Model.SimulationTime = Time;
                 if ((
-                        (((int)(System.currentTimeMillis() - StartTime))%Math.round(Model.T_S*1000)) == 0)
+                        (((int)(System.currentTimeMillis() - StartTime))%Math.round(Model.PlannedT_S*1000)) == 0)
                         &&
                         (System.currentTimeMillis() != LastWrittenTime)
                         ) {
@@ -1427,7 +1691,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WaitedTS = false;
-                    Log.i("Timing", "T_S: "+Math.round(Model.T_S*1000));
+                    //Log.i("Timing", "T_S: "+Math.round(Model.ActualT_S*1000));
                 }
                 if (isValidRead) {
                     isValidRead  = false;
@@ -1436,9 +1700,10 @@ public class MainActivity extends AppCompatActivity {
                     for (int i=0; i<(ReadTimes.length-1); i++)
                         MovingAverageTS = MovingAverageTS + (ReadTimes[i]-ReadTimes[i+1]);
                     MovingAverageTS = MovingAverageTS/(ReadTimes.length-1);
-                    if ((MovingAverageTS > 1.2*Model.T_S) && (NotOfTimesSend<10))
+                    Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
+                    if ((MovingAverageTS > 1.2*Model.PlannedT_S) && (NotOfTimesSend<10))
                         NotOfTimesSend++;
-                    if ((MovingAverageTS < 0.8*Model.T_S) && (NotOfTimesSend>1))
+                    if ((MovingAverageTS < 0.8*Model.PlannedT_S) && (NotOfTimesSend>1))
                         NotOfTimesSend--;
                     Log.i("Timing", "TS past: " + ReadTimes[0] );
                     Log.i("Timing", "TS present: " + ReadTimes[1]);
@@ -1449,22 +1714,24 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i< PreparedSignals.length; i++)
                         PreparedSignals[i] = PutElementToFIFO(PreparedSignals[i],
                                 GeneratedSignals[i].GetValue(Time));
-                    double[] TempOutput = Model.RunAlgorithms(
-                            GetParameters(),
-                            PreparedSignals,
-                            Input,
-                            Output
-                    );
-                    for (int i=0; i<TempOutput.length; i++)
-                        Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
+                    if (Model.ActualT_S > 0) {
+                        double[] TempOutput = Model.RunAlgorithms(
+                                GetParameters(),
+                                PreparedSignals,
+                                Input,
+                                Output
+                        );
+                        for (int i=0; i<TempOutput.length; i++)
+                            Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
+                    }
                     //for (int i=0; i<NotOfTimesSend; i++)
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
                     publishProgress(0);
                 }
                 try {
-                    Model.T_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
+                    Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
                 } catch (Exception e) {
-                    Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+                    Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
                 }
             }
             return null;
@@ -1478,6 +1745,9 @@ public class MainActivity extends AppCompatActivity {
                     Input,
                     Output
             );
+            String InstantValues;
+            InstantValues = getString(R.string.TIME) + ": " + Time;
+            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": " + Model.ActualT_S;
             int Iteration=0;
             for (int i=0; i<ModelGraphs.length; i++) {
                 for (int j=0; j< ModelGraphs[i].getSeries().size(); j++) {
@@ -1489,18 +1759,20 @@ public class MainActivity extends AppCompatActivity {
                             ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
                                     .indexOf("ChartHistoryLength")]
                     );
+                    InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[Iteration];
                     Iteration++;
                 }
             }
+            InstantaneousValues.setText(InstantValues);
         }
 
         @Override
         protected void onPreExecute () {
             Purged = false;
             try {
-                Model.T_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
+                Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
             } catch (Exception e) {
-                Model.T_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+                Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
             }
             Input = new double[Model.NoOfInputs][Model.NoOfPastInputsRequired+1];
             Output = new double[Model.NoOfOutputs][Model.NoOfPastOuputsRequired+1];
