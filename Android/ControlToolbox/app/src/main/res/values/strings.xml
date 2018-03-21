@@ -41,7 +41,7 @@
         <item>Adaptive Controller</item>
         <item>Identification of a first order system</item>
         <item>Identification of a second order system</item>
-        <item>System identification of first order with controller</item>
+        <item>System identification of first order with integral controller</item>
     </string-array>
     <string name="BUTTON_SETTINGS">Settings</string>
     <string-array name="SETTINGS_WINDOW">

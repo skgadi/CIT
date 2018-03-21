@@ -733,7 +733,7 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[0];
         //Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure00;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Closed loop system";
@@ -771,11 +771,13 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<3; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[0] = PutBetweenRange(
-                        Output[0][0] + a * E[0] + b * E[1] + c * E[2],
+                /*OutSignals[0] = PutBetweenRange(
+                        Output[0][0] + a * E[0] + b * E[1] + c * E[2]
+                        +Parameters[3]*0.1*(1-0.5*Math.random()),
                         AnalogOutLimits[0],
-                        AnalogOutLimits[1]);
-                //OutSignals[0] = 0.01f*K_P*E[0];////Generated[2][0];//K_P*E[0];//
+                        AnalogOutLimits[1]);*/
+                OutSignals[1] = Output[1][0] + a * E[0] + b * E[1] + c * E[2];
+                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
                 return OutSignals;
             }
 
@@ -796,14 +798,14 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Model.NoOfInputs=1;
-        Model.NoOfOutputs=1;
+        Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 2;
         Model.NoOfPastOuputsRequired = 1;
         Model.NoOfPastGeneratedValuesRequired = 2;
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure01;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Closed loop system";
@@ -821,10 +823,12 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[0]= "Error e(t)";
         TempTrajectories[1]= "Control u(t)";
         Model.Figures[1] = new Figure("Error e(t) and Control u(t)", TempTrajectories);
-        Model.Parameters = new Parameter [3];
-        Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 0.005);
-        Model.Parameters[1] = new Parameter("K_I", 0, 10, 30);
+        Model.Parameters = new Parameter [5];
+        Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
+        Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
+        Model.Parameters[3] = new Parameter("Other parameters>>Constant perturbation (P_1)", -1, 1, 0);
+        Model.Parameters[4] = new Parameter("Noise constant (P_2)", 0, 1, 0);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
@@ -841,6 +845,7 @@ public class MainActivity extends AppCompatActivity {
                     Output[0] --> u
                     Output[1] --> a_r
                     Output[2] --> a_y
+                    Output[3] --> y_m
                     Generated[0] --> R_1
                     Generated[1] --> R_2
                     Generated[2] --> R_3
@@ -849,16 +854,24 @@ public class MainActivity extends AppCompatActivity {
                     E --> e
                 */
                 double Gamma = Parameters[0];
+                double A_m = Parameters[1];
+                double B_m = Parameters[2];
+
                 double[] E = new double[3];
                 double[] R = new double[3];
                 for (int i=0; i<3; i++)
                     R[i] = Generated[0][i] + Generated[1][i] + Generated[2][i];
-                for (int i=0; i<3; i++)
-                    E[i] = (R[i] - Input[0][i]);
+                for (int i=0; i<2; i++)
+                    E[i] = (Input[0][i] - Output[3][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[1] = Output[1][0] + Gamma*Model.ActualT_S*(E[0]*R[0] + E[1]*R[1])/2.0;
-                OutSignals[2] = Output[2][0] + Gamma*Model.ActualT_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
-                OutSignals[0] = PutBetweenRange(OutSignals[1]*R[0] + OutSignals[2]*Input[0][0], AnalogOutLimits[0], AnalogOutLimits[1]);
+                //OutSignals[3] = 1/(2/Model.ActualT_S  + A_m)*(Output[3][0] * (2/Model.ActualT_S  - A_m) + B_m*(R[0] + R[1]));
+                OutSignals[3] = Output[3][0]*Math.exp(-A_m*Model.ActualT_S)
+                        + B_m/A_m*(1-Math.exp(-A_m*Model.ActualT_S))* R[0];
+                //E[0] = (Input[0][0] - OutSignals[3]);
+                OutSignals[1] = Output[1][0] - Gamma*Model.ActualT_S*(E[0]*R[0] + E[1]*R[1])/2.0;
+                OutSignals[2] = Output[2][0] - Gamma*Model.ActualT_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
+                //OutSignals[0] = PutBetweenRange(OutSignals[1]*R[0] + OutSignals[2]*Input[0][0], AnalogOutLimits[0], AnalogOutLimits[1]);
+                OutSignals[0] = OutSignals[1]*R[0] + OutSignals[2]*Input[0][0];
                 return OutSignals;
             }
 
@@ -870,25 +883,26 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[6];
+                double[] Trajectories = new double[7];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
-                Trajectories[2] = Trajectories[0]-Input[0][0];
-                Trajectories[3] = Output[0][0];
-                Trajectories[4] = Output[1][0];
-                Trajectories[5] = Output[2][0];
+                Trajectories[2] = Output[3][0];
+                Trajectories[3] = Trajectories[0]-Input[0][0];
+                Trajectories[4] = Output[0][0];
+                Trajectories[5] = Output[1][0];
+                Trajectories[6] = Output[2][0];
                 return Trajectories;
             }
         };
         Model.NoOfInputs=1;
-        Model.NoOfOutputs=3;
+        Model.NoOfOutputs=4;
         Model.NoOfPastInputsRequired = 2;
         Model.NoOfPastOuputsRequired = 1;
         Model.NoOfPastGeneratedValuesRequired = 2;
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure02;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Adaptive control model";
@@ -900,9 +914,10 @@ public class MainActivity extends AppCompatActivity {
 
         //Figures
         Model.Figures = new Figure[3];
-        String[] TempTrajectories = new String[2];
+        String[] TempTrajectories = new String[3];
         TempTrajectories[0]= "Reference r(t)";
         TempTrajectories[1]= "Output y(t)";
+        TempTrajectories[2]= "Reference model output y_m(t)";
         Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
         TempTrajectories = new String[2];
         TempTrajectories[0]= "Error e(t)";
@@ -913,8 +928,10 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[1]= "a_y";
         Model.Figures[2] = new Figure("Parameters of the system", TempTrajectories);
 
-        Model.Parameters = new Parameter [1];
+        Model.Parameters = new Parameter [3];
         Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03B3", 0, 1000, 1);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>A_m", 0, 100, 4);
+        Model.Parameters[2] = new Parameter("B_m", 0, 100, 4);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
@@ -1046,15 +1063,15 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure03;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Identification of the first order system";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
-        Model.SignalGenerators[0] = "R1(t)";
-        Model.SignalGenerators[1] = "R2(t)";
-        Model.SignalGenerators[2] = "R3(t)";
+        Model.SignalGenerators[0] = "I1(t)";
+        Model.SignalGenerators[1] = "I2(t)";
+        Model.SignalGenerators[2] = "I3(t)";
 
         //Figures
         Model.Figures = new Figure[3];
@@ -1073,7 +1090,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Figures[2] = new Figure("Identified parameters (A, B)", TempTrajectories);
 
         Model.Parameters = new Parameter [2];
-        Model.Parameters[0] = new Parameter("P", 0, 10000, 1000);
+        Model.Parameters[0] = new Parameter("\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
@@ -1224,8 +1241,8 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[8];
-                /*DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
+                double[] Trajectories = new double[13];
+                DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
                 Equation eq = new Equation();
                 A_D = new DMatrixRMaj(2,2);
                 B_D = new DMatrixRMaj(2,1);
@@ -1257,7 +1274,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Algorithm", "A_C: " + A_C);
                 Log.i("Algorithm", "B_C: " + B_C);
                 Log.i("Algorithm", "C_C: " + C);
-                Log.i("Algorithm", "D_C: " + D);*/
+                Log.i("Algorithm", "D_C: " + D);
 
 
 
@@ -1266,6 +1283,16 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[32][0];
                 for (int i=0; i<5; i++)
                     Trajectories[3+i] = Output[i+26][0];
+                Trajectories[8] = D.get(0,0);
+                Trajectories[9] = C.get(0,0)*B_C.get(0,0)
+                        + C.get(0,1)*B_C.get(1,0)
+                        - D.get(0,0)*(A_C.get(0,0) + A_C.get(1,1));
+                Trajectories[10] =
+                        C.get(0,0)*(B_C.get(1,0)*A_C.get(0,1) - B_C.get(0,0)*A_C.get(1,1))
+                        + C.get(0,1)*(B_C.get(0,0)*A_C.get(1,0) - B_C.get(1,0)*A_C.get(0,0))
+                        + D.get(0,0)*(A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0));
+                Trajectories[11] = -(A_C.get(0,0) + A_C.get(1,1));
+                Trajectories[12] = A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0);
                 return Trajectories;
             }
         };
@@ -1277,33 +1304,40 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure04;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Identification of the first order system";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
-        Model.SignalGenerators[0] = "R1(t)";
-        Model.SignalGenerators[1] = "R2(t)";
-        Model.SignalGenerators[2] = "R3(t)";
+        Model.SignalGenerators[0] = "I1(t)";
+        Model.SignalGenerators[1] = "I2(t)";
+        Model.SignalGenerators[2] = "I3(t)";
 
         //Figures
-        Model.Figures = new Figure[2];
+        Model.Figures = new Figure[3];
         String[] TempTrajectories = new String[3];
         TempTrajectories[0]= "Reference r(t)";
         TempTrajectories[1]= "Output y(t)";
         TempTrajectories[2]= "Validation Output of the system ycap(t)";
         Model.Figures[0] = new Figure("Input output graph", TempTrajectories);
         TempTrajectories = new String[5];
-        TempTrajectories[0]= "Theta_1 Cap";
-        TempTrajectories[1]= "Theta_2 Cap";
-        TempTrajectories[2]= "Theta_3 Cap";
-        TempTrajectories[3]= "Theta_4 Cap";
-        TempTrajectories[4]= "Theta_5 Cap";
-        Model.Figures[1] = new Figure("Identified parameters (Theta)", TempTrajectories);
+        TempTrajectories[0]= "\u03F4_1 Cap";
+        TempTrajectories[1]= "\u03F4_2 Cap";
+        TempTrajectories[2]= "\u03F4_3 Cap";
+        TempTrajectories[3]= "\u03F4_4 Cap";
+        TempTrajectories[4]= "\u03F4_5 Cap";
+        Model.Figures[1] = new Figure("Identified parameters (\u03F4)", TempTrajectories);
+        TempTrajectories = new String[5];
+        TempTrajectories[0]= "\u03B2_1 Cap";
+        TempTrajectories[1]= "\u03B2_2 Cap";
+        TempTrajectories[2]= "\u03B2_3 Cap";
+        TempTrajectories[3]= "\u03B2_4 Cap";
+        TempTrajectories[4]= "\u03B2_5 Cap";
+        Model.Figures[2] = new Figure("Identified parameters (\u03B2)", TempTrajectories);
 
         Model.Parameters = new Parameter [2];
-        Model.Parameters[0] = new Parameter("Identification parameters>>P", 0, 10000, 1000);
+        Model.Parameters[0] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
@@ -1454,7 +1488,7 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.figure05;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Identification of the first order system";
@@ -1482,7 +1516,7 @@ public class MainActivity extends AppCompatActivity {
 
         Model.Parameters = new Parameter [3];
         Model.Parameters[0] = new Parameter("Control parameters>>K_I", 0, 1000, 10);
-        Model.Parameters[1] = new Parameter("Identification parameters>>P", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
         Model.Parameters[2] = new Parameter("\u03BB", 0, 1, 0.9);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }

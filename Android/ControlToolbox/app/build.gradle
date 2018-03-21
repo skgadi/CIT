@@ -6,8 +6,8 @@ android {
         applicationId "com.skgadi.controltoolboxtimedomain"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 1
-        versionName "1A"
+        versionCode 2
+        versionName "1B"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
