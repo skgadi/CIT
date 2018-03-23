@@ -86,48 +86,78 @@
                 android:orientation="vertical"></LinearLayout>
 
             <LinearLayout
-                android:id="@+id/PID"
+                android:id="@+id/Documentation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="false"
-                    android:cropToPadding="false"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/pid" />
+                    android:layout_height="match_parent">
 
-                <com.jjoe64.graphview.GraphView
-                    android:layout_width="match_parent"
-                    android:layout_height="300dip"
-                    android:id="@+id/pid_chart00" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/DOCUMENT_IMAGE_CAPTION_00"
+                            android:textAllCaps="false"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="false"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/bridge_circuit_bb" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/DOCUMENT_IMAGE_CAPTION_01"
+                            android:textAllCaps="false"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="false"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/bridge_circuit_first_order_bb" />
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/DOCUMENT_IMAGE_CAPTION_02"
+                            android:textAllCaps="false"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="false"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/bridge_circuit_second_order_bb" />
+                    </LinearLayout>
+                </ScrollView>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/IDENTIFICATION0"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"></LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/IDENTIFICATION1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"></LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/IDENTIFICATION2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"></LinearLayout>
 
         </LinearLayout>
 

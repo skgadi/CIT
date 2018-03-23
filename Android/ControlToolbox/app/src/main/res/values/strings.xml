@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Control Toolbox</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order system</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order system</string>
     <string name="BUTTON_PID">PID Controller</string>
     <string name="BUTTON_IDENIFICATION0">Zero order identification</string>
     <string name="BUTTON_IDENIFICATION1">First order identification</string>
@@ -36,9 +39,11 @@
     <string-array name="SCREENS_LIST">
         <item>Main window</item>
         <item>Settings</item>
+        <item>Documentation</item>
         <item>Open loop system</item>
         <item>PID Controller</item>
-        <item>Adaptive Controller</item>
+        <item>Adaptive Controller for a first order system</item>
+        <item>Adaptive Controller for a second order system</item>
         <item>Identification of a first order system</item>
         <item>Identification of a second order system</item>
         <item>System identification of first order with integral controller</item>
@@ -68,11 +73,12 @@
         <item>Device is successfully disconnected.</item>
         <item>Unknown error. Detach, re-attach the device to fix the problem.</item>
         <item>Your android device is not having OTG enabled.</item>
-        <item>Simulation not available: No model is available in this window simulate.</item>
+        <item>Simulation not available: No model is available in this window simulate or the bridge is not connected.</item>
         <item>You cannot exit to the Main menu while the simulation is running. Stop the simulation before proceeding to the main menu.</item>
         <item>You cannot change settings while simulation is running.</item>
         <item>This is not a valid integer number. Enter a number in the range</item>
         <item>Please press any of the buttons to exit this window.</item>
+        <item>Simulation is stopped due to error in communication with the bridge device.</item>
         <item></item>
     </string-array>
 
