@@ -198,12 +198,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onArduinoDetached() {
                 DeviceConnected = false;
-                if(SimulationState == SIMULATION_STATUS.ON) {
+                if(SimHandle != null) {
                     SimHandle.cancel(true);
                     Toast.makeText(MainActivity.this,
                             getResources().getStringArray(R.array.TOASTS)[13],
                             Toast.LENGTH_SHORT).show();
                 }
+                SetProperSimulationStatus();
             }
 
             @Override
@@ -214,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onArduinoOpened() {
                 DeviceConnected = true;
+                SetProperSimulationStatus();
             }
 
             @Override
@@ -992,14 +994,21 @@ public class MainActivity extends AppCompatActivity {
                 CommonOps_DDRM.scale(ActualT_S, A_m, A_mT_s);
                 Equation eq = new Equation();
                 eq.alias(A_m_d,"A_m_d", B_m_d,"B_m_d", A_m,"A_m", A_mT_s,"A_mT_s", B_m,"B_m");
-                eq.process("A_m_d = eye(2) + A_mT_s + 1/2*A_mT_s^2 + 1/6*A_mT_s^3 + 1/24*A_mT_s^4 + 1/120*A_mT_s^5 + 1/720*A_mT_s^6");
+                eq.process("A_m_d2 = A_mT_s*A_mT_s");
+                eq.process("A_m_d3 = A_m_d2*A_mT_s");
+                eq.process("A_m_d4 = A_m_d3*A_mT_s");
+                eq.process("A_m_d5 = A_m_d4*A_mT_s");
+                eq.process("A_m_d6 = A_m_d5*A_mT_s");
+                eq.process("A_m_d = eye(2) + A_mT_s + 1/2*A_m_d2 + 1/6*A_m_d3 + 1/24*A_m_d4 + 1/120*A_m_d5 + 1/720*A_m_d6");
                 eq.process("B_m_d = (A_m_d-eye(2))*B_m*inv(A_m)");
                 DMatrixRMaj X_m_1 = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_m = new DMatrixRMaj(2,1);
                 X_m_1.set(0,0, Output[1][0]);
                 X_m_1.set(1,0, Output[2][0]);
-                CommonOps_DDRM.mult(A_m_d, X_m_1, X_m);
-                CommonOps_DDRM.addEquals(X_m, R[0], B_m_d);
+                eq = new Equation();
+                eq.alias(X_m_1, "X_m_1", X_m, "X_m", A_m_d, "A_m_d", B_m_d, "B_m_d", R[0], "R");
+                eq.process("X_m = A_m_d*X_m_1 + B_m_d * R");
+                Log.i("Algorithm", "A_m_d: " + A_m_d.toString());
 
                 DMatrixRMaj P = new DMatrixRMaj(2,2);
                 P.set(0, 1, 1/(2*a_m2));
@@ -1030,7 +1039,7 @@ public class MainActivity extends AppCompatActivity {
                 eq = new Equation();
                 eq.alias(K_c, "K_c", L, "L", K_c_1, "K_c_1", L_1, "L_1", Gamma, "Gamma", ActualT_S, "T_S", B_m, "B_m", P, "P", E, "E", E_1, "E_1", X, "X", X_1, "X_1", R[0], "R", R[1], "R_1", u, "u");
                 eq.process("K_c = K_c_1 + Gamma*T_S/2*(B_m'*P*E*X' + B_m'*P*E_1*X_1')");
-                eq.process("L = L_1 + Gamma*T_S/2*(B_m'*P*E*r + B_m'*P*E_1*R_1')");
+                eq.process("L = L_1 + Gamma*T_S/2*(B_m'*P*E*R + B_m'*P*E_1*R_1  )");
                 eq.process("u = -K_c*X + L*R");
                 double [] OutSignals = new double[NoOfOutputs];
                 OutSignals[0] = u;
@@ -1737,9 +1746,9 @@ public class MainActivity extends AppCompatActivity {
                         ChangeStateToSimulating();
                         SimHandle = new Simulate();
                         SimHandle.execute(0);
-                        Toast.makeText(MainActivity.this,
+                        /*Toast.makeText(MainActivity.this,
                                 "started simulating",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_SHORT).show();*/
                     }
                 }
                 break;
@@ -1747,24 +1756,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     void SetProperSimulationStatus() {
-        if (PresentScreen.ordinal()>3 && DeviceConnected)
+        if (PresentScreen.ordinal()>2 && DeviceConnected)
             ChangeStateToNotSimulating();
         else
             ChangeStateToSimulateDisabled();
     }
     void ChangeStateToSimulateDisabled () {
         SimulationState = SIMULATION_STATUS.DISABLED;
-        SimulateButton.setIcon(R.drawable.icon_simulate_disabled);
+        if (SimulateButton != null) SimulateButton.setIcon(R.drawable.icon_simulate_disabled);
     }
     void ChangeStateToSimulating () {
         SimulationState = SIMULATION_STATUS.ON;
-        SimulateButton.setIcon(R.drawable.icon_simulate_stop);
-        SettingsButton.setIcon(R.drawable.icon_settings_disabled);
+        if (SimulateButton != null) SimulateButton.setIcon(R.drawable.icon_simulate_stop);
+        if (SettingsButton != null) SettingsButton.setIcon(R.drawable.icon_settings_disabled);
     }
     void ChangeStateToNotSimulating () {
         SimulationState = SIMULATION_STATUS.OFF;
-        SimulateButton.setIcon(R.drawable.icon_simulate_start);
-        SettingsButton.setIcon(R.drawable.icon_settings);
+        if (SimulateButton != null) SimulateButton.setIcon(R.drawable.icon_simulate_start);
+        if (SettingsButton != null) SettingsButton.setIcon(R.drawable.icon_settings);
     }
     double[] RecData = new double[3];
     boolean Purged = false;
@@ -1884,7 +1893,7 @@ public class MainActivity extends AppCompatActivity {
             isValidRead = true;
             long LastWrittenTime=0;
             Log.i("Timing", "Simulation Background");
-            while(!this.isCancelled() || !DeviceConnected) {
+            while(!this.isCancelled()) {
                 if (!Purged)
                     PurgeReceivedBuffer();
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
@@ -1916,7 +1925,7 @@ public class MainActivity extends AppCompatActivity {
                         NotOfTimesSend++;
                     if ((MovingAverageTS < 0.8*Model.PlannedT_S) && (NotOfTimesSend>1))
                         NotOfTimesSend--;
-                    Log.i("Timing", "TS past: " + ReadTimes[0] );
+                    /*Log.i("Timing", "TS past: " + ReadTimes[0] );
                     Log.i("Timing", "TS present: " + ReadTimes[1]);
                     Log.i("Timing", "Moving TS Average: " + MovingAverageTS );
                     Log.i("Timing", "Number of times send write: " + NotOfTimesSend);/**/
