@@ -987,20 +987,20 @@ public class MainActivity extends AppCompatActivity {
                 A_m.set(0,1, 1);
                 A_m.set(1,0, -a_m2);
                 A_m.set(1,1, -a_m1);
-                B_m.set(0,0, Parameters[3]);
-                B_m.set(1,0, Parameters[4]);
+                B_m.set(0,0, 0);
+                B_m.set(1,0, Parameters[3]);
                 DMatrixRMaj A_m_d = new DMatrixRMaj(2,2);
                 DMatrixRMaj B_m_d = new DMatrixRMaj(2,1);
                 CommonOps_DDRM.scale(ActualT_S, A_m, A_mT_s);
                 Equation eq = new Equation();
                 eq.alias(A_m_d,"A_m_d", B_m_d,"B_m_d", A_m,"A_m", A_mT_s,"A_mT_s", B_m,"B_m");
-                eq.process("A_m_d2 = A_mT_s*A_mT_s");
-                eq.process("A_m_d3 = A_m_d2*A_mT_s");
-                eq.process("A_m_d4 = A_m_d3*A_mT_s");
-                eq.process("A_m_d5 = A_m_d4*A_mT_s");
-                eq.process("A_m_d6 = A_m_d5*A_mT_s");
-                eq.process("A_m_d = eye(2) + A_mT_s + 1/2*A_m_d2 + 1/6*A_m_d3 + 1/24*A_m_d4 + 1/120*A_m_d5 + 1/720*A_m_d6");
-                eq.process("B_m_d = (A_m_d-eye(2))*B_m*inv(A_m)");
+                eq.process("A_mT_s2 = A_mT_s*A_mT_s");
+                eq.process("A_mT_s3 = A_mT_s2*A_mT_s");
+                eq.process("A_mT_s4 = A_mT_s3*A_mT_s");
+                eq.process("A_mT_s5 = A_mT_s4*A_mT_s");
+                eq.process("A_mT_s6 = A_mT_s5*A_mT_s");
+                eq.process("A_m_d = eye(2) + A_mT_s + 1/2.0*A_mT_s2 + 1/6.0*A_mT_s3 + 1/24.0*A_mT_s4 + 1/120.0*A_mT_s5 + 1/720.0*A_mT_s6");
+                eq.process("B_m_d = inv(A_m)*(A_m_d-eye(2))*B_m");
                 DMatrixRMaj X_m_1 = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_m = new DMatrixRMaj(2,1);
                 X_m_1.set(0,0, Output[1][0]);
@@ -1008,19 +1008,16 @@ public class MainActivity extends AppCompatActivity {
                 eq = new Equation();
                 eq.alias(X_m_1, "X_m_1", X_m, "X_m", A_m_d, "A_m_d", B_m_d, "B_m_d", R[0], "R");
                 eq.process("X_m = A_m_d*X_m_1 + B_m_d * R");
-                Log.i("Algorithm", "A_m_d: " + A_m_d.toString());
 
                 DMatrixRMaj P = new DMatrixRMaj(2,2);
                 P.set(0, 1, 1/(2*a_m2));
                 P.set(1, 0, P.get(0,1));
-                P.set(1, 1, (2*P.get(0,1))/(2*a_m1));
+                P.set(1, 1, (2*P.get(0,1)+1)/(2*a_m1));
                 P.set(0, 0, a_m1*P.get(0,1) + a_m2*P.get(1,1));
                 DMatrixRMaj X = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_1 = new DMatrixRMaj(2,1);
                 X.set(0, 0, Input[0][0]);
                 X.set(1, 0, (Input[0][0]-Input[0][1])/ActualT_S);
-                X.set(0, 0, Input[0][1]);
-                X.set(1, 0, (Input[0][1]-Input[0][2])/ActualT_S);
                 DMatrixRMaj E = new DMatrixRMaj(2,1);
                 DMatrixRMaj E_1 = new DMatrixRMaj(2,1);
                 CommonOps_DDRM.subtract(X, X_m, E);
@@ -1035,14 +1032,21 @@ public class MainActivity extends AppCompatActivity {
                 K_c_1.set(0, 1, Output[4][0]);
                 L_1.set(0, 0, Output[5][0]);
 
-                double u=0;
+                DMatrixRMaj U = new DMatrixRMaj(1,1);
                 eq = new Equation();
-                eq.alias(K_c, "K_c", L, "L", K_c_1, "K_c_1", L_1, "L_1", Gamma, "Gamma", ActualT_S, "T_S", B_m, "B_m", P, "P", E, "E", E_1, "E_1", X, "X", X_1, "X_1", R[0], "R", R[1], "R_1", u, "u");
-                eq.process("K_c = K_c_1 + Gamma*T_S/2*(B_m'*P*E*X' + B_m'*P*E_1*X_1')");
-                eq.process("L = L_1 + Gamma*T_S/2*(B_m'*P*E*R + B_m'*P*E_1*R_1  )");
-                eq.process("u = -K_c*X + L*R");
+                eq.alias(K_c, "K_c", L, "L", K_c_1, "K_c_1", L_1, "L_1", Gamma, "Gamma", ActualT_S, "T_S", B_m, "B_m", P, "P", E, "E", E_1, "E_1", X, "X", X_1, "X_1", R[0], "R", R[1], "R_1", U, "U");
+                eq.process("K_c = K_c_1 + Gamma*T_S/2.0*(B_m'*P*E*X' + B_m'*P*E_1*X_1')");
+                eq.process("L = L_1 - Gamma*T_S/2.0*(B_m'*P*E*R + B_m'*P*E_1*R_1)");
+                eq.process("U = -K_c*X + L*R");
+                Log.i("Algorithm", "A_mT_s: " + A_mT_s.toString());
+                Log.i("Algorithm", "A_m: " + A_m.toString());
+                Log.i("Algorithm", "B_m: " + B_m.toString());
+                Log.i("Algorithm", "A_m_d: " + A_m_d.toString());
+                Log.i("Algorithm", "B_m_d: " + B_m_d.toString());
+                Log.i("Algorithm", "P: " + P.toString());
+
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[0] = u;
+                OutSignals[0] = U.get(0,0);
                 OutSignals[1] = X_m.get(0,0);
                 OutSignals[2] = X_m.get(1,0);
                 OutSignals[3] = K_c.get(0,0);
@@ -1064,7 +1068,7 @@ public class MainActivity extends AppCompatActivity {
                 double[] Trajectories = new double[7];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
-                Trajectories[2] = Output[3][0];
+                Trajectories[2] = Output[1][0];
                 Trajectories[3] = Trajectories[0]-Input[0][0];
                 Trajectories[4] = Output[0][0];
                 Trajectories[5] = Output[1][0];
@@ -1106,12 +1110,11 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[1]= "a_y";
         Model.Figures[2] = new Figure("Parameters of the system", TempTrajectories);
 
-        Model.Parameters = new Parameter [5];
+        Model.Parameters = new Parameter [4];
         Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03B3", 0, 1000, 0.1);
         Model.Parameters[1] = new Parameter("Reference Model Parameters>>A_m_1", 0, 1000, 40);
         Model.Parameters[2] = new Parameter("A_m_2", 0, 1000, 100);
-        Model.Parameters[3] = new Parameter("B_m_11", 0, 1000, 120);
-        Model.Parameters[4] = new Parameter("B_m_21", 0, 1, 0.02);
+        Model.Parameters[3] = new Parameter("B_m", 0, 1000, 120);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
