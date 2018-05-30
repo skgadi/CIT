@@ -51,7 +51,7 @@ enum SCREENS {
     OPEN_LOOP,
     PID,
     FIRST_ORDER_ADAPTIVE_CONTROL,
-    SECOND_ORDER_ADAPTIVE_CONTROL,
+    //SECOND_ORDER_ADAPTIVE_CONTROL,
     FIRST_ORDER_IDENTIFICATION,
     SECOND_ORDER_IDENTIFICATION,
     IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER
@@ -412,9 +412,9 @@ public class MainActivity extends AppCompatActivity {
                 case FIRST_ORDER_ADAPTIVE_CONTROL:
                     PrepareFirstOrderAdaptiveControlModel();
                     break;
-                case SECOND_ORDER_ADAPTIVE_CONTROL:
+                /*case SECOND_ORDER_ADAPTIVE_CONTROL:
                     PrepareSecondOrderAdaptiveControlModel();
-                    break;
+                    break;*/
                 case FIRST_ORDER_IDENTIFICATION:
                     PrepareFirstOrderIdentification();
                     break;
@@ -764,7 +764,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters = new Parameter [0];
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
-
 
     private void PreparePIDModel() {
         Model = new SimulationView() {
