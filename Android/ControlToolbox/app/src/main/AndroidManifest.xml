@@ -11,10 +11,21 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/icon_gsk_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.skgadi.controltoolboxtimedomain.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
         <activity
             android:screenOrientation="sensorLandscape"
             android:launchMode="singleTask"
+            android:hardwareAccelerated="true"
             android:name="com.skgadi.controltoolboxtimedomain.MainActivity">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />

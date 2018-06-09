@@ -49,6 +49,7 @@
         <item>System identification of first order with integral controller</item>
     </string-array>
     <string name="BUTTON_SETTINGS">Settings</string>
+    <string name="BUTTON_SHARE">Share</string>
     <string-array name="SETTINGS_WINDOW">
         <item>Simulation settings>>Sampling time in milli seconds</item>
         <item>Graph settings>>Number of retained samples (Larger values may slowdown your device)</item>

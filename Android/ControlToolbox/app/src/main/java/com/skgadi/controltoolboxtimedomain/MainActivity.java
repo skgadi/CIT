@@ -1,12 +1,17 @@
 package com.skgadi.controltoolboxtimedomain;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.hardware.usb.UsbDevice;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -21,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,6 +42,9 @@ import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
 import org.ejml.equation.Equation;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
             Color.YELLOW,
             Color.MAGENTA
     };
+    ScrollView MainScrollView;
+    //--- Screenshot related
+    private LinearLayout RootLayout;
+    private TextView TextForImageSharing;
+    Bitmap bitmap;
 
     //--- Database Related
     SQLiteDatabase GSK_Database;
@@ -165,11 +179,15 @@ public class MainActivity extends AppCompatActivity {
         //--- Generate Settings window
         GenerateSettingsView ();
         //--- Var vals
+        MainScrollView = (ScrollView) findViewById(R.id.MainScrollView);
+        RootLayout = (LinearLayout) findViewById(R.id.RootLayout);
+        TextForImageSharing = (TextView) findViewById(R.id.TextForImageSharing);
         ModelView = (LinearLayout)findViewById(R.id.ModelView);
         Screens = new LinearLayout[SCREENS.values().length];
         Screens[0] = (LinearLayout) findViewById(R.id.Main);
         Screens[1] = (LinearLayout) findViewById(R.id.Settings);
-        for (int i=2; i< Screens.length; i++)
+        Screens[2] = (LinearLayout) findViewById(R.id.Documentation);
+        for (int i=3; i< Screens.length; i++)
             Screens[i] = (LinearLayout) findViewById(R.id.ModelView);
         DefaultLayoutParams =  new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.FILL_PARENT,
@@ -392,8 +410,6 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getResources().getString(R.string.app_name)
                     + ": "
                     + getResources().getStringArray(R.array.SCREENS_LIST)[PresentScreen.ordinal()]);
-        if (Screen == SCREENS.DOCUMENTATION) findViewById(R.id.Documentation).setVisibility(View.VISIBLE);
-        else findViewById(R.id.Documentation).setVisibility(View.GONE);
         if (LastModelScreen != Screen && Screen.ordinal()>2) {
             LastModelScreen = Screen;
             switch (Screen) {
@@ -468,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView TempImgView = new ImageView(getApplicationContext());
             TempImgView.setImageResource(Model.Images[i]);
+            TempImgView.setAdjustViewBounds(true);
             TempLayout.addView(TempImgView);
 
 
@@ -750,17 +767,17 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.figure00;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Closed loop system";
+        Model.ImageNames[0] = "Open loop system";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
-        Model.SignalGenerators[0] = "I1(t)";
-        Model.SignalGenerators[1] = "I2(t)";
-        Model.SignalGenerators[2] = "I3(t)";
+        Model.SignalGenerators[0] = "u1(t)";
+        Model.SignalGenerators[1] = "u2(t)";
+        Model.SignalGenerators[2] = "u3(t)";
         Model.Figures = new Figure[1];
         String[] TempTrajectories = new String[2];
-        TempTrajectories[0]= "Input i(t)";
+        TempTrajectories[0]= "Input u(t)";
         TempTrajectories[1]= "Output y(t)";
-        Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
+        Model.Figures[0] = new Figure("Input u(t) and Output y(t)", TempTrajectories);
         Model.Parameters = new Parameter [0];
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
@@ -821,12 +838,12 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.figure01;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Closed loop system";
+        Model.ImageNames[0] = "Closed loop system with PID  controller";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
-        Model.SignalGenerators[0] = "R1(t)";
-        Model.SignalGenerators[1] = "R2(t)";
-        Model.SignalGenerators[2] = "R3(t)";
+        Model.SignalGenerators[0] = "r1(t)";
+        Model.SignalGenerators[1] = "r2(t)";
+        Model.SignalGenerators[2] = "r3(t)";
         Model.Figures = new Figure[2];
         String[] TempTrajectories = new String[2];
         TempTrajectories[0]= "Reference r(t)";
@@ -840,8 +857,8 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
         Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
-        Model.Parameters[3] = new Parameter("Other parameters>>Constant perturbation (P_1)", -1, 1, 0);
-        Model.Parameters[4] = new Parameter("Noise constant (P_2)", 0, 1, 0);
+        Model.Parameters[3] = new Parameter("Other parameters>>Constant perturbation (d_1)", -1, 1, 0);
+        Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
         Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
@@ -1714,17 +1731,53 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void shareImage(Bitmap bitmap){
+        // save bitmap to cache directory
+        try {
+            File cachePath = new File(this.getCacheDir(), "images");
+            cachePath.mkdirs(); // don't forget to make the directory
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            stream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        File imagePath = new File(this.getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.png");
+        Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", newFile);
+
+        if (contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            shareIntent.setType("image/png");
+            startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+        }
+    }
     //--- Menu handling
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.con_sim_menu, menu);
-        SettingsButton = menu.getItem(0);
-        SimulateButton = menu.getItem(1);
+        SettingsButton = menu.getItem(1);
+        SimulateButton = menu.getItem(2);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.share:
+                ScrollView iv = (ScrollView) findViewById(R.id.MainScrollView);
+                bitmap = Bitmap.createBitmap(
+                        iv.getChildAt(0).getWidth(),
+                        iv.getChildAt(0).getHeight(),
+                        Bitmap.Config.RGB_565);
+                Canvas c = new Canvas(bitmap);
+                iv.getChildAt(0).draw(c);
+                shareImage(bitmap);
+                break;
             case R.id.settings:
                 if (SimulationState == SIMULATION_STATUS.ON)
                     Toast.makeText(MainActivity.this,

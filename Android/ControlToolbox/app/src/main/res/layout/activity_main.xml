@@ -7,16 +7,28 @@
     tools:context="com.skgadi.controltoolboxtimedomain.MainActivity">
 
     <ScrollView
+        android:id="@+id/MainScrollView"
+        android:background="#ffffffff"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/RootLayout"
+            android:background="#ffffffff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/TextForImageSharing"
+                android:background="#ffffffff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/Settings"
+                android:background="#ffffffff"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -24,6 +36,7 @@
 
                 <LinearLayout
                     android:id="@+id/SettingsSeekBars"
+                    android:background="#ffffffff"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"

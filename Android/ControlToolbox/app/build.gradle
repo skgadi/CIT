@@ -6,7 +6,7 @@ android {
         applicationId "com.skgadi.controltoolboxtimedomain"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 4
+        versionCode 5
         versionName "1B"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -29,7 +29,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     api 'me.aflak.libraries:arduino:1.4.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    api 'com.jjoe64:graphview:4.2.1'
+    implementation 'com.jjoe64:graphview:4.2.2'
     api 'me.aflak.libraries:arduino:1.4.1'
     api 'com.github.warkiz.widget:indicatorseekbar:1.2.9'
     api group: 'org.ejml', name: 'ejml-all', version: '0.33'
