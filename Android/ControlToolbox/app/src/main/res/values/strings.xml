@@ -8,8 +8,8 @@
     <string name="BUTTON_IDENIFICATION1">First order identification</string>
     <string name="BUTTON_IDENIFICATION2">Second order identification</string>
     <string name="SAMPLING_TIME">Sampling time</string>
-    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time</string>
-    <string name="TIME">Time</string>
+    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time T_S</string>
+    <string name="TIME">Time t</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
     <string-array name="SIM_VIEW_HEADS">
@@ -61,6 +61,7 @@
     <string name="BUTTON_RESET_SAVE">Reset and Save</string>
     <string name="BUTTON_CANCEL">Cancel</string>
 
+    <string name="VERSION_INFO">Version: 1.0.0</string>
 
 
 

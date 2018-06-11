@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/icon_gsk_round"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <provider
             android:name="android.support.v4.content.FileProvider"

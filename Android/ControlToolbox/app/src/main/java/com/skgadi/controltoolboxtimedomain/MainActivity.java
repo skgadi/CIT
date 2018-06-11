@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.hardware.usb.UsbDevice;
 import android.net.Uri;
@@ -15,7 +16,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1757,6 +1760,89 @@ public class MainActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Choose an app"));
         }
     }
+    private Bitmap combineImageIntoOne(ArrayList<Bitmap> bitmap) {
+        int w = 0, h = 0;
+        for (int i = 0; i < bitmap.size(); i++) {
+            if (i < bitmap.size() - 1) {
+                w = bitmap.get(i).getWidth() > bitmap.get(i + 1).getWidth() ? bitmap.get(i).getWidth() : bitmap.get(i + 1).getWidth();
+            }
+            h += bitmap.get(i).getHeight();
+        }
+
+        Bitmap temp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(temp);
+        int top = 0;
+        for (int i = 0; i < bitmap.size(); i++) {
+            Log.d("HTML", "Combine: "+i+"/"+bitmap.size()+1);
+
+            top = (i == 0 ? 0 : top+bitmap.get(i).getHeight());
+            canvas.drawBitmap(bitmap.get(i), 0f, top, null);
+        }
+        return temp;
+    }
+    public Bitmap combineImages(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+        Bitmap cs = null;
+
+        int width, height = 0;
+
+        if(c.getWidth() > s.getWidth()) {
+            width = c.getWidth() + s.getWidth();
+            height = c.getHeight();
+        } else {
+            width = s.getWidth() + s.getWidth();
+            height = c.getHeight();
+        }
+
+        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(cs);
+
+        comboImage.drawBitmap(c, 0f, 0f, null);
+        comboImage.drawBitmap(s, c.getWidth(), 0f, null);
+
+        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
+    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream os = null;
+    try {
+      os = new FileOutputStream(loc + tmpImg);
+      cs.compress(CompressFormat.PNG, 100, os);
+    } catch(IOException e) {
+      Log.e("combineImages", "problem combining images", e);
+    }*/
+
+        return cs;
+    }
+    public Bitmap combineImagesVertical(Bitmap one, Bitmap two) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+        Bitmap cs = null;
+
+        int width, height = 0;
+
+        if(one.getWidth() > two.getWidth()) {
+            width = one.getWidth();
+        } else {
+            width = two.getWidth();
+        }
+        height = one.getHeight() + two.getHeight();
+
+        cs = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+        Canvas comboImage = new Canvas(cs);
+
+        comboImage.drawBitmap(one, 0f, 0f, null);
+        comboImage.drawBitmap(two   , 0f, one.getHeight(), null);
+
+
+        return cs;
+    }
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
     //--- Menu handling
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1770,13 +1856,35 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.share:
                 ScrollView iv = (ScrollView) findViewById(R.id.MainScrollView);
+
+                /*TextForImageSharing.setText("Screenshot taken from the Control Toolbox (Time domain) app's "
+                        + getResources().getStringArray(R.array.SCREENS_LIST)[PresentScreen.ordinal()]
+                        + ". "
+                        +getString(R.string.VERSION_INFO));*/
                 bitmap = Bitmap.createBitmap(
                         iv.getChildAt(0).getWidth(),
                         iv.getChildAt(0).getHeight(),
                         Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(bitmap);
                 iv.getChildAt(0).draw(c);
-                shareImage(bitmap);
+
+
+                View rootview = iv.getRootView();
+                rootview.setDrawingCacheEnabled(true);
+                Bitmap bitmap1 = rootview.getDrawingCache();
+
+
+                int actionBarHeight=56;
+                TypedValue tv = new TypedValue();
+                if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+                {
+                    actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                }
+
+                //TextForImageSharing.setText(getString(R.string.VERSION_INFO));
+                shareImage(combineImagesVertical(
+                        Bitmap.createBitmap(bitmap1, 0,0,bitmap1.getWidth(), actionBarHeight)
+                        , bitmap));
                 break;
             case R.id.settings:
                 if (SimulationState == SIMULATION_STATUS.ON)

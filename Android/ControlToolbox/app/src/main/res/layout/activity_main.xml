@@ -19,27 +19,96 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/TextForImageSharing"
-                android:background="#ffffffff"
+            <LinearLayout
+                android:id="@+id/Main"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_height="match_parent"
+                android:background="#ffffffff"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+            </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/Settings"
-                android:background="#ffffffff"
+                android:id="@+id/Documentation"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/DOCUMENT_IMAGE_CAPTION_00"
+                    android:textAllCaps="false"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_00"
+                    android:cropToPadding="false"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/bridge_circuit_bb" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/DOCUMENT_IMAGE_CAPTION_01"
+                    android:textAllCaps="false"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_01"
+                    android:cropToPadding="false"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/bridge_circuit_first_order_bb" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/DOCUMENT_IMAGE_CAPTION_02"
+                    android:textAllCaps="false"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_02"
+                    android:cropToPadding="false"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/bridge_circuit_second_order_bb" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Settings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffffff"
+                android:orientation="vertical"
+                android:visibility="gone">
+
                 <LinearLayout
                     android:id="@+id/SettingsSeekBars"
-                    android:background="#ffffffff"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="#ffffffff"
                     android:orientation="vertical"></LinearLayout>
 
                 <LinearLayout
@@ -84,93 +153,20 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/Main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/ModelView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"></LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/Documentation"
+            <TextView
+                android:id="@+id/TextForImageSharing"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/DOCUMENT_IMAGE_CAPTION_00"
-                            android:textAllCaps="false"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-
-                        <ImageView
-                            android:id="@+id/imageView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:cropToPadding="false"
-                            android:visibility="visible"
-                            app:srcCompat="@drawable/bridge_circuit_bb" />
-
-                        <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/DOCUMENT_IMAGE_CAPTION_01"
-                            android:textAllCaps="false"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-
-                        <ImageView
-                            android:id="@+id/imageView2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:cropToPadding="false"
-                            android:visibility="visible"
-                            app:srcCompat="@drawable/bridge_circuit_first_order_bb" />
-
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/DOCUMENT_IMAGE_CAPTION_02"
-                            android:textAllCaps="false"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-
-                        <ImageView
-                            android:id="@+id/imageView3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:cropToPadding="false"
-                            android:visibility="visible"
-                            app:srcCompat="@drawable/bridge_circuit_second_order_bb" />
-                    </LinearLayout>
-                </ScrollView>
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:background="#ffffffff"
+                android:gravity="right"
+                android:text="@string/VERSION_INFO"
+                android:textAlignment="gravity"
+                android:visibility="visible" />
 
         </LinearLayout>
 
