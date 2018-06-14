@@ -26,7 +26,6 @@
         <activity
             android:screenOrientation="sensorLandscape"
             android:launchMode="singleTask"
-            android:hardwareAccelerated="false"
             android:name="com.skgadi.controltoolboxtimedomain.MainActivity">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />

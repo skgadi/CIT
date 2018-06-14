@@ -491,6 +491,7 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
 
             ImageView TempImgView = new ImageView(getApplicationContext());
+            TempImgView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             TempImgView.setImageResource(Model.Images[i]);
             TempImgView.setAdjustViewBounds(true);
             TempLayout.addView(TempImgView);
@@ -2066,7 +2067,6 @@ public class MainActivity extends AppCompatActivity {
                 if (!Purged)
                     PurgeReceivedBuffer();
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
-                Model.SimulationTime = Time;
                 if ((
                         (((int)(System.currentTimeMillis() - StartTime))%Math.round(Model.PlannedT_S*1000)) == 0)
                         &&
@@ -2104,6 +2104,7 @@ public class MainActivity extends AppCompatActivity {
                         PreparedSignals[i] = PutElementToFIFO(PreparedSignals[i],
                                 GeneratedSignals[i].GetValue(Time));
                     if (Model.ActualT_S > 0) {
+                        Model.SimulationTime = Time;
                         double[] TempOutput = Model.RunAlgorithms(
                                 GetParameters(),
                                 PreparedSignals,
@@ -2134,15 +2135,16 @@ public class MainActivity extends AppCompatActivity {
                     Input,
                     Output
             );
+            Model.OutputTime = Model.SimulationTime;
             String InstantValues;
-            InstantValues = getString(R.string.TIME) + ": " + Time;
+            InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
             InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": " + Model.ActualT_S;
             int Iteration=0;
             for (int i=0; i<ModelGraphs.length; i++) {
                 for (int j=0; j< ModelGraphs[i].getSeries().size(); j++) {
                     ((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).appendData(
                             new DataPoint(
-                                    Time,
+                                    Model.OutputTime,
                                     PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1])),
                             true,
                             ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
