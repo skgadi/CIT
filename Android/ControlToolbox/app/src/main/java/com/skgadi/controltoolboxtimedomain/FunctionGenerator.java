@@ -142,10 +142,11 @@ public class FunctionGenerator {
     public double GenTriangle() {
         double TimePeriod = 1/Frequency;
         if (Time>=StartAt) {
+            //return ((!Compliment) ? -1.0 : 1.0) * (MaximumAmplitude * Math.asin(Math.sin(2 * Math.PI * Frequency * (Time-StartAt))))*2/Math.PI + OffSet;
             if (((Time-StartAt)%TimePeriod)<(TimePeriod/2))
-                return ((!Compliment) ? -1.0 : 1.0) * (4*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2) + MaximumAmplitude) + OffSet;
+                return ((!Compliment) ? -1.0 : 1.0) * (4.0*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2.0) + MaximumAmplitude) + OffSet;
             else
-                return ((!Compliment) ? -1.0 : 1.0) * (-4*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2) + MaximumAmplitude) + OffSet;
+                return ((!Compliment) ? -1.0 : 1.0) * (-4.0*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2.0) + MaximumAmplitude) + OffSet;
         } else
             return 0;
     }

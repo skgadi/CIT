@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  9 JUN 2018 00:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  10 JUN 2018 22:45
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -859,8 +859,7 @@ tex
 File: pgflibraryplotmarks.code.tex 2013/07/20 v3.0.0 (rcs-revision 1.13)
 )))
 (c:/texlive/2015/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.patch
-plots.code.tex)
-No file figures.aux.
+plots.code.tex) (./figures.aux)
 \openout1 = `figures.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
@@ -877,6 +876,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 64.
 LaTeX Font Info:    ... okay on input line 64.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 64.
 LaTeX Font Info:    ... okay on input line 64.
+
 (c:/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count127
@@ -925,84 +925,12 @@ ABD: EveryShipout initializing macros
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.12}).
 
-\openout3 = `figures-figure0.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure0" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure0" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
-\openout3 = `figures-figure1.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure1" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure1" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
-\openout3 = `figures-figure2.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure2" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure2" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
-\openout3 = `figures-figure3.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure3" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure3" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
-\openout3 = `figures-figure4.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure4" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure4" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
-\openout3 = `figures-figure5.md5'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "figures-figure5" "\def\tikzexternalrea
-ljob{figures}\input{figures}"' ========
-\openout3 = `figures.auxlock'.
-
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "figures-figure5" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
-ed.
-
-\openout3 = `figures.auxlock'.
-
+===== Image 'figures-figure0' is up-to-date. ======
+===== Image 'figures-figure1' is up-to-date. ======
+===== Image 'figures-figure2' is up-to-date. ======
+===== Image 'figures-figure3' is up-to-date. ======
+===== Image 'figures-figure4' is up-to-date. ======
+===== Image 'figures-figure5' is up-to-date. ======
 [1
 color push 0 g 0 G
 color pop
@@ -1048,30 +976,27 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
- <./figures-figure5.pdf>] (./figures.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+ <./figures-figure5.pdf>] (./figures.aux) ) 
 Here is how much of TeX's memory you used:
- 23661 strings out of 493089
- 602048 string characters out of 6138420
- 753493 words of memory out of 5000000
+ 23663 strings out of 493089
+ 602072 string characters out of 6138420
+ 753494 words of memory out of 5000000
  26730 multiletter control sequences out of 15000+600000
  3640 words of font info for 14 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,5n,84p,736b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
-live/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2015
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2015/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2015/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pf
-b><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/tex
-live/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/
-texmf-dist/fonts/type1/public/amsfonts/symbols/msam5.pfb><c:/texlive/2015/texmf
--dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+<c:/texlive/2015/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmex10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmmi10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/
+texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/20
+15/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2015/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2015/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
+/symbols/msam5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symb
+ols/msam7.pfb>
 Output written on figures.pdf (4 pages, 136596 bytes).
 PDF statistics:
  221 PDF objects out of 1000 (max. 8388607)

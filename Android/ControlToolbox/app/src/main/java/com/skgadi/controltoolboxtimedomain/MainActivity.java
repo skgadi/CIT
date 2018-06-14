@@ -2,6 +2,7 @@ package com.skgadi.controltoolboxtimedomain;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -54,6 +55,8 @@ import java.util.List;
 
 import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
+
+import static java.security.AccessController.getContext;
 
 
 enum SCREENS {
@@ -244,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 arduino.reopen();
                 DeviceConnected = false;
             }
+
         });
 
     }
@@ -283,10 +287,11 @@ public class MainActivity extends AppCompatActivity {
             } else
                 TempTextView.setText(getResources().getStringArray(R.array.SETTINGS_WINDOW)[i]);
             ((LinearLayout) findViewById(R.id.SettingsSeekBars)).addView(TempTextView);
-            SettingsSeekBars[i] = new IndicatorSeekBar.Builder(getApplicationContext())
-                    .setMin(SettingsLimits[i][0])
-                    .setMax(SettingsLimits[i][1])
-                    .thumbProgressStay(true)
+            SettingsSeekBars[i] = IndicatorSeekBar
+                    .with(getApplicationContext())
+                    .max(SettingsLimits[i][1])
+                    .min(SettingsLimits[i][0])
+                    .showThumbText(true)
                     .build();
             ((LinearLayout) findViewById(R.id.SettingsSeekBars)).addView(SettingsSeekBars[i]);
         }
@@ -642,6 +647,7 @@ public class MainActivity extends AppCompatActivity {
             Switch TempSwitchForCompliment = new Switch(getApplicationContext());
             TempSwitchForCompliment.setChecked(false);
             TempSwitchForCompliment.setText(R.string.INVERT_SIGNAL);
+            TempSwitchForCompliment.setTextColor(Color.BLACK);
             TempSwitchForCompliment.setOnCheckedChangeListener(
                     new SignalComplimentListener(GeneratedSignals[i], TempSwitchForLayout));
             TempLayout.addView(TempSwitchForCompliment);
@@ -1819,9 +1825,9 @@ public class MainActivity extends AppCompatActivity {
         int width, height = 0;
 
         if(one.getWidth() > two.getWidth()) {
-            width = one.getWidth();
-        } else {
             width = two.getWidth();
+        } else {
+            width = one.getWidth();
         }
         height = one.getHeight() + two.getHeight();
 
