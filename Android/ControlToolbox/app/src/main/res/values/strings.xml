@@ -12,6 +12,7 @@
     <string name="TIME">Time t</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
+    <string name="FIRMWARE">Download the firmware for arduino UNO from:\n\nhttps://github.com/skgadi/ControlToolbox/tree/master/Arduino/ControlToolBox</string>
     <string-array name="SIM_VIEW_HEADS">
         <item>Diagram</item>
         <item>Sampling time in milliseconds</item>

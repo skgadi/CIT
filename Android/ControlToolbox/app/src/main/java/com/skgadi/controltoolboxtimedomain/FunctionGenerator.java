@@ -142,11 +142,11 @@ public class FunctionGenerator {
     public double GenTriangle() {
         double TimePeriod = 1/Frequency;
         if (Time>=StartAt) {
-            //return ((!Compliment) ? -1.0 : 1.0) * (MaximumAmplitude * Math.asin(Math.sin(2 * Math.PI * Frequency * (Time-StartAt))))*2/Math.PI + OffSet;
-            if (((Time-StartAt)%TimePeriod)<(TimePeriod/2))
+            return ((!Compliment) ? 1.0 : -1.0) * (MaximumAmplitude * Math.asin(Math.sin(2 * Math.PI * Frequency * (Time-StartAt))))*2/Math.PI + OffSet;
+            /*if (((Time-StartAt)%TimePeriod)<(TimePeriod/2))
                 return ((!Compliment) ? -1.0 : 1.0) * (4.0*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2.0) + MaximumAmplitude) + OffSet;
             else
-                return ((!Compliment) ? -1.0 : 1.0) * (-4.0*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2.0) + MaximumAmplitude) + OffSet;
+                return ((!Compliment) ? -1.0 : 1.0) * (-4.0*MaximumAmplitude/TimePeriod*(((Time - StartAt)%TimePeriod) - TimePeriod/2.0) + MaximumAmplitude) + OffSet;*/
         } else
             return 0;
     }
@@ -154,14 +154,17 @@ public class FunctionGenerator {
         return GetRectangle(50);
     }
     public double GetRectangle(double DutyCycle) {
-        double TimePeriod = 1f/Frequency;
+        double TimePeriod = 1.0/Frequency;
         Log.i("FunctionGenerator", "Val: "+(Time-StartAt)%TimePeriod);
         if (Time>=StartAt) {
-            if (((Time-StartAt)%TimePeriod)<TimePeriod*(DutyCycle/100f))
+            return ((Compliment) ? -1.0 : 1.0)*Math.signum(Math.sin(2*Math.PI*Frequency*((Time-StartAt)
+                    + 0.5*TimePeriod*(0.5-DutyCycle/100.0)))
+                    - Math.sin(2*Math.PI*Frequency*0.5*TimePeriod*(0.5-DutyCycle/100.0)))
+                    + OffSet;
+            /*if (((Time-StartAt)%TimePeriod)<TimePeriod*(DutyCycle/100f))
                 return ((Compliment) ? -1.0 : 1.0) * MaximumAmplitude + OffSet;
             else
-                return ((Compliment) ? 1.0 : -1.0) * MaximumAmplitude + OffSet;
-
+                return ((Compliment) ? 1.0 : -1.0) * MaximumAmplitude + OffSet;*/
         } else
             return 0;
     }
