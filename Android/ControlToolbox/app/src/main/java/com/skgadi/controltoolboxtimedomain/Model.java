@@ -4,7 +4,7 @@ package com.skgadi.controltoolboxtimedomain;
  * Created by gadis on 13-Feb-18.
  */
 
-public abstract class SimulationView {
+public abstract class Model {
     public int[] Images;
     public String[] ImageNames;
     //public String[] Ports; // 0-Out others are input

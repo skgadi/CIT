@@ -2,13 +2,11 @@ package com.skgadi.controltoolboxtimedomain;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.hardware.usb.UsbDevice;
 import android.net.Uri;
@@ -55,8 +53,6 @@ import java.util.List;
 
 import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
-
-import static java.security.AccessController.getContext;
 
 
 enum SCREENS {
@@ -139,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     boolean DeviceConnected = false;
     SIMULATION_STATUS SimulationState;
 
-    SimulationView Model;
+    com.skgadi.controltoolboxtimedomain.Model Model;
     FunctionGenerator[] GeneratedSignals;
 
     Simulate SimHandle;
@@ -739,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareOpenLoopModel() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -793,7 +789,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PreparePIDModel() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -873,7 +869,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareFirstOrderAdaptiveControlModel() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -976,7 +972,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareSecondOrderAdaptiveControlModel() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -1145,7 +1141,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareFirstOrderIdentification() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -1305,7 +1301,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareSecondOrderIdentification() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
@@ -1552,7 +1548,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void PrepareFirstOrderWithControllerIdentification() {
-        Model = new SimulationView() {
+        Model = new Model() {
             @Override
             public double[] RunAlgorithms(
                     double[] Parameters,
