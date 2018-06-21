@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,7 +36,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.DataSet;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -62,7 +72,7 @@ enum SCREENS {
     OPEN_LOOP,
     PID,
     FIRST_ORDER_ADAPTIVE_CONTROL,
-    //SECOND_ORDER_ADAPTIVE_CONTROL,
+    SECOND_ORDER_ADAPTIVE_CONTROL,
     FIRST_ORDER_IDENTIFICATION,
     SECOND_ORDER_IDENTIFICATION,
     IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER
@@ -91,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
     EditText[] ModelParams;
     TextView InstantaneousValues;
     EditText ModelSamplingTime;
-    GraphView[] ModelGraphs;
+    //GraphView[] ModelGraphs;
+    LineChart[] LineCharts;
     int[] ColorTable = {
             Color.RED,
             Color.BLUE,
@@ -432,9 +443,9 @@ public class MainActivity extends AppCompatActivity {
                 case FIRST_ORDER_ADAPTIVE_CONTROL:
                     PrepareFirstOrderAdaptiveControlModel();
                     break;
-                /*case SECOND_ORDER_ADAPTIVE_CONTROL:
+                case SECOND_ORDER_ADAPTIVE_CONTROL:
                     PrepareSecondOrderAdaptiveControlModel();
-                    break;*/
+                    break;
                 case FIRST_ORDER_IDENTIFICATION:
                     PrepareFirstOrderIdentification();
                     break;
@@ -565,8 +576,9 @@ public class MainActivity extends AppCompatActivity {
                     TempTextView.setText(TempTitles[1]);
                 } else
                     TempTextView.setText(Model.Parameters[i].Name);
-                TempTextView.setText(TempTextView.getText()
-                        + " (Recommended to use values in the rage ["+Model.Parameters[i].Min+", "+Model.Parameters[i].Max+"]) :");
+                TempTextView.setText(TempTextView.getText() + ": ");
+                /*TempTextView.setText(TempTextView.getText()
+                        + " (Recommended to use values in the rage ["+Model.Parameters[i].Min+", "+Model.Parameters[i].Max+"]) :");*/
                 ModelParams[i] = new EditText(getApplicationContext());
                 ModelParams[i].setSelectAllOnFocus(true);
                 //ModelParams[i].setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
@@ -658,8 +670,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Graphs
         DrawALine(ModelView);
-        ModelGraphs = new GraphView[Model.Figures.length];
-        for (int i=0; i<ModelGraphs.length; i++) {
+        //ModelGraphs = new GraphView[Model.Figures.length];
+        LineCharts = new LineChart[Model.Figures.length];
+        for (int i=0; i<Model.Figures.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
             TempSwitchForLayout = new Switch(getApplicationContext());
@@ -673,21 +686,51 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
 
-            ModelGraphs[i] = new GraphView(getApplicationContext());
+            /*ModelGraphs[i] = new GraphView(getApplicationContext());
             ModelGraphs[i].getGridLabelRenderer().setGridColor(Color.BLACK);
             ModelGraphs[i].getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
             ModelGraphs[i].getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
             ModelGraphs[i].getGridLabelRenderer().setHorizontalAxisTitleColor(Color.BLACK);
             ModelGraphs[i].getGridLabelRenderer().setVerticalAxisTitleColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setVerticalLabelsSecondScaleColor(Color.BLACK);
+            ModelGraphs[i].getGridLabelRenderer().setVerticalLabelsSecondScaleColor(Color.BLACK);*/
 
-            for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {
-                LineGraphSeries<DataPoint> GraphSeries = new LineGraphSeries<>();
+            LineCharts[i] = new LineChart(getApplicationContext());
+
+            /*LineData lineData = new LineData();
+            for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {*/
+                /*LineGraphSeries<DataPoint> GraphSeries = new LineGraphSeries<>();
                 GraphSeries.setColor(ColorTable[j]);
                 GraphSeries.setTitle(Model.Figures[i].Trajectories[j]);
-                ModelGraphs[i].addSeries(GraphSeries);
+                ModelGraphs[i].addSeries(GraphSeries);*/
+
+                /*List<Entry> entries = new ArrayList<Entry>();
+                entries.add(new Entry(1,3*j));
+                entries.add(new Entry(3,9*j));
+                entries.add(new Entry(9,5*j));
+                LineDataSet dataSet = new LineDataSet(entries, Model.Figures[i].Trajectories[j]);
+                lineData.addDataSet(dataSet);
+                dataSet.setDrawCircles(false);
+                dataSet.setDrawCircleHole(false);
+                dataSet.setDrawValues(false);
+                dataSet.setColor(ColorTable[j]);
+                //dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             }
-            ModelGraphs[i].getViewport().setScalable(true);
+            LineCharts[i].setMinimumHeight(ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
+                    .indexOf("ChartWindowHeight")]);
+            LineCharts[i].getDescription().setEnabled(false);
+            LineCharts[i].setData(lineData);
+            LineCharts[i].invalidate();
+            LineCharts[i].getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            LineCharts[i].getXAxis().setTextSize(15);
+            LineCharts[i].getAxisLeft().setTextSize(15);
+            LineCharts[i].getAxisRight().setTextSize(15);
+            LineCharts[i].getLegend().setTextSize(15);
+            LineCharts[i].getLegend().setForm(Legend.LegendForm.CIRCLE);
+            LineCharts[i].getLegend().setFormSize(15);
+            //LineCharts[i].getLegend()
+            //LineCharts[i].setVisibleXRange(10, 10);
+
+            /*ModelGraphs[i].getViewport().setScalable(true);
             ModelGraphs[i].getViewport().setScalableY(true);
             ModelGraphs[i].getViewport().setScrollable(true);
             ModelGraphs[i].getViewport().setScrollableY(true);
@@ -702,7 +745,12 @@ public class MainActivity extends AppCompatActivity {
                             ]);
             ModelGraphs[i].getLegendRenderer().setVisible(true);
             ModelGraphs[i].getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-            TempLayout.addView(ModelGraphs[i]);
+            GridLabelRenderer gridLabel = ModelGraphs[i].getGridLabelRenderer();
+            gridLabel.setHorizontalAxisTitle("Time (s)");
+            gridLabel.setGridColor(Color.BLACK);
+            gridLabel.setHorizontalAxisTitleColor(Color.BLACK);
+            TempLayout.addView(ModelGraphs[i]);*/
+            TempLayout.addView(LineCharts[i]);
 
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
@@ -1038,6 +1086,8 @@ public class MainActivity extends AppCompatActivity {
                 P.set(0, 0, a_m1*P.get(0,1) + a_m2*P.get(1,1));
                 DMatrixRMaj X = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_1 = new DMatrixRMaj(2,1);
+                X_1.set(0, 0, Input[0][1]);
+                X_1.set(1, 0, (Input[0][1]-Input[0][2])/ActualT_S);
                 X.set(0, 0, Input[0][0]);
                 X.set(1, 0, (Input[0][0]-Input[0][1])/ActualT_S);
                 DMatrixRMaj E = new DMatrixRMaj(2,1);
@@ -1763,59 +1813,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Choose an app"));
         }
     }
-    private Bitmap combineImageIntoOne(ArrayList<Bitmap> bitmap) {
-        int w = 0, h = 0;
-        for (int i = 0; i < bitmap.size(); i++) {
-            if (i < bitmap.size() - 1) {
-                w = bitmap.get(i).getWidth() > bitmap.get(i + 1).getWidth() ? bitmap.get(i).getWidth() : bitmap.get(i + 1).getWidth();
-            }
-            h += bitmap.get(i).getHeight();
-        }
-
-        Bitmap temp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(temp);
-        int top = 0;
-        for (int i = 0; i < bitmap.size(); i++) {
-            Log.d("HTML", "Combine: "+i+"/"+bitmap.size()+1);
-
-            top = (i == 0 ? 0 : top+bitmap.get(i).getHeight());
-            canvas.drawBitmap(bitmap.get(i), 0f, top, null);
-        }
-        return temp;
-    }
-    public Bitmap combineImages(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
-        Bitmap cs = null;
-
-        int width, height = 0;
-
-        if(c.getWidth() > s.getWidth()) {
-            width = c.getWidth() + s.getWidth();
-            height = c.getHeight();
-        } else {
-            width = s.getWidth() + s.getWidth();
-            height = c.getHeight();
-        }
-
-        cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        Canvas comboImage = new Canvas(cs);
-
-        comboImage.drawBitmap(c, 0f, 0f, null);
-        comboImage.drawBitmap(s, c.getWidth(), 0f, null);
-
-        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
-    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
-
-    OutputStream os = null;
-    try {
-      os = new FileOutputStream(loc + tmpImg);
-      cs.compress(CompressFormat.PNG, 100, os);
-    } catch(IOException e) {
-      Log.e("combineImages", "problem combining images", e);
-    }*/
-
-        return cs;
-    }
     public Bitmap combineImagesVertical(Bitmap one, Bitmap two) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
 
@@ -1838,13 +1835,15 @@ public class MainActivity extends AppCompatActivity {
 
         return cs;
     }
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-    public int pxToDp(int px) {
-        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
-        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+
+    public static Bitmap getBitmapFromView(View view) {
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.draw(canvas);
+        return bitmap;
     }
     //--- Menu handling
     @Override
@@ -1870,6 +1869,8 @@ public class MainActivity extends AppCompatActivity {
                         Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(bitmap);
                 iv.getChildAt(0).draw(c);
+
+
 
 
                 View rootview = iv.getRootView();
@@ -2044,6 +2045,7 @@ public class MainActivity extends AppCompatActivity {
         double[] ReadTimes = {0,0,0,0};
         DataPoint[] DataPoints;
         boolean WaitedTS = true;
+        boolean IsFirstProgressOutput=true;
         @Override
         protected Integer doInBackground(Integer... Params) {
             double[] PValues = new double[6];
@@ -2136,25 +2138,45 @@ public class MainActivity extends AppCompatActivity {
             InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
             InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": " + Model.ActualT_S;
             int Iteration=0;
-            for (int i=0; i<ModelGraphs.length; i++) {
-                for (int j=0; j< ModelGraphs[i].getSeries().size(); j++) {
-                    ((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).appendData(
+            for (int i=0; i<Model.Figures.length; i++) {
+                for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
+                    /*((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).appendData(
                             new DataPoint(
                                     Model.OutputTime,
                                     PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1])),
                             true,
                             ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
                                     .indexOf("ChartHistoryLength")]
-                    );
+                    );*/
                     InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[Iteration];
+
+
+                    if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
+                            >
+                            ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
+                            .indexOf("ChartHistoryLength")])
+                        LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
+                    LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
+                            (float)Model.OutputTime, (float)PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1]))
+                    );
+
+                    LineCharts[i].getLineData().notifyDataChanged();
+                    LineCharts[i].notifyDataSetChanged();
+                    LineCharts[i].invalidate();
+
+
                     Iteration++;
                 }
+            }
+            if (IsFirstProgressOutput) for (int i=0; i<Model.Figures.length; i++) {
+                ConfigFigure(i);
             }
             InstantaneousValues.setText(InstantValues);
         }
 
         @Override
         protected void onPreExecute () {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
             try {
                 Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
@@ -2178,10 +2200,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            for (int i=0; i<ModelGraphs.length; i++) {
-                for (int j=0; j< ModelGraphs[i].getSeries().size(); j++) {
-                    ((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).resetData(new DataPoint[0]);
+            for (int i=0; i<Model.Figures.length; i++) {
+                for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
+                    //((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).resetData(new DataPoint[0]);
+
+
+                    //LineCharts[i].getLineData().getDataSetByIndex(j).clear();
+                    //LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(0,0));
                 }
+                AddPlots(i);
             }
         }
         protected double[] GetParameters () {
@@ -2203,8 +2230,41 @@ public class MainActivity extends AppCompatActivity {
             return array;
         }
         protected void onCancelled() {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             SetProperSimulationStatus();
         }
-    }
+        protected void AddPlots(int i) {
+            LineData lineData = new LineData();
+            for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {
+                /*LineGraphSeries<DataPoint> GraphSeries = new LineGraphSeries<>();
+                GraphSeries.setColor(ColorTable[j]);
+                GraphSeries.setTitle(Model.Figures[i].Trajectories[j]);
+                ModelGraphs[i].addSeries(GraphSeries);*/
 
+                List<Entry> entries = new ArrayList<Entry>();
+                //entries.add(new Entry(1,3*j));
+                LineDataSet dataSet = new LineDataSet(entries, Model.Figures[i].Trajectories[j]);
+                lineData.addDataSet(dataSet);
+                dataSet.setDrawCircles(false);
+                dataSet.setDrawCircleHole(false);
+                dataSet.setDrawValues(false);
+                dataSet.setColor(ColorTable[j]);
+                //dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            }
+            LineCharts[i].setData(lineData);
+        }
+        protected void ConfigFigure(int i) {
+            LineCharts[i].setMinimumHeight(ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
+                    .indexOf("ChartWindowHeight")]);
+            LineCharts[i].getDescription().setEnabled(false);
+            LineCharts[i].invalidate();
+            LineCharts[i].getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            LineCharts[i].getXAxis().setTextSize(15);
+            LineCharts[i].getAxisLeft().setTextSize(15);
+            LineCharts[i].getAxisRight().setTextSize(15);
+            LineCharts[i].getLegend().setTextSize(15);
+            LineCharts[i].getLegend().setForm(Legend.LegendForm.CIRCLE);
+            LineCharts[i].getLegend().setFormSize(15);
+        }
+    }
 }

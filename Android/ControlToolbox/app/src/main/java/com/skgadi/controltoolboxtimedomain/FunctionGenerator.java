@@ -157,7 +157,7 @@ public class FunctionGenerator {
         double TimePeriod = 1.0/Frequency;
         Log.i("FunctionGenerator", "Val: "+(Time-StartAt)%TimePeriod);
         if (Time>=StartAt) {
-            return ((Compliment) ? -1.0 : 1.0)*Math.signum(Math.sin(2*Math.PI*Frequency*((Time-StartAt)
+            return ((Compliment) ? -1.0 : 1.0)*MaximumAmplitude*Math.signum(Math.sin(2*Math.PI*Frequency*((Time-StartAt)
                     + 0.5*TimePeriod*(0.5-DutyCycle/100.0)))
                     - Math.sin(2*Math.PI*Frequency*0.5*TimePeriod*(0.5-DutyCycle/100.0)))
                     + OffSet;

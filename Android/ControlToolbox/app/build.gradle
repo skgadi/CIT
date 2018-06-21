@@ -35,4 +35,5 @@ dependencies {
     implementation 'me.aflak.libraries:arduino:1.4.1'
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.0.6'
     implementation 'org.ejml:ejml-all:0.34'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }
