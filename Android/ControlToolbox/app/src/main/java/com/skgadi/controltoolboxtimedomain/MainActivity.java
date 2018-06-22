@@ -1,11 +1,9 @@
 package com.skgadi.controltoolboxtimedomain;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -63,8 +61,6 @@ import me.aflak.arduino.ArduinoListener;
 
 enum SCREENS {
     MAIN_SCREEN,
-    SETTINGS,
-    DOCUMENTATION,
     OPEN_LOOP,
     PID,
     FIRST_ORDER_ADAPTIVE_CONTROL,
@@ -153,10 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         getResources().getStringArray(R.array.TOASTS)[0],
                         Toast.LENGTH_SHORT).show();
-            } else if (PresentScreen == SCREENS.SETTINGS) {
-                Toast.makeText(MainActivity.this,
-                        getResources().getStringArray(R.array.TOASTS)[12],
-                        Toast.LENGTH_SHORT).show();
             } else {
                 SetScreenTo(SCREENS.MAIN_SCREEN);
             }
@@ -175,20 +167,17 @@ public class MainActivity extends AppCompatActivity {
         RootLayout = (LinearLayout) findViewById(R.id.RootLayout);
         TextForImageSharing = (TextView) findViewById(R.id.TextForImageSharing);
         ModelView = (LinearLayout)findViewById(R.id.ModelView);
-        Screens = new LinearLayout[SCREENS.values().length];
-        Screens[0] = (LinearLayout) findViewById(R.id.Main);
-        Screens[1] = (LinearLayout) findViewById(R.id.Settings);
-        Screens[2] = (LinearLayout) findViewById(R.id.Documentation);
-        for (int i=3; i< Screens.length; i++)
-            Screens[i] = (LinearLayout) findViewById(R.id.ModelView);
         DefaultLayoutParams =  new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.FILL_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         SimulationState = SIMULATION_STATUS.DISABLED;
+        Screens = new LinearLayout[SCREENS.values().length];
+        Screens[0] = (LinearLayout) findViewById(R.id.Main);
         //--- Add buttons
         ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
         Button ButtonForMainScreen;
-        for (int i=2; i<ScreensList.length; i++) {
+        for (int i=1; i<ScreensList.length; i++) {
+            Screens[i] = (LinearLayout) findViewById(R.id.ModelView);
             ButtonForMainScreen = new Button(this);
             ButtonForMainScreen.setText(ScreensList[i]);
             ButtonForMainScreen.setLayoutParams(DefaultLayoutParams);
@@ -296,14 +285,10 @@ public class MainActivity extends AppCompatActivity {
             setTitle(getResources().getString(R.string.app_name)
                     + ": "
                     + getResources().getStringArray(R.array.SCREENS_LIST)[PresentScreen.ordinal()]);
-        if (LastModelScreen != Screen && Screen.ordinal()>2) {
+        if (LastModelScreen != Screen && Screen.ordinal()>0) {
             LastModelScreen = Screen;
             switch (Screen) {
                 case MAIN_SCREEN:
-                    break;
-                case SETTINGS:
-                    break;
-                case DOCUMENTATION:
                     break;
                 case OPEN_LOOP:
                     PrepareOpenLoopModel();
@@ -1753,30 +1738,20 @@ public class MainActivity extends AppCompatActivity {
                             getResources().getStringArray(R.array.TOASTS)[10],
                             Toast.LENGTH_SHORT).show();
                 else
-                if (PresentScreen != SCREENS.SETTINGS) {
-                    SetScreenTo(SCREENS.DOCUMENTATION);
-                }
+                    startActivity(new Intent(MainActivity.this, DocumentationActivity.class));
                 break;
             case R.id.share:
-                ScrollView iv = (ScrollView) findViewById(R.id.MainScrollView);
-
-                /*TextForImageSharing.setText("Screenshot taken from the Control Toolbox (Time domain) app's "
-                        + getResources().getStringArray(R.array.SCREENS_LIST)[PresentScreen.ordinal()]
-                        + ". "
-                        +getString(R.string.VERSION_INFO));*/
+                ScrollView MainScroll = (ScrollView) findViewById(R.id.MainScrollView);
                 bitmap = Bitmap.createBitmap(
-                        iv.getChildAt(0).getWidth(),
-                        iv.getChildAt(0).getHeight(),
+                        MainScroll.getChildAt(0).getWidth(),
+                        MainScroll.getChildAt(0).getHeight(),
                         Bitmap.Config.RGB_565);
                 Canvas c = new Canvas(bitmap);
-                iv.getChildAt(0).draw(c);
+                MainScroll.getChildAt(0).draw(c);
 
-
-
-
-                View rootview = iv.getRootView();
-                rootview.setDrawingCacheEnabled(true);
-                Bitmap bitmap1 = rootview.getDrawingCache();
+                View RootView = MainScroll.getRootView();
+                RootView.setDrawingCacheEnabled(true);
+                Bitmap bitmap1 = RootView.getDrawingCache();
 
 
                 int actionBarHeight=56;
@@ -1797,10 +1772,7 @@ public class MainActivity extends AppCompatActivity {
                             getResources().getStringArray(R.array.TOASTS)[10],
                             Toast.LENGTH_SHORT).show();
                 else
-                    if (PresentScreen != SCREENS.SETTINGS) {
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                        //SetScreenTo(SCREENS.SETTINGS);
-                    }
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case R.id.simulate:
                 if(SimulationState == SIMULATION_STATUS.ON) {
@@ -1816,9 +1788,6 @@ public class MainActivity extends AppCompatActivity {
                         ChangeStateToSimulating();
                         SimHandle = new Simulate();
                         SimHandle.execute(0);
-                        /*Toast.makeText(MainActivity.this,
-                                "started simulating",
-                                Toast.LENGTH_SHORT).show();*/
                     }
                 }
                 break;
@@ -1826,7 +1795,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     void SetProperSimulationStatus() {
-        if (PresentScreen.ordinal()>2 && DeviceConnected)
+        if (PresentScreen.ordinal()>0 && DeviceConnected)
             ChangeStateToNotSimulating();
         else
             ChangeStateToSimulateDisabled();
@@ -1876,31 +1845,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (Purged)
             PrevString = Rec;
     }
-    byte PrevByte;
-    boolean IsPrevByteSet=true;
-    private void DataRecUpdateForHex (byte[] data) {
-        if (data.length>=2) {
-            short TempVal = (short) ((data[0] & 0xff) | (data[1] << 8));
-            RecData[0] = PutBetweenRange(TempVal/1024.0*5.0, AnalogInLimits[0], AnalogInLimits[1]);
-            Log.i("Timing", "New Data: " + TempVal);
-            isValidRead = true;
-        } /*else if (data.length==1) {
-            if (IsPrevByteSet) {
-                IsPrevByteSet = false;
-                byte UpdatedData[] = {PrevByte, data[0]};
-                short TempVal = (short) ((UpdatedData[0] & 0xff) | (UpdatedData[1] << 8));
-                RecData[0] = PutBetweenRange(TempVal/1024f*5f, -5, 5);
-                Log.i("Timing", "Found second byte making a total value: " + TempVal);
-                isValidRead = true;
-            } else {
-                IsPrevByteSet = true;
-                PrevByte = data[0];
-                Log.i("Timing", "Found first byte.");
-            }
-        }*/ else {
-            Log.i("Timing", "Received data size: " + data.length);
-        }
-    }
 
     private void RequestAI() {
         byte[] OutBytes= {(byte)0x32,0,0,};
@@ -1908,10 +1852,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void WriteToUSB(double Value) {
         arduino.send(ConvertToIntTSendBytes(ConvertFloatToIntForAO(Value)));
-        Log.i("Timing", "Writing Command");
-        //SendToUSB(ConvertToIntTSendBytes(ConvertFloatToIntForAO(Value)));
-        //port.write(ConvertToIntTSendBytes(ConvertFloatToIntForAO(Value)),10);//Math.round(Model.T_S*1000f));
-        //mSerialIoManager.writeAsync("AA".getBytes());
     }
 
     private long ConvertFloatToIntForAO (double OutFloat) {
@@ -1928,7 +1868,6 @@ public class MainActivity extends AppCompatActivity {
             OutBytes[2] = 0x00;
         else
             OutBytes[2] = 0x01;
-        //Log.i("Timing", String.format("ing string: 0x%2X, 0x%2X, 0x%2X", OutBytes[0], OutBytes[1], OutBytes[2]));
         return OutBytes;
     }
     public double PutBetweenRange (double value, double MinValue, double MaxValue) {

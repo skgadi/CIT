@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Control Toolbox</string>
+    <string name="Documentation_Title">Documentation</string>
     <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
     <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order system</string>
     <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order system</string>
@@ -39,8 +40,6 @@
     <string name="INVERT_SIGNAL">Invert signal (0\' compliment)</string>
     <string-array name="SCREENS_LIST">
         <item>Main window</item>
-        <item>Settings</item>
-        <item>Documentation</item>
         <item>Open loop system</item>
         <item>PID Controller</item>
         <item>Adaptive Controller for a first order system</item>
@@ -89,7 +88,7 @@
 
     <!-- Simulation window preferences  -->
     <string name="pref_header_simulation">Simulation</string>
-    
+
     <string name="pref_sim_sampling_time">Sampling time (ms)</string>
     <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
     <string name="pref_sim_tolerance">Tolerance time (ms)</string>

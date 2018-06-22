@@ -50,6 +50,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skgadi.controltoolboxtimedomain.MainActivity" />
         </activity>
+        <activity
+            android:name=".DocumentationActivity"
+            android:label="@string/Documentation_Title"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skgadi.controltoolboxtimedomain.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
