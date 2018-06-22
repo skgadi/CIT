@@ -8,6 +8,11 @@
         android:title="@string/pref_header_simulation" />
 
     <header
+        android:fragment="com.skgadi.controltoolboxtimedomain.SettingsActivity$GraphFragment"
+        android:icon="@drawable/icon_simulate_start"
+        android:title="@string/pref_header_graphs" />
+
+    <header
         android:fragment="com.skgadi.controltoolboxtimedomain.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />

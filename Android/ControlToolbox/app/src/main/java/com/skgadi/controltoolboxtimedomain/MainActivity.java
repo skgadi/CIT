@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -272,6 +274,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    /**
+     * This method converts device specific pixels to density independent pixels.
+     *
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent dp equivalent to px value
+     */
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
     private void GenerateSettingsView () {
         TextView TempTextView;
         SettingsSeekBars = new IndicatorSeekBar[SettingsDefault.length];
@@ -476,7 +505,19 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    public String getPref(String key, String DefaultValue) {
+    public int getPrefInt(String key, int DefaultValue) {
+        Context context = this.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.valueOf(preferences.getString(key, String.valueOf(DefaultValue)));
+    }
+
+    public boolean getPrefBool(String key, boolean DefaultValue) {
+        Context context = this.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(key, DefaultValue);
+    }
+
+    public String getPrefString(String key, String DefaultValue) {
         Context context = this.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, DefaultValue);
@@ -541,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
         ModelSamplingTime = new EditText(getApplicationContext());
         ModelSamplingTime.setSelectAllOnFocus(true);
         ModelSamplingTime.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
-        ModelSamplingTime.setText(getPref("sim_sampling_time", "100"));
+        ModelSamplingTime.setText(String.valueOf(getPrefInt("sim_sampling_time", 100)));
         ModelSamplingTime.setTextColor(Color.BLACK);
         TempTextView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ModelSamplingTime.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -2068,24 +2109,13 @@ public class MainActivity extends AppCompatActivity {
         double[][] PreparedSignals;
         double Time;
         double[] ReadTimes = {0,0,0,0};
-        //DataPoint[] DataPoints;
         boolean WaitedTS = true;
         boolean IsFirstProgressOutput=true;
         @Override
         protected Integer doInBackground(Integer... Params) {
-            double[] PValues = new double[6];
-            //DataPoints = new DataPoint[1000];
-
-
-
             long StartTime = System.currentTimeMillis();
-            int NotOfTimesSend = 1;
-
-            Log.i("Timing", "Started work");
-
             isValidRead = true;
             long LastWrittenTime=0;
-            Log.i("Timing", "Simulation Background");
             while(!this.isCancelled()) {
                 if (!Purged)
                     PurgeReceivedBuffer();
@@ -2103,24 +2133,11 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     WaitedTS = false;
-                    //Log.i("Timing", "T_S: "+Math.round(Model.ActualT_S*1000));
                 }
                 if (isValidRead) {
                     isValidRead  = false;
                     PutElementToFIFO(ReadTimes, Time);
-                    double MovingAverageTS=0;
-                    for (int i=0; i<(ReadTimes.length-1); i++)
-                        MovingAverageTS = MovingAverageTS + (ReadTimes[i]-ReadTimes[i+1]);
-                    MovingAverageTS = MovingAverageTS/(ReadTimes.length-1);
                     Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
-                    if ((MovingAverageTS > 1.2*Model.PlannedT_S) && (NotOfTimesSend<10))
-                        NotOfTimesSend++;
-                    if ((MovingAverageTS < 0.8*Model.PlannedT_S) && (NotOfTimesSend>1))
-                        NotOfTimesSend--;
-                    /*Log.i("Timing", "TS past: " + ReadTimes[0] );
-                    Log.i("Timing", "TS present: " + ReadTimes[1]);
-                    Log.i("Timing", "Moving TS Average: " + MovingAverageTS );
-                    Log.i("Timing", "Number of times send write: " + NotOfTimesSend);/**/
                     for (int i=0; i<Input.length; i++)
                         Input[i] = PutElementToFIFO(Input[i], RecData[i]);
                     for (int i = 0; i< PreparedSignals.length; i++)
@@ -2137,9 +2154,11 @@ public class MainActivity extends AppCompatActivity {
                         for (int i=0; i<TempOutput.length; i++)
                             Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
                     }
-                    //for (int i=0; i<NotOfTimesSend; i++)
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
                     publishProgress(0);
+                    if (Model.ActualT_S >
+                            (Model.PlannedT_S + Integer.valueOf(getPrefInt("sim_sampling_tolerance", 1000))/1000.0))
+                        this.cancel(true);
                 }
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
@@ -2165,35 +2184,21 @@ public class MainActivity extends AppCompatActivity {
             int Iteration=0;
             for (int i=0; i<Model.Figures.length; i++) {
                 for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
-                    /*((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).appendData(
-                            new DataPoint(
-                                    Model.OutputTime,
-                                    PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1])),
-                            true,
-                            ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                                    .indexOf("ChartHistoryLength")]
-                    );*/
                     InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[Iteration];
-
-
                     if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
-                            >
-                            ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                            .indexOf("ChartHistoryLength")])
+                            > getPrefInt("graph_collect_size",200))
                         LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
                     LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
                             (float)Model.OutputTime, (float)PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1]))
                     );
-
                     LineCharts[i].getLineData().notifyDataChanged();
                     LineCharts[i].notifyDataSetChanged();
                     LineCharts[i].invalidate();
-
-
                     Iteration++;
                 }
             }
             if (IsFirstProgressOutput) for (int i=0; i<Model.Figures.length; i++) {
+                IsFirstProgressOutput=false;
                 ConfigFigure(i);
             }
             InstantaneousValues.setText(InstantValues);
@@ -2203,6 +2208,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute () {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
+            IsFirstProgressOutput = true;
             try {
                 Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
             } catch (Exception e) {
@@ -2225,16 +2231,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            for (int i=0; i<Model.Figures.length; i++) {
-                for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
-                    //((LineGraphSeries<DataPoint>)(ModelGraphs[i].getSeries().get(j))).resetData(new DataPoint[0]);
-
-
-                    //LineCharts[i].getLineData().getDataSetByIndex(j).clear();
-                    //LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(0,0));
-                }
-                AddPlots(i);
-            }
+            for (int i=0; i<Model.Figures.length; i++) AddPlots(i);
         }
         protected double[] GetParameters () {
             double[] ParameterValues = new double[Model.Parameters.length];
@@ -2261,35 +2258,33 @@ public class MainActivity extends AppCompatActivity {
         protected void AddPlots(int i) {
             LineData lineData = new LineData();
             for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {
-                /*LineGraphSeries<DataPoint> GraphSeries = new LineGraphSeries<>();
-                GraphSeries.setColor(ColorTable[j]);
-                GraphSeries.setTitle(Model.Figures[i].Trajectories[j]);
-                ModelGraphs[i].addSeries(GraphSeries);*/
-
                 List<Entry> entries = new ArrayList<Entry>();
-                //entries.add(new Entry(1,3*j));
                 LineDataSet dataSet = new LineDataSet(entries, Model.Figures[i].Trajectories[j]);
                 lineData.addDataSet(dataSet);
                 dataSet.setDrawCircles(false);
                 dataSet.setDrawCircleHole(false);
                 dataSet.setDrawValues(false);
                 dataSet.setColor(ColorTable[j]);
-                //dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+                dataSet.setLineWidth(Float.valueOf(getPrefInt("graph_line_thickness",1)));
+                if (getPrefBool("graph_cubic",false))
+                    dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             }
             LineCharts[i].setData(lineData);
         }
         protected void ConfigFigure(int i) {
-            LineCharts[i].setMinimumHeight(ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                    .indexOf("ChartWindowHeight")]);
+            LineCharts[i].setMinimumHeight(
+                    Math.round(convertDpToPixel(Float.valueOf(getPrefInt("graph_window_height",200)),getApplicationContext()))
+            );
             LineCharts[i].getDescription().setEnabled(false);
             LineCharts[i].invalidate();
             LineCharts[i].getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-            LineCharts[i].getXAxis().setTextSize(15);
-            LineCharts[i].getAxisLeft().setTextSize(15);
-            LineCharts[i].getAxisRight().setTextSize(15);
-            LineCharts[i].getLegend().setTextSize(15);
-            LineCharts[i].getLegend().setForm(Legend.LegendForm.CIRCLE);
-            LineCharts[i].getLegend().setFormSize(15);
+            int GraphFontSize = getPrefInt("graph_font_size", 15);
+            LineCharts[i].getXAxis().setTextSize(GraphFontSize);
+            LineCharts[i].getAxisLeft().setTextSize(GraphFontSize);
+            LineCharts[i].getAxisRight().setTextSize(GraphFontSize);
+            LineCharts[i].getLegend().setTextSize(GraphFontSize);
+            LineCharts[i].getLegend().setFormSize(GraphFontSize);
+            LineCharts[i].getLegend().setForm(Legend.LegendForm.valueOf(getPrefString("graph_legend_form", "DEFAULT")));
         }
     }
 }

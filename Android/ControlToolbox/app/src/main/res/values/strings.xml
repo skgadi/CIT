@@ -91,6 +91,39 @@
     <string name="pref_header_simulation">Simulation</string>
     
     <string name="pref_sim_sampling_time">Sampling time (ms)</string>
+    <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
+    <string name="pref_sim_tolerance">Tolerance time (ms)</string>
+    <string name="pref_sim_tolerance_desc">Simulation stops if your device is incapable of operating in this range.</string>
+
+    <!-- Graph Window -->
+    <string name="pref_header_graphs">Graphs</string>
+
+    <string name="pref_graph_collect_size">Retain sample size</string>
+    <string name="pref_graph_collect_size_desc">Retains a sample size to display in the graph. Pinch-zoom can be used to change viewing size.</string>
+    <string name="pref_graph_window_height">Window height (dp)</string>
+    <string name="pref_graph_window_height_desc">Vertical axis length can be modified here. Pinch-zoom can be used to elongate horizontal axis</string>
+    <string name="pref_graph_line_thickness">Line thickness (pixels)</string>
+    <string name="pref_graph_line_thickness_desc">Thickness of the lines in the graphs.</string>
+    <string name="pref_graph_cubic">Cubic Bézier curve</string>
+    <string name="pref_graph_cubic_desc">Approximates the curve to avoid sharp edges. It is not recommended.</string>
+    <string name="pref_graph_font_size">Font size</string>
+    <string name="pref_graph_font_size_desc">Font size of the axis and legend</string>
+    <string name="pref_graph_legend_form">Legend form</string>
+    <string-array name="pref_graph_legend_form_entries">
+        <item>Circle</item>
+        <item>Square</item>
+        <item>Line</item>
+        <item>Empty</item>
+    </string-array>
+    <string-array name="pref_graph_legend_form_values">
+        <item>CIRCLE</item>
+        <item>SQUARE</item>
+        <item>LINE</item>
+        <item>EMPTY</item>
+    </string-array>
+
+
+
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
