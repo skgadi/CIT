@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -120,20 +119,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView TextForImageSharing;
     Bitmap bitmap;
 
-    //--- Database Related
-    SQLiteDatabase GSK_Database;
-    String DatabaseName = "gsk_settings.db";
-    //--- Settings Related
-    Integer[] SettingsDefault = {
-            100, 100, 10, 200
-    };
-    Integer[][] SettingsLimits = {
-            {10, 1000}, {10, 10000}, {1, 100}, {25, 1000}
-    };
-    Integer[] PreviousSettings = {
-            0, 0, 0, 0
-    };
-    String[] SettingsDBColumns = {"SamplingTime", "ChartHistoryLength", "ZoomXWindow", "ChartWindowHeight"};
     IndicatorSeekBar[] SettingsSeekBars;
     double[] AnalogOutLimits = {0, 5};
     double[] AnalogInLimits = {0, 5};
@@ -185,10 +170,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //--- Database
-        ConnectToDatabase();
-        //--- Generate Settings window
-        GenerateSettingsView ();
         //--- Var vals
         MainScrollView = (ScrollView) findViewById(R.id.MainScrollView);
         RootLayout = (LinearLayout) findViewById(R.id.RootLayout);
@@ -300,141 +281,6 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
-    }
-    private void GenerateSettingsView () {
-        TextView TempTextView;
-        SettingsSeekBars = new IndicatorSeekBar[SettingsDefault.length];
-        for (int i=0; i<SettingsDefault.length; i++) {
-            TempTextView = new TextView(getApplicationContext());
-            TempTextView.setTextColor(Color.BLACK);
-            if (getResources().getStringArray(R.array.SETTINGS_WINDOW)[i].contains(">>")) {
-                String[] TempTitles = getResources().getStringArray(R.array.SETTINGS_WINDOW)[i].split(">>");
-                TempTextView.setText(TempTitles[0]);
-                TempTextView.setTextSize(18);
-                TempTextView.setTypeface(null, Typeface.BOLD);
-                ((LinearLayout) findViewById(R.id.SettingsSeekBars)).addView(TempTextView);
-                TempTextView = new TextView(getApplicationContext());
-                TempTextView.setTextColor(Color.BLACK);
-                TempTextView.setText(TempTitles[1]);
-            } else
-                TempTextView.setText(getResources().getStringArray(R.array.SETTINGS_WINDOW)[i]);
-            ((LinearLayout) findViewById(R.id.SettingsSeekBars)).addView(TempTextView);
-            SettingsSeekBars[i] = IndicatorSeekBar
-                    .with(getApplicationContext())
-                    .max(SettingsLimits[i][1])
-                    .min(SettingsLimits[i][0])
-                    .showThumbText(true)
-                    .build();
-            ((LinearLayout) findViewById(R.id.SettingsSeekBars)).addView(SettingsSeekBars[i]);
-        }
-        ChangeSettingsPositionsTo(ReadSettingsFromDatabase());
-    }
-
-    private void ChangeSettingsPositionsTo (Integer[] Values) {
-        for (int i=0; i< SettingsDefault.length; i++) {
-            Log.i("DBaseStuff", "Got " + Values[i]);
-            SettingsSeekBars[i].setProgress(Values[i]);
-        }
-    }
-
-    private Integer[] ReadSettingsPositions () {
-        Integer[] Values = new Integer[SettingsDefault.length];
-        for (int i=0; i< SettingsDefault.length; i++)
-            Values[i] = SettingsSeekBars[i].getProgress();
-        return Values;
-
-    }
-
-    private void WriteSettingsToDatabase (Integer[] Values) {
-        ContentValues data;
-        data = new ContentValues();
-        //Log.i("DBaseStuff", "Got " + Values[0]);
-        data.put("Key", 1);
-        for (int i=0; i<SettingsDefault.length; i++)
-            data.put (SettingsDBColumns[i], Values[i]);
-        Cursor TempCursor;
-        TempCursor = GSK_Database.rawQuery("SELECT * FROM `Settings`", null);
-        if (TempCursor.moveToFirst())
-            GSK_Database.update("Settings", data, "Key == 1" ,null);
-        else {
-            GSK_Database.insert("Settings", null, data);
-            WriteSettingsToDatabase(SettingsDefault);
-        }
-        TempCursor.close();
-
-    }
-
-    private Integer[] ReadSettingsFromDatabase () {
-        Integer[] Values = new Integer[SettingsDefault.length];
-        Cursor TempCursor;
-        TempCursor = GSK_Database.rawQuery("SELECT * FROM `Settings`", null);
-        Log.i("DBaseStuff", "Cursor count: " + TempCursor.getCount());
-        if (TempCursor.moveToFirst()) {
-            Log.i("DBaseStuff", "Got raw query For Key:"
-                    + TempCursor.getInt(TempCursor.getColumnIndex("Key")));
-
-            for (int i=0; i<SettingsDefault.length; i++)
-                Values[i] = TempCursor.getInt(TempCursor.getColumnIndex(SettingsDBColumns[i]));
-        } else {
-            Log.i("DBaseStuff", "No raw query");
-            CreateAandPopulateRecordForSettingsTable();
-        }
-        return Values;
-    }
-    public void SettingsSave (View v) {
-        WriteSettingsToDatabase(ReadSettingsPositions());
-        SetScreenTo(PreviousScreen);
-    }
-
-    public void SettingsReset (View v) {
-        ChangeSettingsPositionsTo(SettingsDefault);
-    }
-
-    public void SettingsResetNSave (View v) {
-        ChangeSettingsPositionsTo(SettingsDefault);
-        SettingsSave(v);
-    }
-
-    public void SettingsCancel (View v) {
-        ChangeSettingsPositionsTo(ReadSettingsFromDatabase());
-        SetScreenTo(PreviousScreen);
-    }
-
-    private void ConnectToDatabase () {
-        GSK_Database = getApplicationContext().openOrCreateDatabase(DatabaseName ,
-                MODE_PRIVATE, null);
-        if (GSK_Database.isOpen()) {
-            Log.i("DBaseStuff", "Database Opened");
-            if (isTableExists(GSK_Database, "Settings"))
-                Log.i("DBaseStuff", "Table is found");
-            else {
-                Log.i("DBaseStuff", "Table does not exist");
-                CreateAandPopulateRecordForSettingsTable();
-            }
-        } else
-            Log.i("DBaseStuff", "Unable to open Database");
-    }
-
-    private void CreateAandPopulateRecordForSettingsTable () {
-        String Query = "CREATE TABLE IF NOT EXISTS `Settings` (" +
-                "`Key`              INTEGER PRIMARY KEY ASC";
-        for (int i=0; i<SettingsDefault.length; i++)
-            Query += ", `" + SettingsDBColumns[i] + "`  INTEGER NOT NULL";
-        Query += ");";
-        //Log.i("DBaseStuff", "Query String: "+Query);
-        GSK_Database.execSQL(Query);
-        WriteSettingsToDatabase(SettingsDefault);
-    }
-    public boolean isTableExists(SQLiteDatabase mDatabase, String tableName) {
-        Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+tableName+"'", null);
-        if(cursor!=null) {
-            if(cursor.getCount()>0) {
-                cursor.close();
-                return true;
-            }
-            cursor.close();
-        }
-        return false;
     }
 
     private void SetScreenTo (SCREENS Screen) {
@@ -884,7 +730,6 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[1]= "Output y(t)";
         Model.Figures[0] = new Figure("Input u(t) and Output y(t)", TempTrajectories);
         Model.Parameters = new Parameter [0];
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PreparePIDModel() {
@@ -964,7 +809,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
         Model.Parameters[3] = new Parameter("Other parameters>>Constant perturbation (d_1)", -1, 1, 0);
         Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareFirstOrderAdaptiveControlModel() {
@@ -1067,7 +911,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03B3", 0, 1000, 1);
         Model.Parameters[1] = new Parameter("Reference Model Parameters>>A_m", 0, 100, 4);
         Model.Parameters[2] = new Parameter("B_m", 0, 100, 4);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareSecondOrderAdaptiveControlModel() {
@@ -1238,7 +1081,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("Reference Model Parameters>>A_m_1", 0, 1000, 40);
         Model.Parameters[2] = new Parameter("A_m_2", 0, 1000, 100);
         Model.Parameters[3] = new Parameter("B_m", 0, 1000, 120);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareFirstOrderIdentification() {
@@ -1398,7 +1240,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters = new Parameter [2];
         Model.Parameters[0] = new Parameter("\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareSecondOrderIdentification() {
@@ -1645,7 +1486,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters = new Parameter [2];
         Model.Parameters[0] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     private void PrepareFirstOrderWithControllerIdentification() {
@@ -1824,7 +1664,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Control parameters>>K_I", 0, 1000, 10);
         Model.Parameters[1] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
         Model.Parameters[2] = new Parameter("\u03BB", 0, 1, 0.9);
-        Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
     }
 
     public class OnMainWindowButton implements View.OnClickListener {
@@ -2163,7 +2002,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
                 } catch (Exception e) {
-                    Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+                    Model.PlannedT_S = getPrefInt("sim_sampling_time", 100)/1000.0;
                 }
             }
             return null;
@@ -2212,7 +2051,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
             } catch (Exception e) {
-                Model.PlannedT_S = ReadSettingsPositions()[Arrays.asList(SettingsDBColumns).indexOf("SamplingTime")]/1000.0;
+                Model.PlannedT_S = getPrefInt("sim_sampling_time", 100)/1000.0;
             }
             Input = new double[Model.NoOfInputs][Model.NoOfPastInputsRequired+1];
             Output = new double[Model.NoOfOutputs][Model.NoOfPastOuputsRequired+1];
