@@ -1,22 +1,23 @@
 package com.skgadi.controltoolboxtimedomain;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -39,15 +40,9 @@ import android.widget.Toast;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.warkiz.widget.IndicatorSeekBar;
 
 import org.ejml.data.DMatrixRMaj;
@@ -96,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     protected String[] ScreensList;
     MenuItem SettingsButton;
     MenuItem SimulateButton;
+    MenuItem DocumentationButton;
 
     LinearLayout ModelView;
     EditText[] ModelParams;
@@ -472,6 +468,20 @@ public class MainActivity extends AppCompatActivity {
             ModelView.removeAllViews();
     }
 
+    public void putPref(String key, String value) {
+        Context context = this.getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public String getPref(String key, String DefaultValue) {
+        Context context = this.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, DefaultValue);
+    }
+
     private void GenerateViewFromModel () {
         //Removing previous view
         ClearTheModelView ();
@@ -531,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
         ModelSamplingTime = new EditText(getApplicationContext());
         ModelSamplingTime.setSelectAllOnFocus(true);
         ModelSamplingTime.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
-        ModelSamplingTime.setText(String.valueOf(SettingsSeekBars[0].getProgress()));
+        ModelSamplingTime.setText(getPref("sim_sampling_time", "100"));
         ModelSamplingTime.setTextColor(Color.BLACK);
         TempTextView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ModelSamplingTime.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -1849,13 +1859,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.con_sim_menu, menu);
-        SettingsButton = menu.getItem(1);
-        SimulateButton = menu.getItem(2);
+        DocumentationButton = menu.getItem(0);
+        SettingsButton = menu.getItem(2);
+        SimulateButton = menu.getItem(3);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_documentation:
+                if (SimulationState == SIMULATION_STATUS.ON)
+                    Toast.makeText(MainActivity.this,
+                            getResources().getStringArray(R.array.TOASTS)[10],
+                            Toast.LENGTH_SHORT).show();
+                else
+                if (PresentScreen != SCREENS.SETTINGS) {
+                    SetScreenTo(SCREENS.DOCUMENTATION);
+                }
+                break;
             case R.id.share:
                 ScrollView iv = (ScrollView) findViewById(R.id.MainScrollView);
 
@@ -1896,8 +1917,10 @@ public class MainActivity extends AppCompatActivity {
                             getResources().getStringArray(R.array.TOASTS)[10],
                             Toast.LENGTH_SHORT).show();
                 else
-                    if (PresentScreen != SCREENS.SETTINGS)
-                        SetScreenTo(SCREENS.SETTINGS);
+                    if (PresentScreen != SCREENS.SETTINGS) {
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        //SetScreenTo(SCREENS.SETTINGS);
+                    }
                 break;
             case R.id.simulate:
                 if(SimulationState == SIMULATION_STATUS.ON) {
@@ -1936,11 +1959,13 @@ public class MainActivity extends AppCompatActivity {
         SimulationState = SIMULATION_STATUS.ON;
         if (SimulateButton != null) SimulateButton.setIcon(R.drawable.icon_simulate_stop);
         if (SettingsButton != null) SettingsButton.setIcon(R.drawable.icon_settings_disabled);
+        if (DocumentationButton != null) DocumentationButton.setIcon(R.drawable.icon_documentation_disable);
     }
     void ChangeStateToNotSimulating () {
         SimulationState = SIMULATION_STATUS.OFF;
         if (SimulateButton != null) SimulateButton.setIcon(R.drawable.icon_simulate_start);
         if (SettingsButton != null) SettingsButton.setIcon(R.drawable.icon_settings);
+        if (DocumentationButton != null) DocumentationButton.setIcon(R.drawable.icon_documentation);
     }
     double[] RecData = new double[3];
     boolean Purged = false;
@@ -2043,13 +2068,13 @@ public class MainActivity extends AppCompatActivity {
         double[][] PreparedSignals;
         double Time;
         double[] ReadTimes = {0,0,0,0};
-        DataPoint[] DataPoints;
+        //DataPoint[] DataPoints;
         boolean WaitedTS = true;
         boolean IsFirstProgressOutput=true;
         @Override
         protected Integer doInBackground(Integer... Params) {
             double[] PValues = new double[6];
-            DataPoints = new DataPoint[1000];
+            //DataPoints = new DataPoint[1000];
 
 
 
