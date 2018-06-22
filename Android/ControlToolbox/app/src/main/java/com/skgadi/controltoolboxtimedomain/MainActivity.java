@@ -357,9 +357,7 @@ public class MainActivity extends AppCompatActivity {
     private void GenerateViewFromModel () {
         //Removing previous view
         ClearTheModelView ();
-        //ModelView.getBackgroundTintList()
         ModelView.setBackgroundColor(Color.WHITE);
-        //Declaring TempVariables
         TextView TempTextView;
         LinearLayout TempLayout;
         Switch TempSwitchForLayout;
@@ -459,11 +457,8 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     TempTextView.setText(Model.Parameters[i].Name);
                 TempTextView.setText(TempTextView.getText() + ": ");
-                /*TempTextView.setText(TempTextView.getText()
-                        + " (Recommended to use values in the rage ["+Model.Parameters[i].Min+", "+Model.Parameters[i].Max+"]) :");*/
                 ModelParams[i] = new EditText(getApplicationContext());
                 ModelParams[i].setSelectAllOnFocus(true);
-                //ModelParams[i].setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
                 ModelParams[i].setText(String.valueOf(Model.Parameters[i].DefaultValue));
                 ModelParams[i].setTextColor(Color.BLACK);
                 TempTextView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -567,71 +562,7 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setTextSize(18);
             TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
-
-            /*ModelGraphs[i] = new GraphView(getApplicationContext());
-            ModelGraphs[i].getGridLabelRenderer().setGridColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setHorizontalAxisTitleColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setVerticalAxisTitleColor(Color.BLACK);
-            ModelGraphs[i].getGridLabelRenderer().setVerticalLabelsSecondScaleColor(Color.BLACK);*/
-
             LineCharts[i] = new LineChart(getApplicationContext());
-
-            /*LineData lineData = new LineData();
-            for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {*/
-                /*LineGraphSeries<DataPoint> GraphSeries = new LineGraphSeries<>();
-                GraphSeries.setColor(ColorTable[j]);
-                GraphSeries.setTitle(Model.Figures[i].Trajectories[j]);
-                ModelGraphs[i].addSeries(GraphSeries);*/
-
-                /*List<Entry> entries = new ArrayList<Entry>();
-                entries.add(new Entry(1,3*j));
-                entries.add(new Entry(3,9*j));
-                entries.add(new Entry(9,5*j));
-                LineDataSet dataSet = new LineDataSet(entries, Model.Figures[i].Trajectories[j]);
-                lineData.addDataSet(dataSet);
-                dataSet.setDrawCircles(false);
-                dataSet.setDrawCircleHole(false);
-                dataSet.setDrawValues(false);
-                dataSet.setColor(ColorTable[j]);
-                //dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-            }
-            LineCharts[i].setMinimumHeight(ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                    .indexOf("ChartWindowHeight")]);
-            LineCharts[i].getDescription().setEnabled(false);
-            LineCharts[i].setData(lineData);
-            LineCharts[i].invalidate();
-            LineCharts[i].getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-            LineCharts[i].getXAxis().setTextSize(15);
-            LineCharts[i].getAxisLeft().setTextSize(15);
-            LineCharts[i].getAxisRight().setTextSize(15);
-            LineCharts[i].getLegend().setTextSize(15);
-            LineCharts[i].getLegend().setForm(Legend.LegendForm.CIRCLE);
-            LineCharts[i].getLegend().setFormSize(15);
-            //LineCharts[i].getLegend()
-            //LineCharts[i].setVisibleXRange(10, 10);
-
-            /*ModelGraphs[i].getViewport().setScalable(true);
-            ModelGraphs[i].getViewport().setScalableY(true);
-            ModelGraphs[i].getViewport().setScrollable(true);
-            ModelGraphs[i].getViewport().setScrollableY(true);
-            ModelGraphs[i].getViewport().setMinX(0);
-            ModelGraphs[i].getViewport().setMaxX(
-                    ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                            .indexOf("ZoomXWindow")
-                            ]);
-            ModelGraphs[i].setMinimumHeight(
-                    ReadSettingsPositions()[Arrays.asList(SettingsDBColumns)
-                            .indexOf("ChartWindowHeight")
-                            ]);
-            ModelGraphs[i].getLegendRenderer().setVisible(true);
-            ModelGraphs[i].getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-            GridLabelRenderer gridLabel = ModelGraphs[i].getGridLabelRenderer();
-            gridLabel.setHorizontalAxisTitle("Time (s)");
-            gridLabel.setGridColor(Color.BLACK);
-            gridLabel.setHorizontalAxisTitleColor(Color.BLACK);
-            TempLayout.addView(ModelGraphs[i]);*/
             TempLayout.addView(LineCharts[i]);
 
             ModelView.addView(TempSwitchForLayout);
@@ -736,11 +667,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<3; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                /*OutSignals[0] = PutBetweenRange(
-                        Output[0][0] + a * E[0] + b * E[1] + c * E[2]
-                        +Parameters[3]*0.1*(1-0.5*Math.random()),
-                        AnalogOutLimits[0],
-                        AnalogOutLimits[1]);*/
                 OutSignals[1] = Output[1][0] + a * E[0] + b * E[1] + c * E[2];
                 OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
                 return OutSignals;
@@ -828,13 +754,10 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<2; i++)
                     E[i] = (Input[0][i] - Output[3][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                //OutSignals[3] = 1/(2/Model.ActualT_S  + A_m)*(Output[3][0] * (2/Model.ActualT_S  - A_m) + B_m*(R[0] + R[1]));
                 OutSignals[3] = Output[3][0]*Math.exp(-A_m*Model.ActualT_S)
                         + B_m/A_m*(1-Math.exp(-A_m*Model.ActualT_S))* R[0];
-                //E[0] = (Input[0][0] - OutSignals[3]);
                 OutSignals[1] = Output[1][0] - Gamma*Model.ActualT_S*(E[0]*R[0] + E[1]*R[1])/2.0;
                 OutSignals[2] = Output[2][0] - Gamma*Model.ActualT_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
-                //OutSignals[0] = PutBetweenRange(OutSignals[1]*R[0] + OutSignals[2]*Input[0][0], AnalogOutLimits[0], AnalogOutLimits[1]);
                 OutSignals[0] = OutSignals[1]*R[0] + OutSignals[2]*Input[0][0];
                 return OutSignals;
             }
@@ -867,10 +790,8 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut[0]=0;
         Model.Images = new int[1];
         Model.Images[0] = R.drawable.figure02;
-        //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Adaptive control model";
-        //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "R1(t)";
         Model.SignalGenerators[1] = "R2(t)";
@@ -1161,11 +1082,6 @@ public class MainActivity extends AppCompatActivity {
                 OutSignals[6] = Theta.get(1,0);
                 OutSignals[7] = K+1;
                 OutSignals[8] =  Output[8][1]*Theta.get(0,0) + Theta.get(1,0)*Output[0][1];
-                Log.i("Algorithm", "Phi: " + Phi.toString());
-                Log.i("Algorithm", "Theta: "  + Theta.toString());
-                Log.i("Algorithm", "z: "  + z);
-                Log.i("Algorithm", "e: "  + e);
-                Log.i("Algorithm", "P: "  + P.toString());
                 return OutSignals;
             }
 
@@ -1200,7 +1116,6 @@ public class MainActivity extends AppCompatActivity {
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Identification of the first order system";
-        //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "I1(t)";
         Model.SignalGenerators[1] = "I2(t)";
@@ -1571,12 +1486,6 @@ public class MainActivity extends AppCompatActivity {
                 OutSignals[5] = Theta.get(0,0);
                 OutSignals[6] = Theta.get(1,0);
                 OutSignals[7] = K+1;
-                /*OutSignals[8] = Output[8][0]* (Theta.get(1,0) + 1 - Theta.get(0,0))
-                        - Output[8][1]*(Theta.get(1,0) + Theta.get(0,0))
-                        + Theta.get(0,0)* (
-                        (Generated[0][1] + Generated[1][1] + Generated[2][1])
-                                + (Generated[0][2] + Generated[1][2] + Generated[2][2])
-                );*/
                 OutSignals[8] = Output[8][0]
                         + Theta.get(0,0) * (
                         (Generated[0][1] + Generated[1][1] + Generated[2][1])

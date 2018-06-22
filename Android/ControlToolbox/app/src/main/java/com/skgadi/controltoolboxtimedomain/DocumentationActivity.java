@@ -20,7 +20,7 @@ public class DocumentationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_help);
+        setContentView(R.layout.activity_documentation);
         setTitle(R.string.Documentation_Title);
 
 
