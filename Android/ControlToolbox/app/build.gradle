@@ -37,4 +37,13 @@ dependencies {
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.0.6'
     implementation 'org.ejml:ejml-all:0.34'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
+        transitive = true
+    }
+    //required support lib modules
+    implementation "com.android.support:appcompat-v7:26.1.0"
+    implementation "com.android.support:recyclerview-v7:26.1.0"
+    implementation "com.android.support:support-annotations:26.1.0"
+    implementation "com.android.support:design:26.1.0"
+    implementation 'com.mikepenz:fontawesome-typeface:5.0.13.0@aar'
 }

@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,6 +43,17 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.warkiz.widget.IndicatorSeekBar;
 
 import org.ejml.data.DMatrixRMaj;
@@ -115,11 +127,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView TextForImageSharing;
     Bitmap bitmap;
 
-    IndicatorSeekBar[] SettingsSeekBars;
     double[] AnalogOutLimits = {0, 5};
-    double[] AnalogInLimits = {0, 5};
     double[] TrajectoryLimits = {-10000, 10000};
 
+    Toolbar AppToolbar;
     //Communication
     public Arduino arduino;
     boolean DeviceConnected = false;
@@ -173,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         SimulationState = SIMULATION_STATUS.DISABLED;
         Screens = new LinearLayout[SCREENS.values().length];
         Screens[0] = (LinearLayout) findViewById(R.id.Main);
+        AppToolbar = (Toolbar) findViewById(R.id.AppToolbar);
         //--- Add buttons
         ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
         Button ButtonForMainScreen;
@@ -184,6 +196,10 @@ public class MainActivity extends AppCompatActivity {
             ButtonForMainScreen.setOnClickListener(new OnMainWindowButton(i));
             Screens[SCREENS.MAIN_SCREEN.ordinal()].addView(ButtonForMainScreen);
         }
+        //--- ShowToolBar
+        SetupToolbar();
+        //--- Navigation Menu (https://github.com/mikepenz/MaterialDrawer)
+        CustomNavigationBuilder();
         //--- USB Connection
         arduino = new Arduino(getApplicationContext(), 115200);
 
@@ -242,6 +258,40 @@ public class MainActivity extends AppCompatActivity {
                 arduino.send(bytes);
             }
         });
+    }
+
+    private void SetupToolbar () {
+        setSupportActionBar(AppToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
+        getSupportActionBar().setSubtitle("Hey");
+    }
+
+    private void CustomNavigationBuilder () {
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.logo)
+                .build();
+        Drawer result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(AppToolbar)
+                .withAccountHeader(headerResult)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                        return true;
+                    }
+                })
+                .build();
+        String[] ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
+        for (int i=0; i<ScreensList .length; i++)
+            result.addItem(new PrimaryDrawerItem().withIdentifier(1).withName(ScreensList[i]));
+
+        //result.removeHeader();
+
+
     }
 
     /**
@@ -1630,9 +1680,12 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
     //--- Menu handling
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.con_sim_menu, menu);
+
         DocumentationButton = menu.getItem(0);
         SettingsButton = menu.getItem(2);
         SimulateButton = menu.getItem(3);
@@ -1703,6 +1756,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     void SetProperSimulationStatus() {
         if (PresentScreen.ordinal()>0 && DeviceConnected)
             ChangeStateToNotSimulating();

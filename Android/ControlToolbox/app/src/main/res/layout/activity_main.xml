@@ -6,47 +6,67 @@
     android:layout_height="match_parent"
     tools:context="com.skgadi.controltoolboxtimedomain.MainActivity">
 
-    <ScrollView
-        android:id="@+id/MainScrollView"
+    <LinearLayout
+        android:id="@+id/RootLayout"
         android:background="#ffffffff"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/RootLayout"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/AppToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/MaterialBaseTheme.Light"
+            app:popupTheme="@style/MaterialBaseBaseTheme.Light" />
+
+        <ScrollView
+            android:id="@+id/MainScrollView"
             android:background="#ffffffff"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/Main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:id="@+id/MSRootLayout"
                 android:background="#ffffffff"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+
+                <LinearLayout
+                    android:id="@+id/Main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ffffffff"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ModelView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"></LinearLayout>
+
+                <TextView
+                    android:id="@+id/TextForImageSharing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffffff"
+                    android:gravity="right"
+                    android:text="@string/VERSION_INFO"
+                    android:textAlignment="gravity"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ModelView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"></LinearLayout>
+        </ScrollView>
 
-            <TextView
-                android:id="@+id/TextForImageSharing"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#ffffffff"
-                android:gravity="right"
-                android:text="@string/VERSION_INFO"
-                android:textAlignment="gravity"
-                android:visibility="visible" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
