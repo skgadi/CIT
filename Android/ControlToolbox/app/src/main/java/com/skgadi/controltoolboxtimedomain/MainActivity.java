@@ -3,6 +3,8 @@ package com.skgadi.controltoolboxtimedomain;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -71,17 +73,6 @@ import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
 
 
-enum SCREENS {
-    MAIN_SCREEN,
-    OPEN_LOOP,
-    PID,
-    FIRST_ORDER_ADAPTIVE_CONTROL,
-    SECOND_ORDER_ADAPTIVE_CONTROL,
-    FIRST_ORDER_IDENTIFICATION,
-    SECOND_ORDER_IDENTIFICATION,
-    IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER
-}
-
 enum SIMULATION_STATUS {
     DISABLED,
     OFF,
@@ -91,11 +82,7 @@ enum SIMULATION_STATUS {
 public class MainActivity extends AppCompatActivity {
 
     private LinearLayout.LayoutParams DefaultLayoutParams;
-    private LinearLayout[] Screens;
-    SCREENS PresentScreen = SCREENS.MAIN_SCREEN;
-    SCREENS LastModelScreen;
 
-    SCREENS PreviousScreen;
     private boolean CloseApp;
     protected String[] ScreensList;
     MenuItem SettingsButton;
@@ -131,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     double[] TrajectoryLimits = {-10000, 10000};
 
     Toolbar AppToolbar;
+    Drawer AppNavDrawer;
     //Communication
     public Arduino arduino;
     boolean DeviceConnected = false;
@@ -146,24 +134,14 @@ public class MainActivity extends AppCompatActivity {
     //--- Back button handling
     @Override
     public void onBackPressed() {
-        if (SimulationState == SIMULATION_STATUS.ON) {
+        if (AppNavDrawer.isDrawerOpen())
+            AppNavDrawer.closeDrawer();
+        else if (SimulationState == SIMULATION_STATUS.ON)
             Toast.makeText(getApplicationContext(),
                     getResources().getStringArray(R.array.TOASTS)[9],
                     Toast.LENGTH_SHORT).show();
-        } else {
-            if (CloseApp && PresentScreen == SCREENS.MAIN_SCREEN)
-                finish();
-            else
-                CloseApp = false;
-            if (PresentScreen == SCREENS.MAIN_SCREEN) {
-                CloseApp = true;
-                Toast.makeText(getApplicationContext(),
-                        getResources().getStringArray(R.array.TOASTS)[0],
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                SetScreenTo(SCREENS.MAIN_SCREEN);
-            }
-        }
+        else
+            super.onBackPressed();
     }
 
 
@@ -176,26 +154,14 @@ public class MainActivity extends AppCompatActivity {
         //--- Var vals
         MainScrollView = (ScrollView) findViewById(R.id.MainScrollView);
         RootLayout = (LinearLayout) findViewById(R.id.RootLayout);
-        TextForImageSharing = (TextView) findViewById(R.id.TextForImageSharing);
         ModelView = (LinearLayout)findViewById(R.id.ModelView);
         DefaultLayoutParams =  new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.FILL_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         SimulationState = SIMULATION_STATUS.DISABLED;
-        Screens = new LinearLayout[SCREENS.values().length];
-        Screens[0] = (LinearLayout) findViewById(R.id.Main);
-        AppToolbar = (Toolbar) findViewById(R.id.AppToolbar);
+        AppToolbar =  findViewById(R.id.AppToolbar);
         //--- Add buttons
         ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
-        Button ButtonForMainScreen;
-        for (int i=1; i<ScreensList.length; i++) {
-            Screens[i] = (LinearLayout) findViewById(R.id.ModelView);
-            ButtonForMainScreen = new Button(this);
-            ButtonForMainScreen.setText(ScreensList[i]);
-            ButtonForMainScreen.setLayoutParams(DefaultLayoutParams);
-            ButtonForMainScreen.setOnClickListener(new OnMainWindowButton(i));
-            Screens[SCREENS.MAIN_SCREEN.ordinal()].addView(ButtonForMainScreen);
-        }
         //--- ShowToolBar
         SetupToolbar();
         //--- Navigation Menu (https://github.com/mikepenz/MaterialDrawer)
@@ -265,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.app_name);
         }
-        getSupportActionBar().setSubtitle("Hey");
+        getSupportActionBar().setSubtitle("Time domain");
     }
 
     private void CustomNavigationBuilder () {
@@ -273,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.logo)
                 .build();
-        Drawer result = new DrawerBuilder()
+        AppNavDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(AppToolbar)
                 .withAccountHeader(headerResult)
@@ -281,17 +247,63 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
+                        AppNavDrawer.closeDrawer();
+                        if (GenerateViewFromModel((int)drawerItem.getIdentifier()))
+                            getSupportActionBar().setSubtitle(Model.ModelName);
+                        SetProperSimulationStatus();
                         return true;
                     }
                 })
                 .build();
+        AppNavDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         String[] ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
-        for (int i=0; i<ScreensList .length; i++)
-            result.addItem(new PrimaryDrawerItem().withIdentifier(1).withName(ScreensList[i]));
 
-        //result.removeHeader();
+        AddAFolderToNavigation("System simulation");
+        AddItemToNavigation("Open loop system", 0);
+        AppNavDrawer.addItem(new DividerDrawerItem());
 
+        AddAFolderToNavigation("Traditional control");
+        AddItemToNavigation("PID controller", 1);
+        AppNavDrawer.addItem(new DividerDrawerItem());
 
+        AddAFolderToNavigation("Model reference adaptive control (MRAC)");
+        AddItemToNavigation("First order", 2);
+        AddItemToNavigation("Second order", 2);
+        AppNavDrawer.addItem(new DividerDrawerItem());
+
+        AddAFolderToNavigation("Identification");
+        AddItemToNavigation("First order", 4);
+        AddItemToNavigation("Second order", 5);
+        AddItemToNavigation("First order with integral control", 6);
+        AppNavDrawer.addItem(new DividerDrawerItem());
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            AppNavDrawer.addItem(new PrimaryDrawerItem()
+                    .withIdentifier(-1)
+                    .withName("Version " + pInfo.versionName + " (" + pInfo.versionCode + ")")
+                    .withEnabled(false));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void AddAFolderToNavigation(String Name) {
+        AppNavDrawer.addItem(new PrimaryDrawerItem()
+                .withIdentifier(-1)
+                .withName(Name)
+                .withEnabled(false)
+                .withDisabledTextColor(Color.BLUE)
+        );
+    }
+
+    private void AddItemToNavigation(String Name, int Key) {
+        AppNavDrawer.addItem(new PrimaryDrawerItem()
+                .withIdentifier(Key)
+                .withName(Name)
+                .withIcon(FontAwesome.Icon.faw_server)
+                .withIconColor(Color.RED)
+        );
     }
 
     /**
@@ -320,50 +332,6 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
-    }
-
-    private void SetScreenTo (SCREENS Screen) {
-        PreviousScreen = PresentScreen;
-        for (int i=0; i<SCREENS.values().length; i++)
-            Screens[i].setVisibility(View.GONE);
-        PresentScreen = Screen;
-        Screens[PresentScreen.ordinal()].setVisibility(View.VISIBLE);
-        SetProperSimulationStatus();
-        if (Screen == SCREENS.MAIN_SCREEN)
-            setTitle(getResources().getString(R.string.app_name));
-        else
-            setTitle(getResources().getString(R.string.app_name)
-                    + ": "
-                    + getResources().getStringArray(R.array.SCREENS_LIST)[PresentScreen.ordinal()]);
-        if (LastModelScreen != Screen && Screen.ordinal()>0) {
-            LastModelScreen = Screen;
-            switch (Screen) {
-                case MAIN_SCREEN:
-                    break;
-                case OPEN_LOOP:
-                    PrepareOpenLoopModel();
-                    break;
-                case PID:
-                    PreparePIDModel();
-                    break;
-                case FIRST_ORDER_ADAPTIVE_CONTROL:
-                    PrepareFirstOrderAdaptiveControlModel();
-                    break;
-                case SECOND_ORDER_ADAPTIVE_CONTROL:
-                    PrepareSecondOrderAdaptiveControlModel();
-                    break;
-                case FIRST_ORDER_IDENTIFICATION:
-                    PrepareFirstOrderIdentification();
-                    break;
-                case SECOND_ORDER_IDENTIFICATION:
-                    PrepareSecondOrderIdentification();
-                    break;
-                case IDENTIFICATION_FIRST_ORDER_WITH_CONTROLLER:
-                    PrepareFirstOrderWithControllerIdentification();
-                    break;
-            }
-            GenerateViewFromModel();
-        }
     }
 
     private void DrawALine(LinearLayout ParentView) {
@@ -404,6 +372,39 @@ public class MainActivity extends AppCompatActivity {
         return preferences.getString(key, DefaultValue);
     }
 
+    private boolean GenerateViewFromModel (int i) {
+        boolean FoundItem = true;
+        switch (i) {
+            case 0:
+                PrepareOpenLoopModel();
+                break;
+            case 1:
+                PreparePIDModel();
+                break;
+            case 2:
+                PrepareFirstOrderAdaptiveControlModel();
+                break;
+            case 3:
+                PrepareSecondOrderAdaptiveControlModel();
+                break;
+            case 4:
+                PrepareFirstOrderIdentification();
+                break;
+            case 5:
+                PrepareSecondOrderIdentification();
+                break;
+            case 6:
+                PrepareFirstOrderWithControllerIdentification();
+                break;
+            default:
+                FoundItem = false;
+                break;
+        }
+        if (FoundItem)
+            GenerateViewFromModel();
+        return FoundItem;
+    }
+
     private void GenerateViewFromModel () {
         //Removing previous view
         ClearTheModelView ();
@@ -417,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0; i<Model.Images.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
-            TempSwitchForLayout = new Switch(getApplicationContext());
+            TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
             TempSwitchForLayout.setTextColor(Color.BLACK);
             TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
             TempSwitchForLayout.setChecked(true);
@@ -443,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
         DrawALine(ModelView);
         TempLayout = new LinearLayout(getApplicationContext());
         TempLayout.setOrientation(LinearLayout.VERTICAL);
-        TempSwitchForLayout = new Switch(getApplicationContext());
+        TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
         TempSwitchForLayout.setTextColor(Color.BLACK);
         TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
         TempSwitchForLayout.setChecked(true);
@@ -458,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
         TempTextView.setText(getString(R.string.SAMPLING_TIME));
         TempTextView.setTypeface(null, Typeface.BOLD);
         TempLayout.addView(TempTextView);
-        ModelSamplingTime = new EditText(getApplicationContext());
+        ModelSamplingTime = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
         ModelSamplingTime.setSelectAllOnFocus(true);
         ModelSamplingTime.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
         ModelSamplingTime.setText(String.valueOf(getPrefInt("sim_sampling_time", 100)));
@@ -476,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
             DrawALine(ModelView);
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
-            TempSwitchForLayout = new Switch(getApplicationContext());
+            TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
             TempSwitchForLayout.setTextColor(Color.BLACK);
             TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
             TempSwitchForLayout.setChecked(true);
@@ -507,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     TempTextView.setText(Model.Parameters[i].Name);
                 TempTextView.setText(TempTextView.getText() + ": ");
-                ModelParams[i] = new EditText(getApplicationContext());
+                ModelParams[i] = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
                 ModelParams[i].setSelectAllOnFocus(true);
                 ModelParams[i].setText(String.valueOf(Model.Parameters[i].DefaultValue));
                 ModelParams[i].setTextColor(Color.BLACK);
@@ -528,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0; i<Model.SignalGenerators.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
-            TempSwitchForLayout = new Switch(getApplicationContext());
+            TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
             TempSwitchForLayout.setTextColor(Color.BLACK);
             TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
             TempSwitchForLayout.setChecked(true);
@@ -541,12 +542,12 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
             //SignalType
-            Spinner TempFunctionsView = new Spinner(getApplicationContext());
+            Spinner TempFunctionsView = (Spinner) getLayoutInflater().inflate(R.layout.gsk_spinner, null);
             TempFunctionsView.setLayoutParams(new Spinner.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             final List<String> SignalsList =
                     new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.AVAILABLE_SIGNALS)));
             final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
-                    this,R.layout.spinner_item,SignalsList);
+                    this,R.layout.support_simple_spinner_dropdown_item,SignalsList);
             TempFunctionsView.setAdapter(spinnerArrayAdapter);
             //TempFunctionsView.getBackground().setColorFilter(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             TempLayout.addView(TempFunctionsView);
@@ -564,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
                 TempTextView = new TextView(getApplicationContext());
                 TempTextView.setTextColor(Color.BLACK);
                 TempTextView.setText(getResources().getStringArray(R.array.SIGNAL_GENERATOR_PARAMETERS)[j]+": ");
-                EditText TempEditText = new EditText(getApplicationContext());
+                EditText TempEditText = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
                 TempEditText.setSelectAllOnFocus(true);
                 //TempEditText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
                 TempEditText.setText(String.valueOf(GeneratedSignals[i].MinMaxDefaultsForFloats[j][2]));
@@ -576,11 +577,11 @@ public class MainActivity extends AppCompatActivity {
                 TempEditText.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 TempHorizontalLayout.addView(TempTextView);
                 TempHorizontalLayout.addView(TempEditText);
-                TempHorizontalLayout.setGravity(Gravity.CENTER);
+                //TempHorizontalLayout.setGravity(Gravity.CENTER);
             }
             TempLayout.addView(TempHorizontalLayout);
             //Compliment
-            Switch TempSwitchForCompliment = new Switch(getApplicationContext());
+            Switch TempSwitchForCompliment = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
             TempSwitchForCompliment.setChecked(false);
             TempSwitchForCompliment.setText(R.string.INVERT_SIGNAL);
             TempSwitchForCompliment.setTextColor(Color.BLACK);
@@ -602,7 +603,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0; i<Model.Figures.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
-            TempSwitchForLayout = new Switch(getApplicationContext());
+            TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
             TempSwitchForLayout.setTextColor(Color.BLACK);
             TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
             TempSwitchForLayout.setChecked(true);
@@ -625,7 +626,7 @@ public class MainActivity extends AppCompatActivity {
         //Instantaneous Values
         TempLayout = new LinearLayout(getApplicationContext());
         TempLayout.setOrientation(LinearLayout.VERTICAL);
-        TempSwitchForLayout = new Switch(getApplicationContext());
+        TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
         TempSwitchForLayout.setTextColor(Color.BLACK);
         TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
         TempSwitchForLayout.setChecked(true);
@@ -673,6 +674,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "Open loop system";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=1;
         Model.NoOfPastInputsRequired = 0;
@@ -738,6 +740,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "PID controller";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 2;
@@ -831,6 +834,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "First order MRAC";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=4;
         Model.NoOfPastInputsRequired = 2;
@@ -998,6 +1002,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "Second order MRAC";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=8;
         Model.NoOfPastInputsRequired = 2;
@@ -1154,6 +1159,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "First order system identification";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=9;
         Model.NoOfPastInputsRequired = 2;
@@ -1393,6 +1399,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "Second order system identification";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=33;
         Model.NoOfPastInputsRequired = 2;
@@ -1570,6 +1577,7 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
+        Model.ModelName = "System identification of first order with integral controller";
         Model.NoOfInputs=1;
         Model.NoOfOutputs=9;
         Model.NoOfPastInputsRequired = 2;
@@ -1610,16 +1618,6 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[2] = new Parameter("\u03BB", 0, 1, 0.9);
     }
 
-    public class OnMainWindowButton implements View.OnClickListener {
-        int ScreenNumber;
-        public OnMainWindowButton (int ScreenNumber) {
-            this.ScreenNumber = ScreenNumber;
-        }
-        @Override
-        public void onClick(View v) {
-            SetScreenTo (SCREENS.values()[ScreenNumber]);
-        }
-    };
 
     private void shareImage(Bitmap bitmap){
         // save bitmap to cache directory
@@ -1758,7 +1756,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void SetProperSimulationStatus() {
-        if (PresentScreen.ordinal()>0 && DeviceConnected)
+        if (DeviceConnected && (Model!=null))
             ChangeStateToNotSimulating();
         else
             ChangeStateToSimulateDisabled();

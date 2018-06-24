@@ -16,7 +16,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/AppToolbar"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/MaterialBaseTheme.Light"
@@ -36,32 +36,19 @@
                 android:orientation="vertical">
 
 
-
-                <LinearLayout
-                    android:id="@+id/Main"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#ffffffff"
-                    android:orientation="vertical"
-                    android:visibility="visible">
-
-                </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/ModelView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/TextForImageSharing"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffffff"
-                    android:gravity="right"
-                    android:text="@string/VERSION_INFO"
-                    android:textAlignment="gravity"
-                    android:visibility="visible" />
+                    <ImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/logo" />
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -5,6 +5,7 @@ package com.skgadi.controltoolboxtimedomain;
  */
 
 public abstract class Model {
+    public String ModelName;
     public int[] Images;
     public String[] ImageNames;
     //public String[] Ports; // 0-Out others are input
