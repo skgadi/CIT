@@ -1789,16 +1789,18 @@ public class MainActivity extends AppCompatActivity {
         }
         Purged = true;
     }
+    private void DataRecUpdateAdio (byte[] data) {
+
+    }
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
         Log.i("Timing", "Found New data:" + new String(data));
-        if (Rec.contains("E") && Rec.contains("[") && Rec.contains("]")) {
+        if (Rec.contains("\n") && Rec.contains("\r")) {
             PrevString = "";
             try {
-                String result = Rec.substring(Rec.indexOf("[") + 1, Rec.indexOf("]", Rec.indexOf("[")));
                 Log.i("Timing", "Obtained: "+Rec);
-                Log.i("Timing", "Extracted: "+result);
-                RecData[0] = Double.parseDouble(result) / 1024 * 5;
+                Log.i("Timing", "Extracted: "+Rec);
+                RecData[0] = Double.parseDouble(Rec) / 1024 * 5;
                 isValidRead = true;
             } catch (Exception e) {
                 Log.i("Timing", "Error in parse");
@@ -1807,18 +1809,29 @@ public class MainActivity extends AppCompatActivity {
             PrevString = Rec;
     }
 
+    private void RequestAIAdio() {
+        byte[] OutBytes= {'3', 'a'};
+        OutBytes[1] += getPrefInt("bridge_ai_port",0);
+        arduino.send(OutBytes);
+    }
     private void RequestAI() {
         byte[] OutBytes= {(byte)0x32,0,0,};
         arduino.send(OutBytes);
     }
     private void WriteToUSB(double Value) {
-        arduino.send(ConvertToIntTSendBytes(ConvertFloatToIntForAO(Value)));
+        arduino.send(ConvertToIntTSendBytesForAdio(ConvertFloatToIntForAO(Value)));
     }
 
     private long ConvertFloatToIntForAO (double OutFloat) {
         return Math.round(OutFloat*51.0);
     }
 
+    private byte[] ConvertToIntTSendBytesForAdio (long Out) {
+        byte[] OutBytes= {'4', 'a',0};
+        OutBytes[1] += getPrefInt("bridge_ao_port",5);
+        OutBytes[2] = (byte) (Math.abs(Out) & 0x0ff);
+        return OutBytes;
+    }
     private byte[] ConvertToIntTSendBytes (long Out) {
         byte[] OutBytes= {(byte)0x31, 0,0};
         if (Math.abs(Out)>=255)
@@ -1865,7 +1878,7 @@ public class MainActivity extends AppCompatActivity {
                         (System.currentTimeMillis() != LastWrittenTime)
                         ) {
                     LastWrittenTime = System.currentTimeMillis();
-                    RequestAI();
+                    RequestAIAdio();
                     try {
                         Thread.sleep(1);
                     } catch (InterruptedException e) {

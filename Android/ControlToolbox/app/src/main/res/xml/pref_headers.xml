@@ -12,4 +12,9 @@
         android:icon="@drawable/ic_timeline_blue_24dp"
         android:title="@string/pref_header_graphs" />
 
+    <header
+        android:fragment="com.skgadi.controltoolboxtimedomain.SettingsActivity$BridgeFragment"
+        android:icon="@drawable/icon_bridge"
+        android:title="@string/pref_header_bridge" />
+
 </preference-headers>

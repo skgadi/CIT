@@ -120,5 +120,12 @@
         <item>EMPTY</item>
     </string-array>
 
+    <!-- Graph Window -->
+    <string name="pref_header_bridge">Bridge device</string>
+
+    <string name="pref_bridge_ai_port">Analog input port number</string>
+    <string name="pref_bridge_ai_port_desc">Enter a valid port number for the analog input port</string>
+    <string name="pref_bridge_ao_port">Analog output port number</string>
+    <string name="pref_bridge_ao_port_desc">Enter a valid port number for the analog output port</string>
 
 </resources>
