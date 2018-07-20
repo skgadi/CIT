@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
                 .withOnAccountHeaderSelectionViewClickListener(new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
                     @Override
                     public boolean onClick(View view, IProfile profile) {
+                        getSupportActionBar().setSubtitle("");
                         AppNavDrawer.setSelection(-1);
                         AppNavDrawer.closeDrawer();
                         GenerateViewFromModel(-1);
@@ -479,7 +480,11 @@ public class MainActivity extends AppCompatActivity {
         TempSwitchForLayout.setTextColor(Color.BLACK);
         TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
         TempSwitchForLayout.setChecked(true);
-        TempSwitchForLayout.setText(getResources().getStringArray(R.array.SIM_VIEW_HEADS)[1]);
+        TempSwitchForLayout.setText(
+                "T_s = "
+                + String.valueOf(getPrefInt("sim_sampling_time", 100))
+                + " ms"
+        );
         TempSwitchForLayout.setTextSize(18);
         TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
         TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
@@ -487,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
         TempLayout.setOrientation(LinearLayout.HORIZONTAL);
         TempTextView = new TextView(getApplicationContext());
         TempTextView.setTextColor(Color.BLACK);
-        TempTextView.setText(getString(R.string.SAMPLING_TIME));
+        TempTextView.setText(getString(R.string.SAMPLING_TIME)+" :");
         TempTextView.setTypeface(null, Typeface.BOLD);
         TempLayout.addView(TempTextView);
         ModelSamplingTime = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
@@ -497,6 +502,7 @@ public class MainActivity extends AppCompatActivity {
         ModelSamplingTime.setTextColor(Color.BLACK);
         TempTextView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ModelSamplingTime.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        ModelSamplingTime.addTextChangedListener(new ListenerForSamplingTimeEditText(TempSwitchForLayout));
         TempLayout.addView(ModelSamplingTime);
 
         ModelView.addView(TempSwitchForLayout);
@@ -564,11 +570,12 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setTextColor(Color.BLACK);
             TempSwitchForLayout.setBackgroundColor(Color.LTGRAY);
             TempSwitchForLayout.setChecked(true);
-            TempSwitchForLayout.setText(getResources().getStringArray(R.array.SIM_VIEW_HEADS)[3]
+            /*TempSwitchForLayout.setText(getResources().getStringArray(R.array.SIM_VIEW_HEADS)[3]
                     + ": "
                     + Model.SignalGenerators[i]
                     + "=0"
-            );
+            );*/
+            TempSwitchForLayout.setText(Model.SignalGenerators[i] + "=0");
             TempSwitchForLayout.setTextSize(18);
             TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
@@ -995,12 +1002,12 @@ public class MainActivity extends AppCompatActivity {
                 eq.process("K_c = K_c_1 + Gamma*T_S/2.0*(B_m'*P*E*X' + B_m'*P*E_1*X_1')");
                 eq.process("L = L_1 - Gamma*T_S/2.0*(B_m'*P*E*R + B_m'*P*E_1*R_1)");
                 eq.process("U = -K_c*X + L*R");
-                Log.i("Algorithm", "A_mT_s: " + A_mT_s.toString());
+                /*Log.i("Algorithm", "A_mT_s: " + A_mT_s.toString());
                 Log.i("Algorithm", "A_m: " + A_m.toString());
                 Log.i("Algorithm", "B_m: " + B_m.toString());
                 Log.i("Algorithm", "A_m_d: " + A_m_d.toString());
                 Log.i("Algorithm", "B_m_d: " + B_m_d.toString());
-                Log.i("Algorithm", "P: " + P.toString());
+                Log.i("Algorithm", "P: " + P.toString());*/
 
                 double [] OutSignals = new double[NoOfOutputs];
                 OutSignals[0] = U.get(0,0);
@@ -1358,12 +1365,12 @@ public class MainActivity extends AppCompatActivity {
                         + Theta.get(2,0 ) * Output[0][2]
                         - Theta.get(3,0 ) * Output[32][0]
                         - Theta.get(4,0 ) * Output[32][1];
-                Log.i("Algorithm", "Phi: " + Phi.toString());
+                /*Log.i("Algorithm", "Phi: " + Phi.toString());
                 Log.i("Algorithm", "Theta: "  + Theta.toString());
                 Log.i("Algorithm", "z: "  + z);
                 Log.i("Algorithm", "e: "  + e);
                 Log.i("Algorithm", "P_1: " + P_1.toString());
-                Log.i("Algorithm", "P: "  + P.toString());
+                Log.i("Algorithm", "P: "  + P.toString());*/
                 return OutSignals;
             }
 
@@ -1405,10 +1412,10 @@ public class MainActivity extends AppCompatActivity {
                 CommonOps_DDRM.scale(1/Model.ActualT_S, A_C);
                 eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
 
-                Log.i("Algorithm", "A_C: " + A_C);
+                /*Log.i("Algorithm", "A_C: " + A_C);
                 Log.i("Algorithm", "B_C: " + B_C);
                 Log.i("Algorithm", "C_C: " + C);
-                Log.i("Algorithm", "D_C: " + D);
+                Log.i("Algorithm", "D_C: " + D);*/
 
 
 
@@ -1581,11 +1588,11 @@ public class MainActivity extends AppCompatActivity {
                                 - Output[8][0] - Output[8][1]
                 )
                         + Theta.get(1,0) * (Output[8][0] - Output[8][1]);
-                Log.i("Algorithm", "Phi: " + Phi.toString());
+                /*Log.i("Algorithm", "Phi: " + Phi.toString());
                 Log.i("Algorithm", "Theta: "  + Theta.toString());
                 Log.i("Algorithm", "z: "  + z);
                 Log.i("Algorithm", "e: "  + e);
-                Log.i("Algorithm", "P: "  + P.toString());
+                Log.i("Algorithm", "P: "  + P.toString());*/
                 return OutSignals;
             }
 
@@ -1825,16 +1832,16 @@ public class MainActivity extends AppCompatActivity {
     }
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
-        Log.i("Timing", "Found New data:" + new String(data));
+        //Log.i("Timing", "Found New data:" + new String(data));
         if (Rec.contains("\n") && Rec.contains("\r")) {
             PrevString = "";
             try {
-                Log.i("Timing", "Obtained: "+Rec);
-                Log.i("Timing", "Extracted: "+Rec);
+                /*Log.i("Timing", "Obtained: "+Rec);
+                Log.i("Timing", "Extracted: "+Rec);*/
                 RecData[0] = Double.parseDouble(Rec) / 1024 * 5;
                 isValidRead = true;
             } catch (Exception e) {
-                Log.i("Timing", "Error in parse");
+                //Log.i("Timing", "Error in parse");
             }
         } else if (Purged)
             PrevString = Rec;
@@ -1892,32 +1899,22 @@ public class MainActivity extends AppCompatActivity {
         double[][] PreparedSignals;
         double Time;
         double[] ReadTimes = {0,0,0,0};
-        boolean WaitedTS = true;
+        boolean RequestSend = true;
         boolean IsFirstProgressOutput=true;
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
             isValidRead = true;
-            long LastWrittenTime=0;
             while(!this.isCancelled()) {
                 if (!Purged)
                     PurgeReceivedBuffer();
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
-                if ((
-                        (((int)(System.currentTimeMillis() - StartTime))%Math.round(Model.PlannedT_S*1000)) == 0)
-                        &&
-                        (System.currentTimeMillis() != LastWrittenTime)
-                        ) {
-                    LastWrittenTime = System.currentTimeMillis();
+                if (((Time-ReadTimes[0]) >= Model.PlannedT_S) && RequestSend) {
+                    RequestSend = false;
                     RequestAIAdio();
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    WaitedTS = false;
                 }
                 if (isValidRead) {
+                    RequestSend = true;
                     isValidRead  = false;
                     PutElementToFIFO(ReadTimes, Time);
                     Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
@@ -1963,7 +1960,8 @@ public class MainActivity extends AppCompatActivity {
             Model.OutputTime = Model.SimulationTime;
             String InstantValues;
             InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
-            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": " + Model.ActualT_S;
+            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
+                    + Model.ActualT_S*1000;
             int Iteration=0;
             for (int i=0; i<Model.Figures.length; i++) {
                 for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {

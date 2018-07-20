@@ -9,7 +9,7 @@
     <string name="BUTTON_IDENIFICATION1">First order identification</string>
     <string name="BUTTON_IDENIFICATION2">Second order identification</string>
     <string name="SAMPLING_TIME">Sampling time</string>
-    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time T_S</string>
+    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time in milli seconds</string>
     <string name="TIME">Time t</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
