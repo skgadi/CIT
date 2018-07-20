@@ -68,6 +68,87 @@
 	\begin{figure}
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Input) [align=center] {Input};
+		\node (Plant) [block, text width = 2cm, right = 2cm of Input] {System};
+		\node (Output) [right = of Plant, right = 2cm, align=center] {Output};
+		\draw [arrow] (Input) -- (Plant);
+		\draw [arrow] (Plant) -- (Output);
+		\end{tikzpicture}
+		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Reference) [align=center] {Reference};
+		\node (SummingPoint) [draw,circle, thick, right = of Reference]  {+};
+		\node (Control) [block, text width = 2cm, right = of SummingPoint] {Control};
+		\node (SummingPoint1) [draw,circle, thick, right = of Control]  {+};
+		\node (Plant) [block, text width = 2cm, right = of SummingPoint1] {Plant};
+		\node (PlantRight) [support, right = of Plant, right = 1cm, fill, circle,scale=0.3] {};
+		\node (Output) [right = of Plant, right = 2cm, align=center] {Output};
+		\node (Perturbations) [align=center, above = of SummingPoint1] {Perturbations};
+		\draw [arrow] (Reference) -- node[anchor=south west]{+}(SummingPoint);
+		\draw [arrow] (SummingPoint) -- node[anchor=south]{$e(t)$}(Control);
+		\draw [arrow] (Control) -- node[anchor=south]{$u(t)$}(SummingPoint1);
+		\draw [arrow] (SummingPoint1) -- (Plant);
+		\draw [arrow] (Plant) -- (Output);
+		\draw [arrow] (PlantRight) -- +(0, -2) -| (SummingPoint) node[below = 2mm, anchor=north east]{\bf\textendash};
+		\draw [arrow] (Perturbations) -- (SummingPoint1);
+		\end{tikzpicture}
+		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Reference) [align=center] {Reference};
+		\node (ReferenceRight) [support, right = of Reference, fill,circle,scale=0.3] {};
+		\node (RefModel) [block, text width = 3cm, right = of ReferenceRight] {Reference model};
+		\node (Control) [block, text width = 3cm, below = of RefModel] {Control law};
+		\node (Adaptation) [block, text width = 3cm, below = of Control, below = 5mm] {Adaptation law};
+		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (60mm, -47mm) node[]{MRAC};
+		\node (Plant) [block, text width = 3cm, right = 15mm of Control] {Plant};
+		\node (PlantRight) [support, right = of Plant, right = 5mm, fill,circle,scale=0.3] {};
+		\node (SummingPoint) [draw,circle, thick, right = 25mm of PlantRight, right = 5mm ]  {+};
+		\node (Output) [right = of SummingPoint, align=center] {Output};
+		
+		\path (Reference.east) -- (Reference.east) coordinate[pos=05] (Reference1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=-	0.5] (Control1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=+0.5] (Control2);
+		
+		\draw [arrow] (Reference) -- node[anchor=south west]{}(RefModel);
+		\draw [arrow] (ReferenceRight) |- (Control);
+		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{\bf\textendash}(SummingPoint);
+		\draw [arrow] (Control) -- node [] {}(Plant);
+		\draw [arrow] (Plant) -- node[pos=0.65, anchor=north west]{+}
+		(SummingPoint);
+		\draw [arrow] (SummingPoint) -- (Output);
+		\draw [arrow] (SummingPoint) |- node[pos=0.98, anchor=north west]{} (Adaptation);
+		\draw [arrow] (Adaptation) -| node [pos=1, anchor=north east]{}(25mm,-30mm) |- (Control1);
+		\draw [arrow] (PlantRight) |- (25mm,-9mm) |- (Control2);		
+		\end{tikzpicture}
+		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Excitation) [align=center] {Excitation};
+		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant};
+		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
+		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least squares
+			\\[0.1cm]
+			\begin{align}
+			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			\end{align}
+		};
+		\node (Output) [right = of Plant, right = 2cm, align=center] {Output};
+		\node (CapValues) [right = of Identification, right = 2cm, align=center] {Estimates};
+		\path (Excitation.east) -- (Excitation.north east) coordinate[pos=0.5] (Reference1);
+		\path (Identification.west) -- (Identification.north west) coordinate[pos=0.5] (Identification1);
+		\path (Identification.west) -- (Identification.north west) coordinate[pos=-0.5] (Identification2);
+		\draw [arrow] (Excitation) -- (Plant);
+		\draw [arrow] (Plant) -- (Output);
+		\draw [arrow] (PlantRight) -- +(0, -1.25) -| +(-7,-1.25) |- (Identification1);
+		\draw [arrow] (PlantLeft) |- (Identification2);
+		\draw [arrow] (Identification) -- (CapValues);
+		\end{tikzpicture}
+		\caption{Background for the app}
+		\label{Fig:Background}
+	\end{figure}
+
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Input) [align=center] {Input\\$u(t)=u_1(t)+u_2(t)+u_3(t)$};
 		\node (Plant) [block, text width = 2cm, right = 2cm of Input] {Plant ($G$)};
 		\node (Output) [right = of Plant, right = 2cm, align=center] {Output\\$y(t)$};
@@ -112,13 +193,13 @@
 		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Reference) [align=center] {Reference\\$r(t)=r_1(t)+r_2(t)+r_3(t)$};
 		\node (ReferenceRight) [support, right = of Reference, fill,circle,scale=0.3] {};
-		\node (RefModel) [block, text width = 3cm, right = of ReferenceRight] {Reference model};
+		\node (RefModel) [block, text width = 3cm, right = of ReferenceRight] {Reference model\\ $\frac{\alpha_{1m}}{s + \alpha_{0m}}$};
 		\node (Control) [block, text width = 3cm, below = of RefModel] {Control law};
 		\node (Adaptation) [block, text width = 3cm, below = of Control, below = 5mm] {Adaptation law};
-		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (60mm, -42.5mm) node[]{Model Rerefence Adaptive Control (MRAC)};
-		\node (Plant) [block, text width = 3cm, right = of Control] {Plant (G)};
+		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (60mm, -47mm) node[]{Model rerefence adaptive control (MRAC)};
+		\node (Plant) [block, text width = 3cm, right = 15mm of Control] {Plant ($G$)};
 		\node (PlantRight) [support, right = of Plant, right = 5mm, fill,circle,scale=0.3] {};
-		\node (SummingPoint) [draw,circle, thick, right = of PlantRight, right = 5mm ]  {+};
+		\node (SummingPoint) [draw,circle, thick, right = 25mm of PlantRight, right = 5mm ]  {+};
 		\node (Output) [right = of SummingPoint, align=center] {Output\\$y(t)$};
 		
 		\path (Reference.east) -- (Reference.east) coordinate[pos=05] (Reference1);
@@ -127,45 +208,100 @@
 		
 		\draw [arrow] (Reference) -- node[anchor=south west]{}(RefModel);
 		\draw [arrow] (ReferenceRight) |- (Control);
-		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{+}(SummingPoint);
-		\draw [arrow] (Control) -- (Plant);
-		\draw [arrow] (Plant) -- node[pos=0.75, anchor=north west]{\bf\textendash}
+		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{\bf\textendash}(SummingPoint);
+		\draw [arrow] (Control) -- node [] {$u(t)$}(Plant);
+		\draw [arrow] (Plant) -- node[pos=0.65, anchor=north west]{+}
 		(SummingPoint);
 		\draw [arrow] (SummingPoint) -- (Output);
-		\draw [arrow] (SummingPoint) |- (Adaptation);
-		\draw [arrow] (Adaptation) -| (35mm,-30mm) |- (Control1);
+		\draw [arrow] (SummingPoint) |- node[pos=0.98, anchor=north west]{$e_m(t)$} (Adaptation);
+		\draw [arrow] (Adaptation) -| node [pos=1, anchor=north east]{${\hat{\gamma }}_{1}$, ${\hat{\gamma }}_{2}$}(35mm,-30mm) |- (Control1);
 		\draw [arrow] (PlantRight) |- (35mm,-9mm) |- (Control2);
+
+		\node [above right = 0.1 of RefModel.east]{$y_m(t)$};
+		\node [below right = 0.1 of Plant.east]{$y(t)$};
+
 		
-		\node (Equation000) [text width = 7cm, below = 1.25cm of Adaptation, align = left] {
-			Reference model:\\
-			$\dot y_m + a_m y_m = b_mr$\\
-			Error:\\
-			$e = y-y_m$\\
+		\node (Equation000) [text width = 15cm, below = 1.25cm of Adaptation, align = left] {
+			Control law:\\
+			\[u(t)={{\hat{\gamma }}_{1}}(t)r(t)+{{\hat{\gamma }}_{2}}(t)y(t)\]	
 			Adaptation law:\\
-			$u = \hat{a}_r r + \hat{a}_yy$\\
-			$\dot{\hat{a}}_r = - \gamma e r$\\
-			$\dot{\hat{a}}_y = - \gamma e y$\\
-			$T_S$ is sampling time.
+			\begin{align}
+				{{\dot{\hat{\gamma }}}_{1}}(t)&=-\varrho {{e}_{m}}(t)r(t)\nonumber\\
+				{{\dot{\hat{\gamma }}}_{2}}(t)&=-\varrho {{e}_{m}}(t)y(t)\nonumber
+			\end{align}
+			where $e_m = y-y_m$, $\varrho>0$ is called adaptation gain and $T_S$ is sampling time.
 		};
 		\end{tikzpicture}
 		\caption{Adaptive control}
-		\label{Fig:AdaptiveControl}
+		\label{Fig:AdaptiveControlFirstOrder}
 	\end{figure}
 	
 	\begin{figure}
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Reference) [align=center] {Reference\\$r(t)=r_1(t)+r_2(t)+r_3(t)$};
+		\node (ReferenceRight) [support, right = of Reference, fill,circle,scale=0.3] {};
+		\node (RefModel) [block, text width = 3cm, right = of ReferenceRight] {Reference model\\ $\frac{\beta_{2m}}{s^2 + \beta_{1m}s + \beta_{0m}}$};
+		\node (Control) [block, text width = 3cm, below = of RefModel] {Control law};
+		\node (Adaptation) [block, text width = 3cm, below = of Control, below = 5mm] {Adaptation law};
+		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (60mm, -47mm) node[]{Model rerefence adaptive control (MRAC)};
+		\node (Plant) [block, text width = 3cm, right = 15mm of Control] {Plant ($G$)};
+		\node (PlantRight) [support, right = of Plant, right = 5mm, fill,circle,scale=0.3] {};
+		\node (SummingPoint) [draw,circle, thick, right = 25mm of PlantRight, right = 5mm ]  {+};
+		\node (Output) [right = of SummingPoint, align=center] {Output\\$y(t)$};
+		
+		\path (Reference.east) -- (Reference.east) coordinate[pos=05] (Reference1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=-0.5] (Control1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=+0.5] (Control2);
+		
+		\draw [arrow] (Reference) -- node[anchor=south west]{}(RefModel);
+		\draw [arrow] (ReferenceRight) |- (Control);
+		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{\bf\textendash}(SummingPoint);
+		\draw [arrow] (Control) -- node [] {$u(t)$}(Plant);
+		\draw [arrow] (Plant) -- node[pos=0.65, anchor=north west]{+}
+		(SummingPoint);
+		\draw [arrow] (SummingPoint) -- (Output);
+		\draw [arrow] (SummingPoint) |- node[pos=0.98, anchor=north west]{$e_m(t)$} (Adaptation);
+		\draw [arrow] (Adaptation) -| node [pos=1, anchor=north east]{${{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t)$, $\dot{\hat{L}}(t)$}(35mm,-30mm) |- (Control1);
+		\draw [arrow] (PlantRight) |- (35mm,-9mm) |- (Control2);
+		
+		\node [above right = 0.1 of RefModel.east]{$y_m(t)$};
+		\node [below right = 0.1 of Plant.east]{$y(t)$};
+		
+		
+		\node (Equation000) [text width = 15cm, below = 1.25cm of Adaptation, align = left] {
+			Control law:\\
+			\[u(t)={{\widehat{\mathbf{K}}}_{c}}(t)\mathbf{x}(t)+\hat{L}(t)r(t)\]	
+			Adaptation law:\\
+			\begin{align}
+			{{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t) &=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t){{\mathbf{x}}^{T}}(t)\nonumber\\
+			\dot{\hat{L}}(t)&=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t)r(t)\nonumber
+			\end{align}
+			where $T_S$ is sampling time, $e = y-y_m$, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$.
+			
+		};
+		\end{tikzpicture}
+		\caption{Adaptive control}
+		\label{Fig:AdaptiveControlSecondOrder}
+	\end{figure}
+
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Excitation) [align=center] {Excitation\\$u(t)=u_1(t)+u_2(t)+u_3(t)$};
-		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{b}{s+a}$};
+		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\alpha_1}{s+\alpha_0}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 6cm, below = of Plant] {Identification
-			\\[0.3cm]
-			$P(k) = P(k-1) - \frac{P(k-1)\phi(k)\phi^\intercal(k)P(k-1)}{1 + \phi^\intercal(k)P(k-1)\phi(k)}$\\[0.3cm]
-			$e(k) = z(k) - \phi^\intercal(k)\hat{\theta}(k-1)$\\[0.3cm]
-			$\hat{\theta}(k) = \hat{\theta}(k-1) + P(k)\phi (k)e(k)$};
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Identification
+			\\[0.1cm]
+			\begin{align}
+			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			\end{align}
+		};
 		\node (Output) [right = of Plant, right = 2cm, align=center] {Output\\$y(t)$};
-		\node (CapValues) [right = of Identification, right = 2cm] {$\hat{\theta}(k)$};
+		\node (CapValues) [right = of Identification, right = 2cm, align=center] {Estimates\\$\hat{\theta}(k)$};
 		\path (Excitation.east) -- (Excitation.north east) coordinate[pos=0.5] (Reference1);
 		\path (Identification.west) -- (Identification.north west) coordinate[pos=0.5] (Identification1);
 		\path (Identification.west) -- (Identification.north west) coordinate[pos=-0.5] (Identification2);
@@ -175,22 +311,25 @@
 		\draw [arrow] (PlantLeft) |- (Identification2);
 		\draw [arrow] (Identification) -- (CapValues);
 		\node (Equation000) [text width = 12cm, below = 1cm of Identification, align = left] {
-			$P(0) = P_0 = P_0^\intercal>0$, $P_0 = \rho
+			$\mathbf{P}(0) = \mathbf{P_0} = \mathbf{P_0}^\intercal>0$, $\mathbf{P_0} = \rho
 			\begin{bmatrix}
 			1 & 0 \\
 			0 & 1
 			\end{bmatrix}$,
-			$z = y(k)$,
-			$\phi = \begin{bmatrix}
+			$\boldsymbol{\phi} = \begin{bmatrix}
 			y(k-1) &
 			u(k-1)
-			\end{bmatrix}^\intercal$,
-			$\theta = \begin{bmatrix}
+			\end{bmatrix}^\intercal$, \\
+			$\boldsymbol{\theta} = \begin{bmatrix}
 			\theta_1 &
 			\theta_2
 			\end{bmatrix}^\intercal$,
-			$\hat{a} = \frac{-\ln{\hat{\theta_1}}}{T_S}$,
-			$\hat{b} = \frac{\hat{\theta_2}\hat{a}}{1-\hat{\theta_1}}$, and $T_S$ is sampling time.
+			$\hat{\boldsymbol{\theta}} = \begin{bmatrix}
+			\hat{\theta}_1 &
+			\hat{\theta}_2
+			\end{bmatrix}^\intercal$,
+			$\hat{\alpha}_0 = \frac{-\ln{\hat{\theta_1}}}{T_S}$,
+			$\hat{\alpha}_1 = \frac{\hat{\alpha}_0\hat{\theta_2}}{1-\hat{\theta_1}}$, and \\$T_S$ is sampling time.
 		};
 		\end{tikzpicture}
 		\caption{First order system identification}
@@ -201,16 +340,19 @@
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Excitation) [align=center] {Excitation\\\\$u(t)=u_1(t)+u_2(t)+u_3(t)$};
-		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\beta_1s^2 + \beta_2s + \beta_3}{s^2 + \beta_4s + \beta_5}$};
+		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\beta_2}{s^2 + \beta_1s + \beta_0}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 6cm, below = of Plant] {Identification
-			\\[0.3cm]
-			$P(k) = P(k-1) - \frac{P(k-1)\phi(k)\phi^\intercal(k)P(k-1)}{1 + \phi^\intercal(k)P(k-1)\phi(k)}$\\[0.3cm]
-			$e(k) = z(k) - \phi^\intercal(k)\hat{\theta}(k-1)$\\[0.3cm]
-			$\hat{\theta}(k) = \hat{\theta}(k-1) + P(k)\phi (k)e(k)$};
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Identification
+			\\[0.1cm]
+			\begin{align}
+			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			\end{align}
+		};
 		\node (Output) [right = of Plant, right = 2cm, align=center] {Output\\$y(t)$};
-		\node (CapValues) [right = of Identification, right = 2cm] {$\hat{\theta}(k)$};
+		\node (CapValues) [right = of Identification, right = 2cm, align=center] {Estimates\\$\hat{\theta}(k)$};
 		\path (Excitation.east) -- (Excitation.north east) coordinate[pos=0.5] (Reference1);
 		\path (Identification.west) -- (Identification.north west) coordinate[pos=0.5] (Identification1);
 		\path (Identification.west) -- (Identification.north west) coordinate[pos=-0.5] (Identification2);
@@ -221,77 +363,66 @@
 		\draw [arrow] (Identification) -- (CapValues);
 		\node (Equation000) [text width = 15cm, below = 1cm of Identification, align = left] {
 			Discretized plant model:
-			$G(z)=\frac{y(k)}{u(k)} = \frac{\alpha_1z^2 + \alpha_2z + \alpha_3}{z^2 + \alpha_4z + \alpha_5}$,
-			$z(k) = y(k)$,\\
-			$T_S$ is sampling time, 
-			$P(0) = P_0 = P_0^\intercal>0$,\\
-			$P_0 = \rho
+			$y(k)=\theta_{1}y(k-1)+\theta_{2}y(k-2)+\theta_{3}u(k-1)+\theta_{4}u(k-2)=\boldsymbol{ \phi}^{T}(k)\boldsymbol{ \theta}$, \\
+			$\boldsymbol{ \theta}=[\theta_{1}, \ \theta_{2}, \ \theta_{3}, \ \theta_{4}]^{T}$,\\
+			$\boldsymbol{ \phi}(k)=[y(k-1), \ y(k-2), \ u(k-1), \ u(k-2)]^{T}$,\\
+			$\hat{\boldsymbol{ \theta}}(k)=[\hat{\theta}_{1}(k), \ \hat{\theta}_{2}(k), \ \hat{\theta}_{3}(k), \ \hat{\theta}_{4}(k)]^{T}$,\\
+			$T_S$ is sampling time, \\
+			$\boldsymbol{P}(0) = \boldsymbol{P_0} = \boldsymbol{P_0}^\intercal>0$,
+			$\boldsymbol{P_0} = \rho
 			\begin{bmatrix}
-			1 & 0 & 0 & 0 & 0 \\
-			0 & 1 & 0 & 0 & 0 \\
-			0 & 0 & 1 & 0 & 0 \\
-			0 & 0 & 0 & 1 & 0 \\
-			0 & 0 & 0 & 0 & 1			
-			\end{bmatrix}$,
-			$\phi = \begin{bmatrix}
-			u(k)\\
-			u(k-1)\\
-			u(k-2)\\
-			-y(k-1)\\
-			-y(k-2)
-			\end{bmatrix}$,
-			$\theta = \begin{bmatrix}
-			\theta_1\\
-			\theta_2\\
-			\theta_3\\
-			\theta_4\\
-			\theta_5
-			\end{bmatrix}=\begin{bmatrix}
-			\alpha_1\\
-			\alpha_2\\
-			\alpha_3\\
-			\alpha_4\\
-			\alpha_5
+				1 & 0 & 0 & 0 \\
+				0 & 1 & 0 & 0 \\
+				0 & 0 & 1 & 0 \\
+				0 & 0 & 0 & 1 		
 			\end{bmatrix}$.\\
 			Discretized plant model in state space:\\
-			$x(k+1) = A_dx(k) + B_du(k)$,\\
-			$y(k+1) = C_dx(k) + D_du(k)$,\\
-			where $A=\begin{bmatrix}
+			\begin{align}
+			\mathbf{x}(k+1)&=\hat{\mathbf{A}}_{d}\mathbf{x}(k)+\hat{\mathbf{B}}_{d}u(k) \nonumber\\ 
+			y(k+1)&=\hat{\mathbf{C}}_{d}\mathbf{x}(k) \nonumber
+			\end{align}\\
+			where 
+			\[\hat{\mathbf{A}}_{d}=\left[    
+			\begin{array}{cc}
 			0 & 1 \\
-			-\alpha_5 & -\alpha_4
-			\end{bmatrix}$,
-			$B_d = \begin{bmatrix}
-			0\\
+			-\hat{\theta}_{2} & -\hat{\theta}_{1}
+			\end{array}
+			\right], \qquad
+			\hat{\mathbf{B}}_{d}=\left[    
+			\begin{array}{c}
+			0  \\
 			1
-			\end{bmatrix}$, 
-			$C_d = \begin{bmatrix}
-			\theta_3-\theta_5\theta_1 & \theta_2-\theta_4\theta_1
-			\end{bmatrix}$, and
-			$D_d = \begin{bmatrix}
-			\theta_1
-			\end{bmatrix}$.\\
-			Continuous plant model in state space:\\
-			$\dot x = Ax + Bu$,\\
-			$y = Cx + Du$,\\
-			where $A = \frac{2}{T_S}R(I-\frac{8}{21}R^2-\frac{4}{105}R^4)(I-\frac{5}{7}R^2)^{-1}$,
-			$B = A(A_d-I)^{-1}B_d$,
-			$C = C_d$,
-			$D = D_d$, 
-			$R = (A_d-I)(A_d+I)^{-1}$, and
-			$I = \begin{bmatrix}
-			1 & 0\\
-			0 & 1
-			\end{bmatrix}$\\
-			$\beta_1 = D_{1,1}$, 
-			$\beta_2 = C_{1,1}B_{1,1}+C_{1,2}B_{2,1} - D_{1,1}(A_{1,1}+A_{2,2})$,\\
-			$\beta_3 = C_{1,1}(B_{2,1}A_{1,2}- B_{1,1}A_{2,2}) + C_{1,2}(B_{1,1}A_{2,1}-B_{2,1}A_{1,1}) + D_{1,1}(A_{1,1}A_{2,2}-A_{1,2}A_{2,1})$,\\
-			$\beta_4 = -(A_{1,1}+A_{2,2})$, and
-			$\beta_5 = A_{1,1}A_{2,2} - A_{1,2}A_{2,1}$
+			\end{array}
+			\right], \qquad
+			\hat{\mathbf{C}}_{d}=[\hat{\theta}_{4}, \ \hat{\theta}_{3}]\].
+			Estimated continuous model is:
+			\begin{align}
+				\overset{.}{\mathop{\mathbf{x}}}\,(t)&={{\widehat{\mathbf{A}}}_{c}}x(t)+{{\widehat{\mathbf{B}}}_{c}}u(t) \nonumber \\ 
+				y(t)&={{\widehat{\mathbf{C}}}_{c}}\mathbf{x}(t) \nonumber
+			\end{align}
+			
+			where
+			
+			\begin{align}
+			& {{\widehat{\mathbf{A}}}_{c}}=\left[ \begin{matrix}
+			{{a}_{11}} & {{a}_{12}}  \\
+			{{a}_{21}} & {{a}_{22}}  \\
+			\end{matrix} \right]=\frac{2}{T}\mathbf{R}\left[ {{\mathbf{I}}_{2x2}}-\frac{8}{21}{{\mathbf{R}}^{2}}-\frac{4}{105}{{\mathbf{R}}^{4}} \right]{{\left[ {{\mathbf{I}}_{2x2}}-\frac{5}{7}{{\mathbf{R}}^{2}} \right]}^{-1}} \nonumber\\ 
+			& {{\widehat{\mathbf{B}}}_{c}}=\left[ \begin{matrix}
+			{{b}_{11}}  \\
+			{{b}_{21}}  \\
+			\end{matrix} \right]={{\widehat{\mathbf{A}}}_{c}}{{\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]}^{-1}}{{\widehat{\mathbf{B}}}_{d}},\qquad {{\widehat{\mathbf{C}}}_{c}}=[{{c}_{11}},\ {{c}_{12}}]={{\widehat{\mathbf{C}}}_{d}} \nonumber\\ 
+			& \mathbf{R}=\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]{{\left[ {{\widehat{\mathbf{A}}}_{d}}+{{\mathbf{I}}_{2x2}} \right]}^{-1}} \nonumber 
+			\end{align}
+			
+			So, we calculate:
+			\[{{\hat{\beta }}_{0}}(k)={{a}_{11}}{{a}_{22}}-{{a}_{12}}{{a}_{21}},\quad {{\hat{\beta }}_{1}}=-({{a}_{11}}+{{a}_{22}}),\quad {{\hat{\beta }}_{2}}={{c}_{11}}({{b}_{21}}{{a}_{12}}-{{b}_{11}}{{a}_{22}})+{{c}_{12}}({{b}_{11}}{{a}_{21}}-{{b}_{21}}{{a}_{11}})\]
 		};
 		\end{tikzpicture}
 		\caption{Second order system identification}
 		\label{Fig:SecondOrderIdentification}
 	\end{figure}
+
 	
 	\begin{figure}
 		\centering
@@ -309,7 +440,7 @@
 			$e(k) = z(k) - \phi^\intercal(k)\hat{\theta}(k-1)$\\[0.3cm]
 			$\hat{\theta}(k) = \hat{\theta}(k-1) + P(k)\phi (k)e(k)$};
 		\node (OutputTapingPoint) [support, below = of SummingPoint, below = 1.6cm, fill,circle,scale=0.3] {};
-		\node (CapValues) [right = of Identification, right = 1cm] {$\hat{\theta}$};
+		\node (CapValues) [right = of Identification, right = 1cm, align=center] {Estimates\\$\hat{\theta}$};
 		\draw [arrow] (Reference) -- node[anchor=south west]{+}(SummingPoint);
 		\draw [arrow] (SummingPoint) -- node[anchor=south]{$E$}(Control);
 		\draw [arrow] (Control) -- node[anchor=south]{$U$}(Plant);

@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.skgadi.controltoolboxtimedomain"
+        applicationId "com.skgadi.cit"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 5
+        versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -46,4 +46,5 @@ dependencies {
     implementation "com.android.support:support-annotations:26.1.0"
     implementation "com.android.support:design:26.1.0"
     implementation 'com.mikepenz:fontawesome-typeface:5.0.13.0@aar'
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 }

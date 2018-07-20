@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.skgadi.controltoolboxtimedomain.MainActivity">
+    tools:context="com.skgadi.cit.MainActivity">
 
     <LinearLayout
         android:id="@+id/RootLayout"
@@ -40,15 +40,7 @@
                     android:id="@+id/ModelView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/imageView4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="fitXY"
-                        app:srcCompat="@drawable/logo" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
             </LinearLayout>
 

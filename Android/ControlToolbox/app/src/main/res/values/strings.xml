@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Control Toolbox</string>
+    <string name="app_name">Control &amp; Identification Toolbox</string>
     <string name="Documentation_Title">Documentation</string>
     <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
     <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order system</string>

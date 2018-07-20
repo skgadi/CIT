@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.skgadi.controltoolboxtimedomain">
+    package="com.skgadi.cit">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.skgadi.controltoolboxtimedomain.fileprovider"
+            android:authorities="com.skgadi.cit.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -25,7 +25,7 @@
         </provider>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.skgadi.cit.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape">
             <intent-filter>
@@ -43,22 +43,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.skgadi.cit.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/SubAppTheme"
-            android:parentActivityName=".MainActivity">
+            android:screenOrientation="sensorLandscape"
+            android:parentActivityName="com.skgadi.cit.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skgadi.controltoolboxtimedomain.MainActivity" />
+                android:value="com.skgadi.cit.MainActivity" />
         </activity>
         <activity
-            android:name=".DocumentationActivity"
+            android:name="com.skgadi.cit.DocumentationActivity"
             android:label="@string/Documentation_Title"
             android:theme="@style/SubAppTheme"
-            android:parentActivityName=".MainActivity">
+            android:screenOrientation="sensorLandscape"
+            android:parentActivityName="com.skgadi.cit.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skgadi.controltoolboxtimedomain.MainActivity" />
+                android:value="com.skgadi.cit.MainActivity" />
         </activity>
     </application>
 

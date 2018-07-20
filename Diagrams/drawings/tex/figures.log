@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  10 JUN 2018 22:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  19 JUL 2018 23:11
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -859,7 +859,8 @@ tex
 File: pgflibraryplotmarks.code.tex 2013/07/20 v3.0.0 (rcs-revision 1.13)
 )))
 (c:/texlive/2015/texmf-dist/tex/generic/pgfplots/libs/tikzlibrarypgfplots.patch
-plots.code.tex) (./figures.aux)
+plots.code.tex)
+No file figures.aux.
 \openout1 = `figures.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
@@ -876,7 +877,6 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 64.
 LaTeX Font Info:    ... okay on input line 64.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 64.
 LaTeX Font Info:    ... okay on input line 64.
-
 (c:/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count127
@@ -925,12 +925,169 @@ ABD: EveryShipout initializing macros
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.12}).
 
-===== Image 'figures-figure0' is up-to-date. ======
-===== Image 'figures-figure1' is up-to-date. ======
-===== Image 'figures-figure2' is up-to-date. ======
-===== Image 'figures-figure3' is up-to-date. ======
-===== Image 'figures-figure4' is up-to-date. ======
-===== Image 'figures-figure5' is up-to-date. ======
+\openout3 = `figures-figure0.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure0" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure0" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure1.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure1" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure1" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure2.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure2" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure2" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure3.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure3" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure3" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure4.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure4" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure4" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure5.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure5" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure5" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+\openout3 = `figures-figure6.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure6" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure6" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+
+Overfull \hbox (0.53236pt too wide) in paragraph at lines 193--235
+ [][] 
+ []
+
+\openout3 = `figures-figure7.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure7" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure7" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+
+Overfull \hbox (0.53236pt too wide) in paragraph at lines 241--284
+ [][] 
+ []
+
+\openout3 = `figures-figure8.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure8" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure8" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+
+Overfull \hbox (10.63812pt too wide) in paragraph at lines 290--335
+ [][] 
+ []
+
+\openout3 = `figures-figure9.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure9" "\def\tikzexternalrea
+ljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure9" "\def\tikzexternalrealjob{figures}\input{figures}")...execut
+ed.
+
+\openout3 = `figures.auxlock'.
+
+
+Overfull \hbox (10.63812pt too wide) in paragraph at lines 341--422
+ [][] 
+ []
+
+\openout3 = `figures-figure10.md5'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "figures-figure10" "\def\tikzexternalre
+aljob{figures}\input{figures}"' ========
+\openout3 = `figures.auxlock'.
+
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "figures-figure10" "\def\tikzexternalrealjob{figures}\input{figures}")...execu
+ted.
+
+\openout3 = `figures.auxlock'.
+
 [1
 color push 0 g 0 G
 color pop
@@ -944,12 +1101,9 @@ color push 0 g 0 G
 color pop
 color pop
 color push 0 g 0 G
-color push 0 g 0 G
 color pop
-color pop
-color push 0 g 0 G
-color pop
- <./figures-figure0.pdf> <./figures-figure1.pdf> <./figures-figure2.pdf>] [2
+ <./figures-figure0.pdf> <./figures-figure1.pdf> <./figures-figure2.pdf> <./fig
+ures-figure3.pdf> <./figures-figure4.pdf>] [2
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -957,8 +1111,25 @@ color push 0 g 0 G
 color pop
 color pop
 color push 0 g 0 G
+color push 0 g 0 G
 color pop
- <./figures-figure3.pdf>] [3
+color pop
+color push 0 g 0 G
+color pop
+ <./figures-figure5.pdf> <./figures-figure6.pdf>] [3
+color push 0 g 0 G
+color pop
+color push 0 g 0 G
+color push 0 g 0 G
+color pop
+color pop
+color push 0 g 0 G
+color push 0 g 0 G
+color pop
+color pop
+color push 0 g 0 G
+color pop
+ <./figures-figure7.pdf> <./figures-figure8.pdf>] [4
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -967,7 +1138,7 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
- <./figures-figure4.pdf>] [4
+ <./figures-figure9.pdf>] [5
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -976,31 +1147,37 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
- <./figures-figure5.pdf>] (./figures.aux) ) 
+ <./figures-figure10.pdf>] (./figures.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 23663 strings out of 493089
- 602072 string characters out of 6138420
- 753494 words of memory out of 5000000
- 26730 multiletter control sequences out of 15000+600000
+ 23668 strings out of 493089
+ 602182 string characters out of 6138420
+ 754494 words of memory out of 5000000
+ 26732 multiletter control sequences out of 15000+600000
  3640 words of font info for 14 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,5n,84p,736b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2015/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmex10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmmi10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
-5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/
-texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/20
-15/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2015/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2015/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
-/symbols/msam5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symb
-ols/msam7.pfb>
-Output written on figures.pdf (4 pages, 136596 bytes).
+<c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb><c:/te
+xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/201
+5/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texlive/2015/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2015/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmmi5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+b10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c
+:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2
+015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2015/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/pub
+lic/amsfonts/symbols/msam5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/a
+msfonts/symbols/msam7.pfb>
+Output written on figures.pdf (5 pages, 174949 bytes).
 PDF statistics:
- 221 PDF objects out of 1000 (max. 8388607)
- 195 compressed objects within 2 object streams
+ 328 PDF objects out of 1000 (max. 8388607)
+ 292 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 43 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 68 words of extra memory for PDF output out of 10000 (max. 10000000)
 
