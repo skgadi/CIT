@@ -34,7 +34,7 @@
 \usetikzlibrary{
 	external,
 }
-\tikzexternalize
+%\tikzexternalize
 
 \usetikzlibrary{shapes.geometric, arrows, calc, positioning}
 \tikzstyle{startstop} = [rectangle, thick, rounded corners=2.5mm, minimum width=2cm, minimum height=5mm,text centered, draw=black]
@@ -269,7 +269,17 @@
 		\node [below right = 0.1 of Plant.east]{$y(t)$};
 		
 		
-		\node (Equation000) [text width = 15cm, below = 1.25cm of Adaptation, align = left] {
+		\node (Equation000) [text width = 17cm, below = 1.25cm of Adaptation, align = left] {
+			Model:
+			\[{{\overset{.}{\mathop{\mathbf{x}}}\,}_{m}}(t)={{\widehat{\mathbf{A}}}_{mc}}{{\mathbf{x}}_{m}}(t)+{{\widehat{\mathbf{B}}}_{mc}}r(t)\]
+			\[{{\mathbf{A}}_{mc}}=\left[ \begin{matrix}
+			0 & 1  \\
+			-{{\beta }_{0m}} & -{{\beta }_{1m}}  \\
+			\end{matrix} \right],\qquad {{\mathbf{B}}_{mc}}=\left[ \begin{matrix}
+			0  \\
+			{{\beta }_{2m}}  \\
+			\end{matrix} \right],\qquad {{\mathbf{x}}_{m}}(t)={{[{{y}_{m}}(t),\ {{\dot{y}}_{m}}(t)]}^{T}}\]
+			
 			Control law:\\
 			\[u(t)={{\widehat{\mathbf{K}}}_{c}}(t)\mathbf{x}(t)+\hat{L}(t)r(t)\]	
 			Adaptation law:\\
@@ -277,7 +287,7 @@
 			{{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t) &=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t){{\mathbf{x}}^{T}}(t)\nonumber\\
 			\dot{\hat{L}}(t)&=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t)r(t)\nonumber
 			\end{align}
-			where $T_S$ is sampling time, $e = y-y_m$, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$.
+			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$.
 			
 		};
 		\end{tikzpicture}
@@ -427,11 +437,11 @@
 	\begin{figure}
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
-		\node (Reference) [align=center] {Reference\\($R=R_1+R_2+R_3$)};
+		\node (Reference) [align=center] {Reference\\$r(t)=r_1(t)+r_2(t)+r_3(t)$};
 		\node (SummingPoint) [draw,circle, thick, right = of Reference]  {+};
 		\node (Control) [block, text width = 2cm, right = of SummingPoint] {Controller\\$\frac{K_I}{s}$};
 		\node (ControlLeft) [support, left = of Control, left = 0.5cm, fill,circle,scale=0.3] {};
-		\node (Plant) [block, text width = 2cm, right = of Control] {Plant ($G$)};
+		\node (Plant) [block, text width = 2cm, right = of Control] {Plant \\$G=\frac{b}{s+a}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (Output) [right = of Plant, right = 2cm] {Output ($Y$)};
 		\node (Identification) [block, text width = 6cm, below = 2cm of Plant] {Identification
