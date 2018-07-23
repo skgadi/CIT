@@ -3,8 +3,8 @@
     <string name="app_name_full">Control &amp; Identification Toolbox</string>
     <string name="Documentation_Title">Documentation</string>
     <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
-    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order system</string>
-    <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order system</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order filter for testing the CIT</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order filter for testing the CIT</string>
     <string name="BUTTON_PID">PID Controller</string>
     <string name="BUTTON_IDENIFICATION0">Zero order identification</string>
     <string name="BUTTON_IDENIFICATION1">First order identification</string>
@@ -14,7 +14,30 @@
     <string name="TIME">Time t</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
-    <string name="FIRMWARE">Download the firmware for arduino UNO from:\n\nhttps://github.com/skgadi/ControlToolbox/tree/master/Arduino/ControlToolBox</string>
+    <string name="FIRMWARE">Download the firmware for Arduino from:\n\nhttps://github.com/skgadi/ControlToolbox/blob/master/Arduino/ControlToolBox/adio.pde</string>
+    <string name="OPEN_URL">Open in a browser</string>
+    <string-array name="NAV_HEADS">
+        <item>System response</item>
+        <item>Parameter identification</item>
+        <item>Traditional closed-loop control</item>
+        <item>Model Reference Adaptive Control (MRAC)</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_0">
+        <item>Open loop system</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_1">
+        <item>Open-loop first-order system</item>
+        <item>Open-loop second-order system</item>
+        <item>First-order system with integral action</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_2">
+        <item>PID controller</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_3">
+        <item>First-order system</item>
+        <item>Second-order system</item>
+    </string-array>
+
     <string-array name="SIM_VIEW_HEADS">
         <item>Diagram</item>
         <item>Sampling time in milliseconds</item>

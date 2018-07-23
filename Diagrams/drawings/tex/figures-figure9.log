@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  20 JUL 2018 17:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  23 JUL 2018 11:20
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -881,11 +881,11 @@ A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
 \openout4 = `figures-figure9.dpth'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 342.
+LaTeX Font Info:    Try loading font information for U+msa on input line 353.
 (c:/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 342.
+LaTeX Font Info:    Try loading font information for U+msb on input line 353.
 (c:/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
@@ -913,7 +913,7 @@ ts/cm/cmr10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/201
 5/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-di
 st/fonts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on figures-figure9.pdf (1 page, 110055 bytes).
+Output written on figures-figure9.pdf (1 page, 110275 bytes).
 PDF statistics:
  59 PDF objects out of 1000 (max. 8388607)
  43 compressed objects within 1 object stream

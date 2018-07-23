@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  20 JUL 2018 23:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  23 JUL 2018 11:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -719,6 +719,9 @@ Package pdftexcmds Info: \pdfdraftmode found.
 )
 (c:/texlive/2015/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzex
 ternalshared.code.tex))
+\openout3 = `figures.auxlock'.
+
+
 (c:/texlive/2015/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzli
 braryshapes.geometric.code.tex
 File: tikzlibraryshapes.geometric.code.tex 2008/01/09 v3.0.0 (rcs-revision 1.1)
@@ -922,40 +925,43 @@ ABD: EveryShipout initializing macros
 Package pgfplots notification 'compat/show suggested version=true': document ha
 s been generated with the most recent feature set (\pgfplotsset{compat=1.12}).
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 87.
-(c:/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Try loading font information for U+msb on input line 87.
+===== Image 'figures-figure0' is up-to-date. ======
+===== Image 'figures-figure1' is up-to-date. ======
+===== Image 'figures-figure2' is up-to-date. ======
+===== Image 'figures-figure3' is up-to-date. ======
+===== Image 'figures-figure4' is up-to-date. ======
+===== Image 'figures-figure5' is up-to-date. ======
+===== Image 'figures-figure6' is up-to-date. ======
 
-(c:/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Overfull \hbox (0.53221pt too wide) in paragraph at lines 234--235
+Overfull \hbox (0.53236pt too wide) in paragraph at lines 193--235
  [][] 
  []
 
+===== Image 'figures-figure7' is up-to-date. ======
 
-Overfull \hbox (17.46608pt too wide) in paragraph at lines 293--294
+Overfull \hbox (17.46562pt too wide) in paragraph at lines 241--295
  [][] 
  []
 
+===== Image 'figures-figure8' is up-to-date. ======
 
-Overfull \hbox (10.63823pt too wide) in paragraph at lines 344--345
+Overfull \hbox (10.63812pt too wide) in paragraph at lines 301--346
  [][] 
  []
 
+===== Image 'figures-figure9' is up-to-date. ======
 
-Overfull \hbox (10.63823pt too wide) in paragraph at lines 431--432
+Overfull \hbox (10.63812pt too wide) in paragraph at lines 352--433
  [][] 
  []
 
+===== Image 'figures-figure10' is up-to-date. ======
 [1
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
+color push 0 g 0 G
 {c:/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
-color push 0 g 0 G
 color pop
 color pop
 color push 0 g 0 G
@@ -964,7 +970,8 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-] [2
+ <./figures-figure0.pdf> <./figures-figure1.pdf> <./figures-figure2.pdf> <./fig
+ures-figure3.pdf> <./figures-figure4.pdf>] [2
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -977,7 +984,7 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-] [3
+ <./figures-figure5.pdf> <./figures-figure6.pdf>] [3
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -986,8 +993,7 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-]
-[4
+ <./figures-figure7.pdf>] [4
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -996,7 +1002,7 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-] [5
+ <./figures-figure8.pdf>] [5
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -1005,7 +1011,7 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-] [6
+ <./figures-figure9.pdf>] [6
 color push 0 g 0 G
 color pop
 color push 0 g 0 G
@@ -1014,33 +1020,33 @@ color pop
 color pop
 color push 0 g 0 G
 color pop
-] (./figures.aux) ) 
+ <./figures-figure10.pdf>] (./figures.aux) ) 
 Here is how much of TeX's memory you used:
- 23932 strings out of 493089
- 607629 string characters out of 6138420
- 812494 words of memory out of 5000000
- 26985 multiletter control sequences out of 15000+600000
- 8096 words of font info for 31 fonts, out of 8000000 for 9000
+ 23670 strings out of 493089
+ 602206 string characters out of 6138420
+ 754463 words of memory out of 5000000
+ 26732 multiletter control sequences out of 15000+600000
+ 3640 words of font info for 14 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,22n,84p,736b,858s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mbsy10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pf
-b><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><c:/texl
-ive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2015/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2015/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2015/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmmib10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmr10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.
-pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/tex
-live/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dis
-t/fonts/type1/public/amsfonts/symbols/msam5.pfb><c:/texlive/2015/texmf-dist/fon
-ts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on figures.pdf (6 pages, 161144 bytes).
+ 55i,5n,84p,736b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
+<c:/texlive/2015/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmbsy10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmbx10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmbx7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cme
+x10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive
+/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2015/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2015/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2015/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmr5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+sy10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
+c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam5.pfb><c:/te
+xlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+Output written on figures.pdf (6 pages, 175748 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
- 62 compressed objects within 1 object stream
+ 331 PDF objects out of 1000 (max. 8388607)
+ 294 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 68 words of extra memory for PDF output out of 10000 (max. 10000000)
 

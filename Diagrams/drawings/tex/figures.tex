@@ -34,7 +34,7 @@
 \usetikzlibrary{
 	external,
 }
-%\tikzexternalize
+\tikzexternalize
 
 \usetikzlibrary{shapes.geometric, arrows, calc, positioning}
 \tikzstyle{startstop} = [rectangle, thick, rounded corners=2.5mm, minimum width=2cm, minimum height=5mm,text centered, draw=black]
@@ -123,7 +123,7 @@
 		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least squares
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
 			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
@@ -271,7 +271,7 @@
 		
 		\node (Equation000) [text width = 17cm, below = 1.25cm of Adaptation, align = left] {
 			Model:
-			\[{{\overset{.}{\mathop{\mathbf{x}}}\,}_{m}}(t)={{\widehat{\mathbf{A}}}_{mc}}{{\mathbf{x}}_{m}}(t)+{{\widehat{\mathbf{B}}}_{mc}}r(t)\]
+			\[{{\overset{.}{\mathop{\mathbf{x}}}\,}_{m}}(t)={{{\mathbf{A}}}_{mc}}{{\mathbf{x}}_{m}}(t)+{{{\mathbf{B}}}_{mc}}r(t)\]
 			\[{{\mathbf{A}}_{mc}}=\left[ \begin{matrix}
 			0 & 1  \\
 			-{{\beta }_{0m}} & -{{\beta }_{1m}}  \\
@@ -287,7 +287,8 @@
 			{{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t) &=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t){{\mathbf{x}}^{T}}(t)\nonumber\\
 			\dot{\hat{L}}(t)&=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t)r(t)\nonumber
 			\end{align}
-			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$.
+			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$ which satisfies:
+			\[\mathbf{A}_{mc}^{T}\mathcal{P}+\mathcal{P}\mathbf{A}_{mc}^{T}=-{{\mathbf{I}}_{2x2}}\]
 			
 		};
 		\end{tikzpicture}
@@ -302,7 +303,7 @@
 		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\alpha_1}{s+\alpha_0}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Identification
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
 			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
@@ -353,7 +354,7 @@
 		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\beta_2}{s^2 + \beta_1s + \beta_0}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Identification
+		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
 			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
@@ -444,7 +445,7 @@
 		\node (Plant) [block, text width = 2cm, right = of Control] {Plant \\$G=\frac{b}{s+a}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (Output) [right = of Plant, right = 2cm] {Output ($Y$)};
-		\node (Identification) [block, text width = 6cm, below = 2cm of Plant] {Identification
+		\node (Identification) [block, text width = 6cm, below = 2cm of Plant] {Least Squares identification method
 			\\[0.3cm]
 			$P(k) = P(k-1) - \frac{P(k-1)\phi(k)\phi^\intercal(k)P(k-1)}{1 + \phi^\intercal(k)P(k-1)\phi(k)}$\\[0.3cm]
 			$e(k) = z(k) - \phi^\intercal(k)\hat{\theta}(k-1)$\\[0.3cm]

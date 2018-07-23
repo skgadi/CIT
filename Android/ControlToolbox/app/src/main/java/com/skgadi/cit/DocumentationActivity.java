@@ -1,7 +1,10 @@
 package com.skgadi.cit;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
@@ -45,7 +48,13 @@ public class DocumentationActivity extends AppCompatActivity {
         DSwitch00.setTextSize(18);
         DSwitch01.setTextSize(18);
         DSwitch02.setTextSize(18);
-        DSwitch03   .setTextSize(18);
+        DSwitch03.setTextSize(18);
 
+    }
+
+    public void OpenFirmwareURL (View v) {
+        Uri uri = Uri.parse("https://raw.githubusercontent.com/skgadi/ControlToolbox/master/Arduino/CIT/latest.pde");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 }

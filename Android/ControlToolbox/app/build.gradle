@@ -6,7 +6,7 @@ android {
         applicationId "com.skgadi.cit"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 1
+        versionCode 3
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -33,7 +33,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.jjoe64:graphview:4.2.2'
-    implementation 'me.aflak.libraries:arduino:1.4.1'
+    implementation 'me.aflak.libraries:arduino:1.4.3'
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.0.6'
     implementation 'org.ejml:ejml-all:0.34'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'

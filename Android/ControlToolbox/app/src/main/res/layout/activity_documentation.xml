@@ -49,6 +49,13 @@
                     android:enabled="false"
                     android:inputType="textMultiLine"
                     android:text="@string/FIRMWARE" />
+
+                <Button
+                    android:id="@+id/Open_URL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="OpenFirmwareURL"
+                    android:text="@string/OPEN_URL" />
             </LinearLayout>
             <View
                 android:layout_width="match_parent"

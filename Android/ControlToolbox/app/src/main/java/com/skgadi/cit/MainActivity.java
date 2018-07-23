@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                         // do something with the clicked item :D
                         AppNavDrawer.closeDrawer();
                         if (GenerateViewFromModel((int)drawerItem.getIdentifier()))
-                            getSupportActionBar().setSubtitle(Model.ModelName);
+                                getSupportActionBar().setSubtitle(Model.ModelName);
                         SetProperSimulationStatus();
                         return true;
                     }
@@ -271,23 +271,23 @@ public class MainActivity extends AppCompatActivity {
         AppNavDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         String[] ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
 
-        AddAFolderToNavigation("System simulation");
-        AddItemToNavigation("Open loop system", 0);
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[0]);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_0)[0], 0);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation("Identification");
-        AddItemToNavigation("First order", 1);
-        AddItemToNavigation("Second order", 2);
-        AddItemToNavigation("First order with integral control", 3);
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[1]);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[0], 1);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[1], 2);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[2], 3);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation("Traditional control");
-        AddItemToNavigation("PID controller", 4);
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[2]);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation("Model reference adaptive control (MRAC)");
-        AddItemToNavigation("First order", 5);
-        AddItemToNavigation("Second order", 6);
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 5);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
 
@@ -307,16 +307,14 @@ public class MainActivity extends AppCompatActivity {
                 .withIdentifier(-1)
                 .withName(Name)
                 .withEnabled(false)
-                .withDisabledTextColor(Color.BLUE)
         );
     }
 
     private void AddItemToNavigation(String Name, int Key) {
         AppNavDrawer.addItem(new PrimaryDrawerItem()
                 .withIdentifier(Key)
-                .withName(Name)
-                .withIcon(FontAwesome.Icon.faw_server)
-                .withIconColor(Color.RED)
+                .withName("\u25C9\u0020\u0020"+Name)
+                //.withIcon(FontAwesome.Icon.faw_server)
         );
     }
 
@@ -712,7 +710,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "Open loop system";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[0]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_0)[0];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=1;
         Model.NoOfPastInputsRequired = 0;
@@ -778,7 +778,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "PID controller";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[2]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_2)[0];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 2;
@@ -809,7 +811,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
         Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
-        Model.Parameters[3] = new Parameter("Other parameters>>Constant perturbation (d_1)", -1, 1, 0);
+        Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
         Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
     }
 
@@ -872,7 +874,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "First order MRAC";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[3]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[0];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=4;
         Model.NoOfPastInputsRequired = 2;
@@ -883,7 +887,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Images = new int[1];
         Model.Images[0] = R.drawable.mrac1;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Adaptive control model";
+        Model.ImageNames[0] = "Adaptive controller";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "r_1(t)";
         Model.SignalGenerators[1] = "r_2(t)";
@@ -906,9 +910,9 @@ public class MainActivity extends AppCompatActivity {
         Model.Figures[2] = new Figure("Estimated system parameters", TempTrajectories);
 
         Model.Parameters = new Parameter [3];
-        Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03F1", 0, 1000, 1);
-        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B1_0", 0, 100, 4);
-        Model.Parameters[2] = new Parameter("\u03B1_1", 0, 100, 4);
+        Model.Parameters[0] = new Parameter("Adaptation gain>>\u03F1", 0, 1000, 1);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B1_0m", 0, 100, 4);
+        Model.Parameters[2] = new Parameter("\u03B1_1m", 0, 100, 4);
     }
 
     private void PrepareSecondOrderAdaptiveControlModel() {
@@ -1041,7 +1045,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "Second order MRAC";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[3]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[1];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=8;
         Model.NoOfPastInputsRequired = 2;
@@ -1053,7 +1059,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.mrac2;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Adaptive control model";
+        Model.ImageNames[0] = "Adaptive controller";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "r_1(t)";
@@ -1078,10 +1084,10 @@ public class MainActivity extends AppCompatActivity {
         Model.Figures[2] = new Figure("Adaptation Law output", TempTrajectories);
 
         Model.Parameters = new Parameter [4];
-        Model.Parameters[0] = new Parameter("Adaptive Control Parameters>>\u03B3", 0, 1000, 0.1);
-        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0", 0, 1000, 40);
-        Model.Parameters[2] = new Parameter("\u03B2_1", 0, 1000, 100);
-        Model.Parameters[3] = new Parameter("\u03B2_2", 0, 1000, 120);
+        Model.Parameters[0] = new Parameter("Adaptation gain>>\u03B3", 0, 1000, 0.1);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 40);
+        Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 100);
+        Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 120);
     }
 
     private void PrepareFirstOrderIdentification() {
@@ -1199,7 +1205,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "First order system identification";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[0];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=9;
         Model.NoOfPastInputsRequired = 2;
@@ -1211,7 +1219,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.estimates1;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Identification of the first order system";
+        Model.ImageNames[0] = "Identification of a first-order system";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "u_1(t)";
         Model.SignalGenerators[1] = "u_2(t)";
@@ -1225,16 +1233,16 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[2]= "Validation y(t) cap";
         Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
         TempTrajectories = new String[2];
-        TempTrajectories[0]= "\u0398_1 cap";
-        TempTrajectories[1]= "\u0398_2 cap";
-        Model.Figures[1] = new Figure("Estimates (\u0398 cap)", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B8_1";
+        TempTrajectories[1]= "Estimate of \u03B8_2";
+        Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
         TempTrajectories = new String[2];
-        TempTrajectories[0]= "\u03B1_0 cap";
-        TempTrajectories[1]= "\u03B1_1 cap";
-        Model.Figures[2] = new Figure("Identified parameters [\u03B1_0, \u03B1_1] cap", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B1_0";
+        TempTrajectories[1]= "Estimate of \u03B1_1";
+        Model.Figures[2] = new Figure("Estimates of \u03B1_0 and \u03B1_1", TempTrajectories);
 
         Model.Parameters = new Parameter [2];
-        Model.Parameters[0] = new Parameter("\u03C1", 0, 10000, 1000);
+        Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
@@ -1396,7 +1404,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "Second order system identification";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[1];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=23;
         Model.NoOfPastInputsRequired = 2;
@@ -1408,7 +1418,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.estimates2;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Identification of the first order system";
+        Model.ImageNames[0] = "Identification of a second-order system";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "u_1(t)";
@@ -1423,19 +1433,19 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[2]= "Validation y(t) cap";
         Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
         TempTrajectories = new String[4];
-        TempTrajectories[0]= "\u03F4_1 cap";
-        TempTrajectories[1]= "\u03F4_2 cap";
-        TempTrajectories[2]= "\u03F4_3 cap";
-        TempTrajectories[3]= "\u03F4_4 cap";
-        Model.Figures[1] = new Figure("Estimated parameters (\u03F4) cap", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B8_1";
+        TempTrajectories[1]= "Estimate of \u03B8_2";
+        TempTrajectories[2]= "Estimate of \u03B8_3";
+        TempTrajectories[3]= "Estimate of \u03B8_4";
+        Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
         TempTrajectories = new String[3];
-        TempTrajectories[0]= "\u03B2_0 cap";
-        TempTrajectories[1]= "\u03B2_1 cap";
-        TempTrajectories[2]= "\u03B2_2 cap";
-        Model.Figures[2] = new Figure("Identified parameters (\u03B2) cap", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B2_0 cap";
+        TempTrajectories[1]= "Estimate of \u03B2_1 cap";
+        TempTrajectories[2]= "Estimate of \u03B2_2 cap";
+        Model.Figures[2] = new Figure("Estimates of \u03B2_0, \u03B2_1, and \u03B2_2", TempTrajectories);
 
         Model.Parameters = new Parameter [2];
-        Model.Parameters[0] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
+        Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
@@ -1571,7 +1581,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "System identification of first order with integral controller";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[2];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=9;
         Model.NoOfPastInputsRequired = 2;
@@ -1583,7 +1595,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Images[0] = R.drawable.estimates3;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Identification of the first order system";
+        Model.ImageNames[0] = "Identification of a first-order system with integral action";
         //Model.ImageNames[1] = "Reference Value details";
         Model.SignalGenerators = new String[3];
         Model.SignalGenerators[0] = "u_1(t)";
@@ -1598,17 +1610,17 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[2]= "Validation y(t) cap";
         Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
         TempTrajectories = new String[2];
-        TempTrajectories[0]= "\u0398_1 cap";
-        TempTrajectories[1]= "\u0398_2 cap";
-        Model.Figures[1] = new Figure("Estimates (\u0398 cap)", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B8_1";
+        TempTrajectories[1]= "Estimate of \u03B8_2";
+        Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
         TempTrajectories = new String[2];
-        TempTrajectories[0]= "a Cap";
-        TempTrajectories[1]= "b Cap";
-        Model.Figures[2] = new Figure("Identified parameters (a, b) cap", TempTrajectories);
+        TempTrajectories[0]= "Estimates of a";
+        TempTrajectories[1]= "Estimates of b";
+        Model.Figures[2] = new Figure("Estimates of a and b", TempTrajectories);
 
         Model.Parameters = new Parameter [3];
         Model.Parameters[0] = new Parameter("Control parameters>>K_I", 0, 1000, 10);
-        Model.Parameters[1] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
         Model.Parameters[2] = new Parameter("\u03BB", 0, 1, 0.9);
     }
 
@@ -1813,7 +1825,9 @@ public class MainActivity extends AppCompatActivity {
                 return Trajectories;
             }
         };
-        Model.ModelName = "Second order system identification";
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[1];
         Model.NoOfInputs=1;
         Model.NoOfOutputs=33;
         Model.NoOfPastInputsRequired = 2;
