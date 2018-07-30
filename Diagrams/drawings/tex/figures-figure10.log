@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  23 JUL 2018 11:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/W32TeX) (preloaded format=pdflatex 2018.6.7)  26 JUL 2018 10:36
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -894,26 +894,26 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {c:/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] ) 
 Here is how much of TeX's memory you used:
- 23836 strings out of 493089
- 605804 string characters out of 6138420
- 761441 words of memory out of 5000000
- 26898 multiletter control sequences out of 15000+600000
- 5948 words of font info for 24 fonts, out of 8000000 for 9000
+ 23854 strings out of 493089
+ 606018 string characters out of 6138420
+ 762441 words of memory out of 5000000
+ 26908 multiletter control sequences out of 15000+600000
+ 8397 words of font info for 32 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,16n,84p,771b,778s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,23n,84p,771b,897s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/20
 15/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2015/texmf-
 dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2015/texmf-dist/font
 s/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/p
 ublic/amsfonts/cm/cmmi5.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmmi7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:
-/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/20
-15/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dist/fonts
-/type1/public/amsfonts/symbols/msam5.pfb><c:/texlive/2015/texmf-dist/fonts/type
-1/public/amsfonts/symbols/msam7.pfb>
-Output written on figures-figure10.pdf (1 page, 106170 bytes).
+mib10.pfb><c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+<c:/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive
+/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2015/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2015/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2015/texmf-dist/fonts/type1/p
+ublic/amsfonts/symbols/msam7.pfb>
+Output written on figures-figure10.pdf (1 page, 105605 bytes).
 PDF statistics:
  59 PDF objects out of 1000 (max. 8388607)
  43 compressed objects within 1 object stream

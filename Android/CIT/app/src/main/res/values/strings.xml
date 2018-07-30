@@ -1,0 +1,155 @@
+<resources>
+    <string name="app_name">CIT</string>
+    <string name="app_name_full">Control &amp; Identification Toolbox</string>
+    <string name="Documentation_Title">Documentation</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order filter for testing the CIT</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order filter for testing the CIT</string>
+    <string name="BUTTON_PID">PID Controller</string>
+    <string name="BUTTON_IDENIFICATION0">Zero order identification</string>
+    <string name="BUTTON_IDENIFICATION1">First order identification</string>
+    <string name="BUTTON_IDENIFICATION2">Second order identification</string>
+    <string name="SAMPLING_TIME">Sampling time</string>
+    <string name="ACTUAL_SAMPLING_TIME">Actual sampling time in milli seconds</string>
+    <string name="TIME">Time t</string>
+    <string name="GRAPH_CAPTION">Figure</string>
+    <string name="GRAPHS">Figures</string>
+    <string name="FIRMWARE">Download the firmware for Arduino from:\n\nhttps://github.com/skgadi/ControlToolbox/blob/master/Arduino/ControlToolBox/adio.pde</string>
+    <string name="OPEN_URL">Open in a browser</string>
+    <string-array name="NAV_HEADS">
+        <item>System response</item>
+        <item>Parameter identification</item>
+        <item>Traditional closed-loop control</item>
+        <item>Model Reference Adaptive Control (MRAC)</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_0">
+        <item>Open loop system</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_1">
+        <item>Open-loop first-order system</item>
+        <item>Open-loop second-order system</item>
+        <item>First-order system with integral action</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_2">
+        <item>PID controller</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_3">
+        <item>First-order system</item>
+        <item>Second-order system</item>
+    </string-array>
+
+    <string-array name="SIM_VIEW_HEADS">
+        <item>Diagram</item>
+        <item>Sampling time in milliseconds</item>
+        <item>Parameters</item>
+        <item>Signal generator</item>
+        <item>Figure</item>
+        <item>Instantaneous values</item>
+    </string-array>
+    <string-array name="AVAILABLE_SIGNALS">
+        <item>Step function</item>
+        <item>Sine wave</item>
+        <item>Sawtooth wave</item>
+        <item>Triangular wave</item>
+        <item>Square wave</item>
+        <item>Rectangular wave</item>
+    </string-array>
+    <string-array name="SIGNAL_GENERATOR_PARAMETERS">
+        <item>Frequency</item>
+        <item>| Amplitude</item>
+        <item>| Start at</item>
+        <item>| Duty cycle</item>
+        <item>| Offset</item>
+    </string-array>
+    <string name="INVERT_SIGNAL">Invert signal (0\' compliment)</string>
+    <string-array name="SCREENS_LIST">
+        <item>Open loop system</item>
+        <item>PID Controller</item>
+        <item>Adaptive Controller for a first order system</item>
+        <item>Adaptive Controller for a second order system</item>
+        <item>Identification of a first order system</item>
+        <item>Identification of a second order system</item>
+        <item>System identification of first order with integral controller</item>
+    </string-array>
+    <string name="BUTTON_DOCUMENTATION">Documentation</string>
+    <string name="BUTTON_SETTINGS">Settings</string>
+    <string name="BUTTON_SHARE">Share</string>
+    <string-array name="SETTINGS_WINDOW">
+        <item>Simulation settings>>Sampling time in milli seconds</item>
+        <item>Graph settings>>Number of retained samples (Larger values may slowdown your device)</item>
+        <item>Default window zoom on the horizontal axis</item>
+        <item>Window\'s height for the figures</item>
+    </string-array>
+    <string name="BUTTON_SAVE">Save</string>
+    <string name="BUTTON_RESET">Reset to default values</string>
+    <string name="BUTTON_RESET_SAVE">Reset and Save</string>
+    <string name="BUTTON_CANCEL">Cancel</string>
+
+    <string name="VERSION_INFO">Version: 1.0.0</string>
+
+
+    <string-array name="TOASTS">
+        <item>Hit the Back button again to exit</item>
+        <item>Device is not pluged to the phone</item>
+        <item>Couldn\'t able to establish a connection. Try again with proper permissions.</item>
+        <item>Device is successfully connected.</item>
+        <item>Unable to open the port. Detach, re-attach the device to fix the problem.</item>
+        <item>Device is successfully disconnected.</item>
+        <item>Unknown error. Detach, re-attach the device to fix the problem.</item>
+        <item>Your android device is not having OTG enabled.</item>
+        <item>Simulation not available: No model is available in this window simulate or the bridge is not connected.</item>
+        <item>You cannot exit to the Main menu while the simulation is running. Stop the simulation before proceeding to the main menu.</item>
+        <item>You cannot invoke this feature while simulation is in progress.</item>
+        <item>This is not a valid integer number. Enter a number in the range</item>
+        <item>Please press any of the buttons to exit this window.</item>
+        <item>Simulation is stopped due to error in communication with the bridge device.</item>
+        <item></item>
+    </string-array>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Simulation window preferences  -->
+    <string name="pref_header_simulation">Simulation</string>
+
+    <string name="pref_sim_sampling_time">Sampling time (ms)</string>
+    <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
+    <string name="pref_sim_tolerance">Tolerance time (ms)</string>
+    <string name="pref_sim_tolerance_desc">Simulation stops if your device is incapable of operating in this range.</string>
+
+    <!-- Graph Window -->
+    <string name="pref_header_graphs">Graphs</string>
+
+    <string name="pref_graph_collect_size">Retain sample size</string>
+    <string name="pref_graph_collect_size_desc">Retains a sample size to display in the graph. Pinch-zoom can be used to change viewing size.</string>
+    <string name="pref_graph_window_height">Window height (dp)</string>
+    <string name="pref_graph_window_height_desc">Vertical axis length can be modified here. Pinch-zoom can be used to elongate horizontal axis</string>
+    <string name="pref_graph_line_thickness">Line thickness (pixels)</string>
+    <string name="pref_graph_line_thickness_desc">Thickness of the lines in the graphs.</string>
+    <string name="pref_graph_cubic">Cubic Bézier curve</string>
+    <string name="pref_graph_cubic_desc">Approximates the curve to avoid sharp edges. It is not recommended.</string>
+    <string name="pref_graph_font_size">Font size</string>
+    <string name="pref_graph_font_size_desc">Font size of the axis and legend</string>
+    <string name="pref_graph_legend_form">Legend form</string>
+    <string-array name="pref_graph_legend_form_entries">
+        <item>Circle</item>
+        <item>Square</item>
+        <item>Line</item>
+        <item>Empty</item>
+    </string-array>
+    <string-array name="pref_graph_legend_form_values">
+        <item>CIRCLE</item>
+        <item>SQUARE</item>
+        <item>LINE</item>
+        <item>EMPTY</item>
+    </string-array>
+
+    <!-- Graph Window -->
+    <string name="pref_header_bridge">Bridge device</string>
+
+    <string name="pref_bridge_ai_port">Analog input port number</string>
+    <string name="pref_bridge_ai_port_desc">Enter a valid port number for the analog input port</string>
+    <string name="pref_bridge_ao_port">Analog output port number</string>
+    <string name="pref_bridge_ao_port_desc">Enter a valid port number for the analog output port</string>
+
+</resources>

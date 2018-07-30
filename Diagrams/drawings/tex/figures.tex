@@ -287,7 +287,7 @@
 			{{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t) &=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t){{\mathbf{x}}^{T}}(t)\nonumber\\
 			\dot{\hat{L}}(t)&=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t)r(t)\nonumber
 			\end{align}
-			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$ and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$ which satisfies:
+			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$, and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$  satisfies:
 			\[\mathbf{A}_{mc}^{T}\mathcal{P}+\mathcal{P}\mathbf{A}_{mc}^{T}=-{{\mathbf{I}}_{2x2}}\]
 			
 		};
@@ -442,14 +442,18 @@
 		\node (SummingPoint) [draw,circle, thick, right = of Reference]  {+};
 		\node (Control) [block, text width = 2cm, right = of SummingPoint] {Controller\\$\frac{K_I}{s}$};
 		\node (ControlLeft) [support, left = of Control, left = 0.5cm, fill,circle,scale=0.3] {};
-		\node (Plant) [block, text width = 2cm, right = of Control] {Plant \\$G=\frac{b}{s+a}$};
+		\node (Plant) [block, text width = 2cm, right = of Control] {Plant \\$G=\frac{\alpha_1}{s+\alpha_0}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (Output) [right = of Plant, right = 2cm] {Output ($Y$)};
-		\node (Identification) [block, text width = 6cm, below = 2cm of Plant] {Least Squares identification method
+		\node (Identification) [block, text width = 9cm, below = 2cm of Plant] {Least Squares identification method
 			\\[0.3cm]
-			$P(k) = P(k-1) - \frac{P(k-1)\phi(k)\phi^\intercal(k)P(k-1)}{1 + \phi^\intercal(k)P(k-1)\phi(k)}$\\[0.3cm]
-			$e(k) = z(k) - \phi^\intercal(k)\hat{\theta}(k-1)$\\[0.3cm]
-			$\hat{\theta}(k) = \hat{\theta}(k-1) + P(k)\phi (k)e(k)$};
+			\begin{align}
+				\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+				\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+				e(k) &=z(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			\end{align}
+
+		};
 		\node (OutputTapingPoint) [support, below = of SummingPoint, below = 1.6cm, fill,circle,scale=0.3] {};
 		\node (CapValues) [right = of Identification, right = 1cm, align=center] {Estimates\\$\hat{\theta}$};
 		\draw [arrow] (Reference) -- node[anchor=south west]{+}(SummingPoint);
@@ -462,24 +466,23 @@
 		\draw [arrow] (ControlLeft) |- (Identification1);
 		\draw [arrow] (OutputTapingPoint) |- (Identification2);
 		\draw [arrow] (Identification) -- (CapValues);
-		\node (Equation000) [text width = 12cm, below = 6cm of Control, align = left] {
-			$P(0) = P_0 = P_0^\intercal>0$, $P_0 = \rho
+		\node (Equation000) [text width = 15cm, below = 8cm of Control, align = left] {
+			$\textbf{P}(0) = \textbf{P}_0 = \textbf{P}_0^\intercal>0$, $\textbf{P}_0 = \rho
 			\begin{bmatrix}
 			1 & 0 \\
 			0 & 1
 			\end{bmatrix}$,
 			$z = y(k) - y(k-1)$,
-			$\phi = \begin{bmatrix}
+			$\boldsymbol{\phi} = \begin{bmatrix}
 			e(k-1) + e(k-2) \\
 			y(k-1) - y(k-2)
 			\end{bmatrix}$,
-			$\theta = \begin{bmatrix}
+			$\boldsymbol{\theta} = \begin{bmatrix}
 			\theta_1 \\
 			\theta_2
 			\end{bmatrix}$,
-			$\hat{a} = -\frac{\ln{\hat{\theta_2}}}{T_S}$,
-			$\hat{b} = \frac{2\hat{\theta_1}\hat{a}}{T_S(1-\hat{\theta_2})K_I}$,\\
-			and $T_S$ is sampling time.
+			$\hat{\alpha_0} = -\frac{\ln{\hat{\theta_2}}}{T_S}$,
+			$\hat{\alpha_1} = \frac{2\hat{\theta_1}\hat{\alpha_0}}{T_S(1-\hat{\theta_2})K_I}$, and $T_S$ is sampling time.
 		};
 		\end{tikzpicture}
 		\caption{Parameter estimation of a first order system with integral controller}
