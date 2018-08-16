@@ -1091,7 +1091,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 120);
     }
 
-    private void PrepareFirstOrderIdentification() {
+    private void PrepareFirstOrderIdentificationOld() {
         Model = new Model() {
             @Override
             public double[] RunAlgorithms(
@@ -1247,6 +1247,151 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
+    private void PrepareFirstOrderIdentification() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[0] --> u
+                    Output[1] --> P11
+                    Output[2] --> P12
+                    Output[3] --> P21
+                    Output[4] --> P22
+                    Output[5] --> Theta_1
+                    Output[6] --> Theta_2
+                    Output[7] --> K
+                    Output[8] --> Z Cap Calculated
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> z = y
+                    E --> e
+                */
+                DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
+                Gamma.set(0,0,Parameters[1]);
+                double K = Output[7][0];
+                DMatrixRMaj y = new DMatrixRMaj(1,1);
+                y.set(0,0,Input[0][0]);
+                DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
+                y_hat.set(0,0,0);
+
+                DMatrixRMaj z = new DMatrixRMaj(1,1);
+                z.set(0, 0, Input[0][0]);
+                DMatrixRMaj Phi = new DMatrixRMaj(2,1);
+                Phi.set(0, 0, Input[0][1]);
+                Phi.set(1, 0, Output[0][1]);
+                DMatrixRMaj Theta_1 = new DMatrixRMaj(2,1);
+                Theta_1.set(0,0, Output[5][0]);
+                Theta_1.set(1,0, Output[6][0]);
+                DMatrixRMaj P_1 = new DMatrixRMaj(2,2);
+                if (K==0) {
+                    P_1.set(0, 0, Parameters[0]);
+                    P_1.set(0, 1, 0);
+                    P_1.set(1, 0, 0);
+                    P_1.set(1, 1, Parameters[0]);
+                } else {
+                    P_1.set(0, 0, Output[1][0]);
+                    P_1.set(0, 1, Output[2][0]);
+                    P_1.set(1, 0, Output[3][0]);
+                    P_1.set(1, 1, Output[4][0]);
+                }
+
+                DMatrixRMaj P = new DMatrixRMaj(2,2);
+                DMatrixRMaj Theta = new DMatrixRMaj(2,1);
+
+
+                DMatrixRMaj L = new DMatrixRMaj(2,1);
+                Equation eq = new Equation();
+                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", P_1, "P_1", y, "y", Gamma, "Gamma", L, "L", y_hat, "y_hat");
+                eq.process("y_hat = Phi'*Theta_1");
+                eq.process("Epsilon = y - y_hat");
+                eq.process("P_den = Gamma + Phi'*P_1*Phi");
+                eq.process("L = P_1*Phi/P_den(0,0)");
+                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma(0,0)");
+                eq.process("Theta = Theta_1 + L*Epsilon");
+
+
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                OutSignals[1] = P.get(0,0);
+                OutSignals[2] = P.get(0,1);
+                OutSignals[3] = P.get(1,0);
+                OutSignals[4] = P.get(1,1);
+                OutSignals[5] = Theta.get(0,0);
+                OutSignals[6] = Theta.get(1,0);
+                OutSignals[7] = K+1;
+                OutSignals[8] = y_hat.get(0,0);
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[7];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Output[8][0];
+                Trajectories[3] = Output[5][0];
+                Trajectories[4] = Output[6][0];
+                Trajectories[5] = -Math.log(Output[5][0])/Model.ActualT_S;
+                Trajectories[6] = Output[6][0]*Trajectories[5]/(1-Output[5][0]);
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[0];
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=9;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 1;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.estimates1;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Identification of a first-order system";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "u_1(t)";
+        Model.SignalGenerators[1] = "u_2(t)";
+        Model.SignalGenerators[2] = "u_3(t)";
+
+        //Figures
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[3];
+        TempTrajectories[0]= "u(t)";
+        TempTrajectories[1]= "y(t)";
+        TempTrajectories[2]= "Validation y(t) cap";
+        Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Estimate of \u03B8_1";
+        TempTrajectories[1]= "Estimate of \u03B8_2";
+        Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Estimate of \u03B1_0";
+        TempTrajectories[1]= "Estimate of \u03B1_1";
+        Model.Figures[2] = new Figure("Estimates of \u03B1_0 and \u03B1_1", TempTrajectories);
+
+        Model.Parameters = new Parameter [2];
+        Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
+    }
+
     private void PrepareSecondOrderIdentification() {
         Model = new Model() {
             @Override
@@ -1291,12 +1436,13 @@ public class MainActivity extends AppCompatActivity {
                 double K = Output[21][0];
                 /*DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
                 Gamma.set(0,0, Parameters[1]);*/
-                double Gamma = Parameters[1];
+                DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
+                Gamma.set(0,0,Parameters[1]);
                 DMatrixRMaj Phi = new DMatrixRMaj(MatrixSize,1);
                 Phi.set(0, 0, Input[0][1]);
                 Phi.set(1, 0, Input[0][2]);
-                Phi.set(2, 0, Output[0][0]);
-                Phi.set(3, 0, Output[0][1]);
+                Phi.set(2, 0, Output[0][1]);
+                Phi.set(3, 0, Output[0][2]);
                 DMatrixRMaj Theta_1 = new DMatrixRMaj(MatrixSize,1);
                 for (int i=0; i<MatrixSize; i++)
                     Theta_1.set(i,0, Output[i+17][0]);
@@ -1313,15 +1459,20 @@ public class MainActivity extends AppCompatActivity {
                             P_1.set(i, j, Output[(i*MatrixSize+j+1)][0]);
                 }
                 DMatrixRMaj P = new DMatrixRMaj(MatrixSize,MatrixSize);
-                double Epsilon=0.0;// = new DMatrixRMaj(1,1);
-                double y = Input[0][1];
+                DMatrixRMaj Epsilon = new DMatrixRMaj(1,1);
+                DMatrixRMaj y = new DMatrixRMaj(1,1);
+                y.set(0,0,Input[0][1]);
+                DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
+
                 DMatrixRMaj Theta = new DMatrixRMaj(MatrixSize,1);
                 Equation eq = new Equation();
-                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", Epsilon, "Epsilon", P_1, "P_1", y, "y", Gamma, "Gamma");
-                eq.process("Epsilon = y - Phi'*Theta_1");
+                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", Epsilon, "Epsilon", P_1, "P_1", y, "y", Gamma, "Gamma", y_hat, "y_hat");
+                eq.process("y_hat = Phi'*Theta_1");
+                eq.process("Epsilon = y - y_hat");
                 eq.process("P_den = Gamma + Phi'*P_1*Phi");
-                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma");
-                eq.process("Theta = Theta_1 + P*Phi*Epsilon");
+                eq.process("L = P_1*Phi/P_den(0,0)");
+                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma(0,0)");
+                eq.process("Theta = Theta_1 + L*Epsilon");
 
 
                 double [] OutSignals = new double[NoOfOutputs];
@@ -1332,7 +1483,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<MatrixSize; i++)
                     OutSignals[i+17] = Theta.get(i,0);
                 OutSignals[21] = K+1;
-                OutSignals[22] = y;//.get(0, 0);
+                OutSignals[22] = y_hat.get(0,0);//.get(0, 0);
                 Log.i("Algorithm", "Phi: " + Phi.toString());
                 Log.i("Algorithm", "Theta: "  + Theta.toString());
                 Log.i("Algorithm", "z: "  + y);
@@ -2119,6 +2270,7 @@ public class MainActivity extends AppCompatActivity {
         double[] ReadTimes = {0,0,0,0};
         boolean RequestSend = true;
         boolean IsFirstProgressOutput=true;
+        boolean TimeOutError = false;
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
@@ -2154,9 +2306,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
                     publishProgress(0);
-                    if (Model.ActualT_S >
-                            (Model.PlannedT_S + Integer.valueOf(getPrefInt("sim_sampling_tolerance", 1000))/1000.0))
-                        this.cancel(true);
+                }
+                if ((Time-ReadTimes[0]) >
+                        (Model.PlannedT_S + Integer.valueOf(getPrefInt("sim_sampling_tolerance", 1000))/1000.0)) {
+                    TimeOutError = true;
+                    this.cancel(true);
                 }
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
@@ -2205,6 +2359,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute () {
+            TimeOutError = false;
             DisableDrawer();
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
@@ -2255,6 +2410,10 @@ public class MainActivity extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             SetProperSimulationStatus();
             EnableDrawer();
+            if (TimeOutError)
+                Toast.makeText(MainActivity.this,
+                        getResources().getStringArray(R.array.TOASTS)[14],
+                        Toast.LENGTH_SHORT).show();
         }
         protected void AddPlots(int i) {
             LineData lineData = new LineData();

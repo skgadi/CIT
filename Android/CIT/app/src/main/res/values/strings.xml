@@ -103,7 +103,7 @@
         <item>This is not a valid integer number. Enter a number in the range</item>
         <item>Please press any of the buttons to exit this window.</item>
         <item>Simulation is stopped due to error in communication with the bridge device.</item>
-        <item></item>
+        <item>Bridge is slow. Simulation is stopped to avoid system hanging. If you want more tolerance time, please change in the settings.</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
 
