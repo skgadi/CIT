@@ -2279,15 +2279,15 @@ public class MainActivity extends AppCompatActivity {
                 if (!Purged)
                     PurgeReceivedBuffer();
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
-                if (((Time-ReadTimes[0]) >= Model.PlannedT_S) && RequestSend) {
+                if ((Math.round((Time-ReadTimes[0]-Model.PlannedT_S)*1000) >= 0) && RequestSend) {
+                    PutElementToFIFO(ReadTimes, Time);
+                    Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
                     RequestSend = false;
                     RequestAIAdio();
                 }
                 if (isValidRead) {
                     RequestSend = true;
                     isValidRead  = false;
-                    PutElementToFIFO(ReadTimes, Time);
-                    Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
                     for (int i=0; i<Input.length; i++)
                         Input[i] = PutElementToFIFO(Input[i], RecData[i]);
                     for (int i = 0; i< PreparedSignals.length; i++)
@@ -2333,7 +2333,7 @@ public class MainActivity extends AppCompatActivity {
             String InstantValues;
             InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
             InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
-                    + Model.ActualT_S*1000;
+                    + Math.round(Model.ActualT_S*1000);
             int Iteration=0;
             for (int i=0; i<Model.Figures.length; i++) {
                 for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
@@ -2364,6 +2364,10 @@ public class MainActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
             IsFirstProgressOutput = true;
+            AnalogOutLimits[0] =  getPrefInt("bridge_out_limit_lower", 0);
+            AnalogOutLimits[1] =  getPrefInt("bridge_out_limit_upper", 5);
+            TrajectoryLimits[0] = -getPrefInt("graph_vertical_upper_lower_limit", 10000);
+            TrajectoryLimits[1] = getPrefInt("graph_vertical_upper_lower_limit", 10000);
             try {
                 Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
             } catch (Exception e) {
@@ -2413,7 +2417,7 @@ public class MainActivity extends AppCompatActivity {
             if (TimeOutError)
                 Toast.makeText(MainActivity.this,
                         getResources().getStringArray(R.array.TOASTS)[14],
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
         }
         protected void AddPlots(int i) {
             LineData lineData = new LineData();

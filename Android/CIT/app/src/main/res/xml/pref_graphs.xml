@@ -46,5 +46,13 @@
         android:key="graph_legend_form"
         android:summary="%s"
         android:title="@string/pref_graph_legend_form" />
+    <EditTextPreference
+        android:defaultValue="10000"
+        android:key="graph_vertical_upper_lower_limit"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_graph_vertical_upper_lower_limit"
+        android:dialogMessage="@string/pref_graph_vertical_upper_lower_limit_desc"/>
 
 </PreferenceScreen>

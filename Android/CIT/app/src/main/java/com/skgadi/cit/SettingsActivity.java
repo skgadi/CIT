@@ -192,7 +192,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("graph_window_height"));
             bindPreferenceSummaryToValue(findPreference("graph_line_thickness"));
             bindPreferenceSummaryToValue(findPreference("graph_font_size"));
-            //bindPreferenceSummaryToValue(findPreference("graph_legend_form"));
+            bindPreferenceSummaryToValue(findPreference("graph_vertical_upper_lower_limit"));
         }
 
         @Override
@@ -220,6 +220,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("bridge_ai_port"));
             bindPreferenceSummaryToValue(findPreference("bridge_ao_port"));
+            bindPreferenceSummaryToValue(findPreference("bridge_out_limit_lower"));
+            bindPreferenceSummaryToValue(findPreference("bridge_out_limit_upper"));
         }
 
         @Override
