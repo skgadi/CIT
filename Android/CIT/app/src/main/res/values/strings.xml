@@ -116,6 +116,25 @@
     <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
     <string name="pref_sim_tolerance">Tolerance time (ms)</string>
     <string name="pref_sim_tolerance_desc">Simulation stops if your device is incapable of operating in this range.</string>
+    <string name="pref_sim_actual_sampling_time_type">Select actual sampling time type</string>
+    <string-array name="pref_sim_actual_sampling_time_type_entries">
+        <item>Direct</item>
+        <item>Simple moving average</item>
+        <item>Cumulative moving average</item>
+        <!--item>Weighted moving average</item>
+        <item>Exponential moving average</item-->
+    </string-array>
+    <string-array name="pref_sim_actual_sampling_time_type_values">
+        <item>SIM</item>
+        <item>SMA</item>
+        <item>CMA</item>
+        <!--item>WMA</item>
+        <item>EMA</item-->
+    </string-array>
+    <string name="pref_sim_ma_data_points">Number of data points for the moving average calculation</string>
+    <string name="pref_sim_ma_data_points_desc">When simple is selected, this value is ignored.</string>
+    <string name="pref_sim_wma_weight">Weight for weighted moving average</string>
+    <string name="pref_sim_wma_weight_desc">In the calculation of WMA, this weight is used for the most recent and a step of 1 each previous sampling time.</string>
 
     <!-- Graph Window -->
     <string name="pref_header_graphs">Graphs</string>

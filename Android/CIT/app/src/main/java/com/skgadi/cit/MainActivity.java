@@ -45,18 +45,14 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.skgadi.cit.BuildConfig;
-import com.skgadi.cit.R;
 
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.dense.row.CommonOps_DDRM;
@@ -751,9 +747,9 @@ public class MainActivity extends AppCompatActivity {
                 double K_P = Parameters[0];
                 double K_I = Parameters[1];
                 double K_D = Parameters[2];
-                double a = K_P + K_I* ActualT_S /2.0 + K_D/ActualT_S;
-                double b = -K_P + K_I*ActualT_S/2.0 - 2.0*K_D/ActualT_S;
-                double c = K_D/ActualT_S;
+                double a = K_P + K_I* T_SForModel /2.0 + K_D/ T_SForModel;
+                double b = -K_P + K_I* T_SForModel /2.0 - 2.0*K_D/ T_SForModel;
+                double c = K_D/ T_SForModel;
                 double[] E = new double[3];
                 for (int i=0; i<3; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
@@ -848,10 +844,10 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<2; i++)
                     E[i] = (Input[0][i] - Output[3][i]);
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[3] = Output[3][0]*Math.exp(-A_m*Model.ActualT_S)
-                        + B_m/A_m*(1-Math.exp(-A_m*Model.ActualT_S))* R[0];
-                OutSignals[1] = Output[1][0] - Gamma*Model.ActualT_S*(E[0]*R[0] + E[1]*R[1])/2.0;
-                OutSignals[2] = Output[2][0] - Gamma*Model.ActualT_S*(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
+                OutSignals[3] = Output[3][0]*Math.exp(-A_m*Model.T_SForModel)
+                        + B_m/A_m*(1-Math.exp(-A_m*Model.T_SForModel))* R[0];
+                OutSignals[1] = Output[1][0] - Gamma*Model.T_SForModel *(E[0]*R[0] + E[1]*R[1])/2.0;
+                OutSignals[2] = Output[2][0] - Gamma*Model.T_SForModel *(E[0]*Input[0][0] + E[1]*Input[0][1])/2.0;
                 OutSignals[0] = OutSignals[1]*R[0] + OutSignals[2]*Input[0][0];
                 return OutSignals;
             }
@@ -958,7 +954,7 @@ public class MainActivity extends AppCompatActivity {
                 B_m.set(1,0, Parameters[3]);
                 DMatrixRMaj A_m_d = new DMatrixRMaj(2,2);
                 DMatrixRMaj B_m_d = new DMatrixRMaj(2,1);
-                CommonOps_DDRM.scale(ActualT_S, A_m, A_mT_s);
+                CommonOps_DDRM.scale(T_SForModel, A_m, A_mT_s);
                 Equation eq = new Equation();
                 eq.alias(A_m_d,"A_m_d", B_m_d,"B_m_d", A_m,"A_m", A_mT_s,"A_mT_s", B_m,"B_m");
                 eq.process("A_mT_s2 = A_mT_s*A_mT_s");
@@ -984,9 +980,9 @@ public class MainActivity extends AppCompatActivity {
                 DMatrixRMaj X = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_1 = new DMatrixRMaj(2,1);
                 X_1.set(0, 0, Input[0][1]);
-                X_1.set(1, 0, (Input[0][1]-Input[0][2])/ActualT_S);
+                X_1.set(1, 0, (Input[0][1]-Input[0][2])/ T_SForModel);
                 X.set(0, 0, Input[0][0]);
-                X.set(1, 0, (Input[0][0]-Input[0][1])/ActualT_S);
+                X.set(1, 0, (Input[0][0]-Input[0][1])/ T_SForModel);
                 DMatrixRMaj E = new DMatrixRMaj(2,1);
                 DMatrixRMaj E_1 = new DMatrixRMaj(2,1);
                 CommonOps_DDRM.subtract(X, X_m, E);
@@ -1003,7 +999,7 @@ public class MainActivity extends AppCompatActivity {
 
                 DMatrixRMaj U = new DMatrixRMaj(1,1);
                 eq = new Equation();
-                eq.alias(K_c, "K_c", L, "L", K_c_1, "K_c_1", L_1, "L_1", Gamma, "Gamma", ActualT_S, "T_S", B_m, "B_m", P, "P", E, "E", E_1, "E_1", X, "X", X_1, "X_1", R[0], "R", R[1], "R_1", U, "U");
+                eq.alias(K_c, "K_c", L, "L", K_c_1, "K_c_1", L_1, "L_1", Gamma, "Gamma", T_SForModel, "T_S", B_m, "B_m", P, "P", E, "E", E_1, "E_1", X, "X", X_1, "X_1", R[0], "R", R[1], "R_1", U, "U");
                 eq.process("K_c = K_c_1 + Gamma*T_S/2.0*(B_m'*P*E*X' + B_m'*P*E_1*X_1')");
                 eq.process("L = L_1 - Gamma*T_S/2.0*(B_m'*P*E*R + B_m'*P*E_1*R_1)");
                 eq.process("U = -K_c*X + L*R");
@@ -1201,7 +1197,7 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[8][0];
                 Trajectories[3] = Output[5][0];
                 Trajectories[4] = Output[6][0];
-                Trajectories[5] = -Math.log(Output[5][0])/Model.ActualT_S;
+                Trajectories[5] = -Math.log(Output[5][0])/Model.T_SForModel;
                 Trajectories[6] = Output[6][0]*Trajectories[5]/(1-Output[5][0]);
                 return Trajectories;
             }
@@ -1346,7 +1342,7 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[8][0];
                 Trajectories[3] = Output[5][0];
                 Trajectories[4] = Output[6][0];
-                Trajectories[5] = -Math.log(Output[5][0])/Model.ActualT_S;
+                Trajectories[5] = -Math.log(Output[5][0])/Model.T_SForModel;
                 Trajectories[6] = Output[6][0]*Trajectories[5]/(1-Output[5][0]);
                 return Trajectories;
             }
@@ -1524,7 +1520,7 @@ public class MainActivity extends AppCompatActivity {
                 eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
                 eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
                 eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
-                CommonOps_DDRM.scale(1/Model.ActualT_S, A_C);
+                CommonOps_DDRM.scale(1/Model.T_SForModel, A_C);
                 eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
 
                 /*Log.i("Algorithm", "A_C: " + A_C);
@@ -1691,7 +1687,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[0] = Output[0][0] + K_I*Model.ActualT_S/2.0 * (E[0] + E[1]);
+                OutSignals[0] = Output[0][0] + K_I*Model.T_SForModel /2.0 * (E[0] + E[1]);
                 OutSignals[1] = P.get(0,0);
                 OutSignals[2] = P.get(0,1);
                 OutSignals[3] = P.get(1,0);
@@ -1728,8 +1724,8 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[2] = Output[8][0];
                 Trajectories[3] = Output[5][0];
                 Trajectories[4] = Output[6][0];
-                Trajectories[5] = -Math.log(Output[6][0])/Model.ActualT_S;
-                Trajectories[6] = 2*Output[5][0]*Trajectories[5]/((1-Output[6][0])*Model.ActualT_S*Parameters[0]);
+                Trajectories[5] = -Math.log(Output[6][0])/Model.T_SForModel;
+                Trajectories[6] = 2*Output[5][0]*Trajectories[5]/((1-Output[6][0])*Model.T_SForModel *Parameters[0]);
                 return Trajectories;
             }
         };
@@ -1949,7 +1945,7 @@ public class MainActivity extends AppCompatActivity {
                 eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
                 eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
                 eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
-                CommonOps_DDRM.scale(1/Model.ActualT_S, A_C);
+                CommonOps_DDRM.scale(1/Model.T_SForModel, A_C);
                 eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
 
                 /*Log.i("Algorithm", "A_C: " + A_C);
@@ -2268,6 +2264,15 @@ public class MainActivity extends AppCompatActivity {
         double[][] PreparedSignals;
         double Time;
         double[] ReadTimes = {0,0,0,0};
+        int WeightForWMA = getPrefInt("sim_wma_weight",100);
+        int DenForWMA = WeightForWMA*(WeightForWMA+1)/2;
+        long Iteration = 1;
+        int DataPointsForMA = getPrefInt("sim_ma_data_points",100);
+        double[] ActualT_S = new double[DataPointsForMA];
+        double TotalForWMA, NumForWMA;
+        double EMASum, EMACount = 0;
+        double EMAAlpha = 2/(WeightForWMA+1);
+
         boolean RequestSend = true;
         boolean IsFirstProgressOutput=true;
         boolean TimeOutError = false;
@@ -2281,7 +2286,52 @@ public class MainActivity extends AppCompatActivity {
                 Time = (System.currentTimeMillis()-StartTime)/1000.0;
                 if ((Math.round((Time-ReadTimes[0]-Model.PlannedT_S)*1000) >= 0) && RequestSend) {
                     PutElementToFIFO(ReadTimes, Time);
-                    Model.ActualT_S = ReadTimes[0] - ReadTimes[1];
+                    PutElementToFIFO(ActualT_S, ReadTimes[0] - ReadTimes[1]);
+                    /*DataPointsForMA = (Iteration <= getPrefInt("sim_ma_data_points",100))
+                            ? (int) Iteration
+                            : getPrefInt("sim_ma_data_points",100);*/
+                    switch (getPrefString("sim_actual_sampling_time_type", "SIM")) {
+                        case "SIM":
+                            Model.T_SForModel = ReadTimes[0] - ReadTimes[1];
+                            break;
+                        case "SMA":
+                            if (DataPointsForMA>Iteration) {
+                                if (Iteration>1)
+                                    Model.T_SForModel = (ActualT_S[0] + Model.T_SForModel*(Iteration-1))/Iteration;
+                                else
+                                    Model.T_SForModel = ActualT_S[0];
+                            } else {
+                                Model.T_SForModel = Model.T_SForModel
+                                        + (ActualT_S[0] - ActualT_S[ActualT_S.length - 1]) / (DataPointsForMA * 1.0);
+                            }
+                            break;
+                        case "CMA":
+                            if (DataPointsForMA>Iteration) {
+                                if (Iteration>1)
+                                    Model.T_SForModel = (ActualT_S[0] + Model.T_SForModel*(Iteration-1))/Iteration;
+                                else
+                                    Model.T_SForModel = ActualT_S[0];
+                            } else {
+                                Model.T_SForModel = Model.T_SForModel
+                                        + (ActualT_S[0] - Model.T_SForModel) / Iteration;
+                            }
+                            break;
+                        case "WMA":
+                            NumForWMA = NumForWMA + WeightForWMA*ActualT_S[0] - TotalForWMA;
+                            TotalForWMA = TotalForWMA + ActualT_S[0] - ActualT_S[ActualT_S.length-1];
+                            Model.T_SForModel = NumForWMA/DenForWMA;
+                            break;
+                        case "EMA":
+                            EMASum = ActualT_S[0] + (1-EMAAlpha)*EMASum;
+                            EMACount = 1 + (1-EMAAlpha)*EMACount;
+                            Model.T_SForModel = EMASum/EMACount;
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                    //Model.T_SForModel = ReadTimes[0] - ReadTimes[1];
                     RequestSend = false;
                     RequestAIAdio();
                 }
@@ -2293,7 +2343,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i< PreparedSignals.length; i++)
                         PreparedSignals[i] = PutElementToFIFO(PreparedSignals[i],
                                 GeneratedSignals[i].GetValue(Time));
-                    if (Model.ActualT_S > 0) {
+                    if (Model.T_SForModel > 0) {
                         Model.SimulationTime = Time;
                         double[] TempOutput = Model.RunAlgorithms(
                                 GetParameters(),
@@ -2305,10 +2355,11 @@ public class MainActivity extends AppCompatActivity {
                             Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
                     }
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
+                    Iteration++;
                     publishProgress(0);
                 }
                 if ((Time-ReadTimes[0]) >
-                        (Model.PlannedT_S + Integer.valueOf(getPrefInt("sim_sampling_tolerance", 1000))/1000.0)) {
+                        (Model.PlannedT_S + getPrefInt("sim_sampling_tolerance", 1000)/1000.0)) {
                     TimeOutError = true;
                     this.cancel(true);
                 }
@@ -2333,21 +2384,21 @@ public class MainActivity extends AppCompatActivity {
             String InstantValues;
             InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
             InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
-                    + Math.round(Model.ActualT_S*1000);
-            int Iteration=0;
+                    + Math.round(Model.T_SForModel *1000);
+            int IterationGraphs=0;
             for (int i=0; i<Model.Figures.length; i++) {
                 for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
-                    InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[Iteration];
+                    InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[IterationGraphs];
                     if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
                             > getPrefInt("graph_collect_size",200))
                         LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
                     LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
-                            (float)Model.OutputTime, (float)PutBetweenRange(SignalsToPlot[Iteration],TrajectoryLimits[0], TrajectoryLimits[1]))
+                            (float)Model.OutputTime, (float)PutBetweenRange(SignalsToPlot[IterationGraphs],TrajectoryLimits[0], TrajectoryLimits[1]))
                     );
                     LineCharts[i].getLineData().notifyDataChanged();
                     LineCharts[i].notifyDataSetChanged();
                     LineCharts[i].invalidate();
-                    Iteration++;
+                    IterationGraphs++;
                 }
             }
             if (IsFirstProgressOutput) for (int i=0; i<Model.Figures.length; i++) {

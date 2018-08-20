@@ -27,8 +27,8 @@ public class ListenerForSamplingTimeEditText implements TextWatcher {
         try {
             LayoutSwitch.setText("T_s = " + Double.parseDouble(editable.toString()) + " ms");
         } catch (Exception E) {
-            LayoutSwitch.setText("T_s = 1.0 ms");
-            editable.append("1");
+            LayoutSwitch.setText("T_s = 0.0 ms");
+            editable.append("0");
 
         }
 

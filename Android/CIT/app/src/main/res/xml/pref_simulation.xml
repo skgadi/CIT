@@ -19,4 +19,30 @@
         android:title="@string/pref_sim_tolerance"
         android:dialogMessage="@string/pref_sim_tolerance_desc"/>
 
+    <ListPreference
+        android:defaultValue="SIM"
+        android:entries="@array/pref_sim_actual_sampling_time_type_entries"
+        android:entryValues="@array/pref_sim_actual_sampling_time_type_values"
+        android:key="sim_actual_sampling_time_type"
+        android:summary="%s"
+        android:title="@string/pref_sim_actual_sampling_time_type" />
+
+    <EditTextPreference
+        android:defaultValue="100"
+        android:key="sim_ma_data_points"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_ma_data_points"
+        android:dialogMessage="@string/pref_sim_ma_data_points_desc"/>
+
+    <!--EditTextPreference
+        android:defaultValue="15"
+        android:key="sim_wma_weight"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_wma_weight"
+        android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
+
 </PreferenceScreen>

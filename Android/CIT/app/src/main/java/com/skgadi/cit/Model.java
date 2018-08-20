@@ -13,7 +13,7 @@ public abstract class Model {
     public Figure Figures [];
     public Parameter[] Parameters;
     public double PlannedT_S;
-    public double ActualT_S;
+    public double T_SForModel;
     public double[] OutPut;
     public int NoOfInputs;
     public int NoOfOutputs;

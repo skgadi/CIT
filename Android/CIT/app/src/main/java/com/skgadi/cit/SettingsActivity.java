@@ -163,6 +163,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("sim_sampling_time"));
             bindPreferenceSummaryToValue(findPreference("sim_sampling_tolerance"));
+            bindPreferenceSummaryToValue(findPreference("sim_ma_data_points"));
+            //bindPreferenceSummaryToValue(findPreference("sim_wma_weight"));
         }
 
         @Override
