@@ -936,7 +936,7 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories = new String[2];
         TempTrajectories[0]= "\u03B3_r cap";
         TempTrajectories[1]= "\u03B3_y cap";
-        Model.Figures[2] = new Figure("Estimated system parameters", TempTrajectories);
+        Model.Figures[2] = new Figure("Controller parameters", TempTrajectories);
 
         Model.Parameters = new Parameter [3];
         Model.Parameters[0] = new Parameter("Adaptation gain>>\u03F1", 0, 1000, 1);
@@ -1110,7 +1110,7 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[0]= "K_c(1,1)";
         TempTrajectories[1]= "K_c(2,1)";
         TempTrajectories[2]= "L";
-        Model.Figures[2] = new Figure("Adaptation Law output", TempTrajectories);
+        Model.Figures[2] = new Figure("Controller parameters", TempTrajectories);
 
         Model.Parameters = new Parameter [4];
         Model.Parameters[0] = new Parameter("Adaptation gain>>\u03B3", 0, 1000, 0.1);
@@ -1655,6 +1655,8 @@ public class MainActivity extends AppCompatActivity {
                     Input[0] --> y
                     E --> e
                 */
+                DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
+                Gamma.set(0, 0, Parameters[2]);
                 double Lambda = Parameters[2];
                 double K_I = Parameters[0];
                 double K = Output[7][0];
@@ -1664,8 +1666,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                DMatrixRMaj z = new DMatrixRMaj(1,1);
-                z.set(0, 0, Input[0][0] - Input[0][1]);
+                DMatrixRMaj y = new DMatrixRMaj(1,1);
+                y.set(0, 0, Input[0][0] - Input[0][1]);
                 DMatrixRMaj Phi = new DMatrixRMaj(2,1);
                 Phi.set(0, 0, E[1] + E[2]);
                 Phi.set(1, 0, Input[0][1] - Input[0][2]);
@@ -1690,11 +1692,24 @@ public class MainActivity extends AppCompatActivity {
                 DMatrixRMaj TempMatrix0, TempMatrix1, TempMatrix2, TempMatrix3;
                 DMatrixRMaj e = new DMatrixRMaj(1,1);
                 DMatrixRMaj PhiTranspose = new DMatrixRMaj(1,2);
+
+                DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
+                DMatrixRMaj L = new DMatrixRMaj(2,1);
+                Equation eq = new Equation();
+                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", P_1, "P_1", y, "y", Gamma, "Gamma", L, "L", y_hat, "y_hat");
+                eq.process("y_hat = Phi'*Theta_1");
+                eq.process("Epsilon = y - y_hat");
+                eq.process("P_den = Gamma + Phi'*P_1*Phi");
+                eq.process("L = P_1*Phi/P_den(0,0)");
+                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma(0,0)");
+                eq.process("Theta = Theta_1 + L*Epsilon");
+
+                /*
                 // Calculation of e
                 CommonOps_DDRM.transpose(Phi, PhiTranspose);
                 CommonOps_DDRM.mult(PhiTranspose, Theta_1, e);
                 CommonOps_DDRM.changeSign(e);
-                CommonOps_DDRM.addEquals(e,z);
+                CommonOps_DDRM.addEquals(e,y);
                 // Calculation of P
                 TempMatrix0 = new DMatrixRMaj(2,1);
                 TempMatrix1 = new DMatrixRMaj(1,1);
@@ -1716,6 +1731,7 @@ public class MainActivity extends AppCompatActivity {
                 CommonOps_DDRM.mult(P, Phi, Theta);
                 CommonOps_DDRM.mult(Theta, e, Theta);
                 CommonOps_DDRM.addEquals(Theta, Theta_1);
+                */
 
 
                 double [] OutSignals = new double[NoOfOutputs];
