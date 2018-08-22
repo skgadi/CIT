@@ -106,7 +106,12 @@
         <item>Bridge is slow. Simulation is stopped to avoid system hanging. Check the following to troubleshoot. \n1) Flash the bridge circuit with proper firmware. Look into documents for more information.\n2) Disconnect and reconnect the bridge circuit.\n3) If you want more tolerance time, please change in the settings.</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
-
+    <string-array name="graph_zoom">
+        <item>Reset zoom</item>
+        <item>Show y=0</item>
+    </string-array>
+    <string name="graph_reset_zoom">Reset Zoom</string>
+    <string name="graph_include_zero">Show y=0 axis</string>
     <!-- Strings related to Settings -->
 
     <!-- Simulation window preferences  -->
@@ -164,13 +169,15 @@
         <item>LINE</item>
         <item>EMPTY</item>
     </string-array>
+    <string name="pref_graph_zoom_options">Show zoom options</string>
+    <string name="pref_graph_zoom_options_desc">Zoom options are visible under the graphs.</string>
 
     <!-- Graph Window -->
     <string name="pref_header_bridge">Bridge device</string>
 
     <string name="pref_bridge_ai_port">Analog input port number</string>
     <string name="pref_bridge_ai_port_desc">Enter a valid port number for the analog input port</string>
-    <string name="pref_bridge_ao_port">Analog output port number</string>
+    <string name="pref_bridge_ao_port">Analog output (PWM) port number</string>
     <string name="pref_bridge_ao_port_desc">Enter a valid port number for the analog output port</string>
     <string name="pref_bridge_out_limit_lower">Bridge circuit\'s analog output lower limit</string>
     <string name="pref_bridge_out_limit_lower_desc">Enter the lowest voltage that the bridge circuit can generate.</string>

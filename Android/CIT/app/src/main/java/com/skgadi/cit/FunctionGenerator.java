@@ -44,61 +44,78 @@ public class FunctionGenerator {
     public String GetSignalDescription () {
         switch (Type) {
             case STEP:
-                return ((Compliment) ? "-":"") + MaximumAmplitude
-                        + "[2H(t"
-                        + ((StartAt!=0) ? -StartAt:"")
-                        + ")-1]"
-                        + ((OffSet!=0) ? (OffSet>0?"+"+OffSet:OffSet) :"");
+                return ((Compliment) ? "-":"")
+                        + ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                                + MaximumAmplitude
+                                + "H(t"
+                                + ((StartAt!=0) ? -StartAt:"")
+                                + ")"
+                        ))
+                        + ((OffSet!=0) ? (OffSet>0?((MaximumAmplitude != 0.0)?"+":"")+OffSet:OffSet) :"");
             case SINE:
-                return ((Compliment) ? "-":"") + MaximumAmplitude
-                        + "sin(2\u03C0"
-                        + Frequency
-                        + ((StartAt!=0) ? "(":"")
-                        + "t"
-                        + ((StartAt!=0) ? -StartAt+")":"")
-                        + ")"
-                        + ((OffSet!=0) ? (OffSet>0?"+"+OffSet:OffSet) :"");
+                return ((Compliment) ? "-":"")
+                        + ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                            + MaximumAmplitude
+                            + "sin(2\u03C0"
+                            + Frequency
+                            + ((StartAt!=0) ? "(":"")
+                            + "t"
+                            + ((StartAt!=0) ? -StartAt+")":"")
+                            + ")"
+                        ))
+                        + ((OffSet!=0) ? (OffSet>0?((MaximumAmplitude != 0.0)?"+":"")+OffSet:OffSet) :"");
             case SAWTOOTH:
-                return ((Compliment) ? "-":"") + MaximumAmplitude
-                        + "\u00D72["+
-                        + Frequency
-                        + ((StartAt!=0) ? "(":"")
-                        + "t"
-                        + ((StartAt!=0) ? -StartAt+")":"")
-                        + "-floor(0.5 + "
-                        + Frequency
-                        + ((StartAt!=0) ? "(":"")
-                        + "t"
-                        + ((StartAt!=0) ? -StartAt+")":"")
-                        + ")]"
-                        + ((OffSet!=0) ? (OffSet>0?"+"+OffSet:OffSet) :"");
+                return ((Compliment) ? "-":"")
+                        + ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                            + MaximumAmplitude
+                            + "\u00D72["+
+                            + Frequency
+                            + ((StartAt!=0) ? "(":"")
+                            + "t"
+                            + ((StartAt!=0) ? -StartAt+")":"")
+                            + "-floor(0.5 + "
+                            + Frequency
+                            + ((StartAt!=0) ? "(":"")
+                            + "t"
+                            + ((StartAt!=0) ? -StartAt+")":"")
+                            + ")]"
+                        ))
+                        + ((OffSet!=0) ? (OffSet>0?((MaximumAmplitude != 0.0)?"+":"")+OffSet:OffSet) :"");
             case TRIANGLE:
-                return ((Compliment) ? "-":"") + MaximumAmplitude
-                        + "\u00D7\u222B{sgn[sin(2π"
-                        + Frequency
-                        + ((StartAt!=0) ? "(":"")
-                        + "t"
-                        + ((StartAt!=0) ? -StartAt+")":"")
-                        + ")]}dt"
-                        + ((OffSet!=0) ? (OffSet>0?"+"+OffSet:OffSet) :"");
+                return ((Compliment) ? "-":"")
+                        + ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                            + MaximumAmplitude
+                            + "\u00D7\u222B{sgn[sin(2π"
+                            + Frequency
+                            + ((StartAt!=0) ? "(":"")
+                            + "t"
+                            + ((StartAt!=0) ? -StartAt+")":"")
+                            + ")]}dt"
+                        ))
+                        + ((OffSet!=0) ? (OffSet>0?((MaximumAmplitude != 0.0)?"+":"")+OffSet:OffSet) :"");
             case SQUARE:
-                return  ((Compliment) ? "-":"") + MaximumAmplitude
-                        + "sgn[sin(2π"
-                        + Frequency
-                        + ((StartAt!=0) ? "(":"")
-                        + "t"
-                        + ((StartAt!=0) ? -StartAt+")":"")
-                        + ")]"
-                        + ((OffSet!=0) ? (OffSet>0?"+"+OffSet:OffSet) :"");
+                return  ((Compliment) ? "-":"")
+                        + ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                            + MaximumAmplitude
+                            + "sgn[sin(2π"
+                            + Frequency
+                            + ((StartAt!=0) ? "(":"")
+                            + "t"
+                            + ((StartAt!=0) ? -StartAt+")":"")
+                            + ")]"
+                        ))
+                        + ((OffSet!=0) ? (OffSet>0?((MaximumAmplitude != 0.0)?"+":"")+OffSet:OffSet) :"");
             case RECTANGLE:
-                return "A pulse train with: Amplitude = "
-                        + ((Compliment) ? "-":"") + 2*MaximumAmplitude
-                        + "V, Frequency ="
-                        + Frequency
-                        + "Hz, Duty factor = "
-                        + DutyCycle
-                        +"%, and Offset ="
-                        + OffSet + "V";
+                return
+                        ((MaximumAmplitude == 0.0) ? ((OffSet==0)? "0":"") : (
+                            "A pulse train with: Amplitude = "
+                            + ((Compliment) ? "-":"")
+                            + 2*MaximumAmplitude + " V, "
+                            + ((StartAt!=0) ? "Starts at t="+StartAt+" s, ":"")
+                            + "Frequency =" + Frequency + " Hz,"
+                            + ((OffSet==0)?" and ":"") +" Duty factor = " + DutyCycle +" %"
+                        ))
+                        + ((OffSet!=0) ? ((MaximumAmplitude != 0.0)?", and Offset =":"") + OffSet  + ((MaximumAmplitude != 0.0)?" V":"") :"");
         }
         return "";
     }

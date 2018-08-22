@@ -23,13 +23,17 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     EditText ModelSamplingTime;
     //GraphView[] ModelGraphs;
     LineChart[] LineCharts;
+    LinearLayout[] ZoomOptions;
     int[] ColorTable = {
             Color.RED,
             Color.BLUE,
@@ -633,6 +638,7 @@ public class MainActivity extends AppCompatActivity {
         DrawALine(ModelView);
         //ModelGraphs = new GraphView[Model.Figures.length];
         LineCharts = new LineChart[Model.Figures.length];
+        ZoomOptions = new LinearLayout[Model.Figures.length];
         for (int i=0; i<Model.Figures.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
@@ -648,6 +654,32 @@ public class MainActivity extends AppCompatActivity {
             TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
             LineCharts[i] = new LineChart(getApplicationContext());
             TempLayout.addView(LineCharts[i]);
+
+
+            ZoomOptions[i] = new LinearLayout(getApplicationContext());
+            ZoomOptions[i].setOrientation(LinearLayout.HORIZONTAL);
+            ZoomOptions[i].setGravity(Gravity.CENTER);
+            ZoomOptions[i].setVisibility(View.GONE);
+            ImageButton TempButton;
+            Integer[] TempImages= {
+                    R.drawable.ic_zoom_out_map_black_24dp,
+                    R.drawable.ic_zoom_in_black_24dp,
+                    R.drawable.ic_zoom_out_black_24dp,
+                    R.drawable.ic_keyboard_arrow_up_black_24dp,
+                    R.drawable.ic_keyboard_arrow_down_black_24dp,
+                    R.drawable.ic_keyboard_arrow_right_black_24dp,
+                    R.drawable.ic_keyboard_arrow_left_black_24dp
+            };
+            for (ZOOM_AND_MOVE ZO: ZOOM_AND_MOVE.values()) {
+                TempButton = (ImageButton) getLayoutInflater().inflate(R.layout.gsk_button, null);
+                TempButton.setImageResource(TempImages[ZO.ordinal()]);
+                TempButton.setOnClickListener(new ListenerGraphZoomButton(LineCharts[i], ZO));
+                ZoomOptions[i].addView(TempButton);
+            }
+            TempLayout.addView(ZoomOptions[i]);
+            CheckBox TempCheckBox= (CheckBox) getLayoutInflater().inflate(R.layout.gsk_checkbox, null);
+            TempCheckBox.setOnCheckedChangeListener( new ListenerForGraphZoomCheck(LineCharts[i]));
+            ZoomOptions[i].addView(TempCheckBox);
 
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
@@ -2441,7 +2473,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            for (int i=0; i<Model.Figures.length; i++) AddPlots(i);
+            for (int i=0; i<Model.Figures.length; i++) {
+                AddPlots(i);
+                if (getPrefBool("graph_zoom_options", false))
+                    ZoomOptions[i].setVisibility(View.VISIBLE);
+                else
+                    ZoomOptions[i].setVisibility(View.GONE);
+            }
         }
         protected double[] GetParameters () {
             double[] ParameterValues = new double[Model.Parameters.length];

@@ -54,5 +54,11 @@
         android:inputType="number"
         android:title="@string/pref_graph_vertical_upper_lower_limit"
         android:dialogMessage="@string/pref_graph_vertical_upper_lower_limit_desc"/>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="graph_zoom_options"
+        android:title="@string/pref_graph_zoom_options"
+        android:summary="@string/pref_graph_zoom_options_desc"
+        />
 
 </PreferenceScreen>
