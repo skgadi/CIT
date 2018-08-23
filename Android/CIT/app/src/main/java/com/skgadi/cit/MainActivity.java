@@ -1,5 +1,6 @@
 package com.skgadi.cit;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,9 +12,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.hardware.usb.UsbDevice;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -65,12 +70,18 @@ import org.ejml.equation.Equation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
+
+import static android.os.Environment.DIRECTORY_PICTURES;
 
 
 enum SIMULATION_STATUS {
@@ -2096,6 +2107,78 @@ public class MainActivity extends AppCompatActivity {
             startActivity(Intent.createChooser(shareIntent, "Choose an app"));
         }
     }
+    private void DownloadImage (Bitmap bm) {
+        String root = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).toString();
+        File myDir = new File(root + "/CIT");
+        myDir.mkdirs();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        String n = df.format(c.getTime());
+        String fname = n + ".png";
+        File file = new File(myDir, fname);
+        if (file.exists())
+            file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            MediaScannerConnection.scanFile(this,
+                    new String[] { file.toString() }, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public  boolean isStoragePermissionGranted() {
+        String TAG = "Permission";
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
+    }
+    private Bitmap CaptureCompleteScreen () {
+        ScrollView MainScroll = (ScrollView) findViewById(R.id.MainScrollView);
+        bitmap = Bitmap.createBitmap(
+                MainScroll.getChildAt(0).getWidth(),
+                MainScroll.getChildAt(0).getHeight(),
+                Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(bitmap);
+        MainScroll.getChildAt(0).draw(c);
+
+        View RootView = MainScroll.getRootView();
+        RootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap1 = RootView.getDrawingCache();
+
+
+        int actionBarHeight=56;
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        return combineImagesVertical(
+                Bitmap.createBitmap(bitmap1, 0,0,bitmap1.getWidth(), actionBarHeight)
+                , bitmap);
+
+    }
     public Bitmap combineImagesVertical(Bitmap one, Bitmap two) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
 
@@ -2135,9 +2218,9 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.con_sim_menu, menu);
 
-        DocumentationButton = menu.getItem(0);
-        SettingsButton = menu.getItem(2);
-        SimulateButton = menu.getItem(3);
+        DocumentationButton = menu.getItem(2);
+        SettingsButton = menu.getItem(1);
+        SimulateButton = menu.getItem(4);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -2151,31 +2234,27 @@ public class MainActivity extends AppCompatActivity {
                 else
                     startActivity(new Intent(MainActivity.this, DocumentationActivity.class));
                 break;
+            case R.id.download:
+                if (isStoragePermissionGranted()) {
+                    Thread thread = new Thread(new Thread() {
+                        public void run() {
+                            DownloadImage(CaptureCompleteScreen());
+                        }
+                    });
+                    thread.start();
+                } else
+                    Toast.makeText(MainActivity.this,
+                            getResources().getStringArray(R.array.TOASTS)[15],
+                            Toast.LENGTH_SHORT).show();
+
+                break;
             case R.id.share:
-                ScrollView MainScroll = (ScrollView) findViewById(R.id.MainScrollView);
-                bitmap = Bitmap.createBitmap(
-                        MainScroll.getChildAt(0).getWidth(),
-                        MainScroll.getChildAt(0).getHeight(),
-                        Bitmap.Config.RGB_565);
-                Canvas c = new Canvas(bitmap);
-                MainScroll.getChildAt(0).draw(c);
-
-                View RootView = MainScroll.getRootView();
-                RootView.setDrawingCacheEnabled(true);
-                Bitmap bitmap1 = RootView.getDrawingCache();
-
-
-                int actionBarHeight=56;
-                TypedValue tv = new TypedValue();
-                if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-                {
-                    actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-                }
-
-                //TextForImageSharing.setText(getString(R.string.VERSION_INFO));
-                shareImage(combineImagesVertical(
-                        Bitmap.createBitmap(bitmap1, 0,0,bitmap1.getWidth(), actionBarHeight)
-                        , bitmap));
+                Thread thread = new Thread(new Thread() {
+                    public void run() {
+                        shareImage(CaptureCompleteScreen());
+                    }
+                });
+                thread.start();
                 break;
             case R.id.settings:
                 if (SimulationState == SIMULATION_STATUS.ON)

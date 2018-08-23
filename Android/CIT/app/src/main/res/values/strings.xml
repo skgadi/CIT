@@ -74,6 +74,7 @@
     <string name="BUTTON_DOCUMENTATION">Documentation</string>
     <string name="BUTTON_SETTINGS">Settings</string>
     <string name="BUTTON_SHARE">Share</string>
+    <string name="BUTTON_DOWNLOAD">Download</string>
     <string-array name="SETTINGS_WINDOW">
         <item>Simulation settings>>Sampling time in milli seconds</item>
         <item>Graph settings>>Number of retained samples (Larger values may slowdown your device)</item>
@@ -104,6 +105,7 @@
         <item>Please press any of the buttons to exit this window.</item>
         <item>Simulation is stopped due to error in communication with the bridge device.</item>
         <item>Bridge is slow. Simulation is stopped to avoid system hanging. Check the following to troubleshoot. \n1) Flash the bridge circuit with proper firmware. Look into documents for more information.\n2) Disconnect and reconnect the bridge circuit.\n3) If you want more tolerance time, please change in the settings.</item>
+        <item>You cannot complete this without writing permissions to your storage device.</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>
     <string-array name="graph_zoom">
