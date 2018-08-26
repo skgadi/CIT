@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="ARD"
+        android:entries="@array/pref_bridge_circuit_type_entries"
+        android:entryValues="@array/pref_bridge_circuit_type_values"
+        android:key="bridge_circuit_type"
+        android:summary="%s"
+        android:title="@string/pref_bridge_circuit_type" />
 
     <EditTextPreference
         android:defaultValue="0"

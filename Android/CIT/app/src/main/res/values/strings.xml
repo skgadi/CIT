@@ -174,7 +174,7 @@
     <string name="pref_graph_zoom_options">Show zoom options</string>
     <string name="pref_graph_zoom_options_desc">Zoom options are visible under the graphs.</string>
 
-    <!-- Graph Window -->
+    <!-- Bridge Window -->
     <string name="pref_header_bridge">Bridge device</string>
 
     <string name="pref_bridge_ai_port">Analog input port number</string>
@@ -185,5 +185,14 @@
     <string name="pref_bridge_out_limit_lower_desc">Enter the lowest voltage that the bridge circuit can generate.</string>
     <string name="pref_bridge_out_limit_upper">Bridge circuit\'s analog output upper limit</string>
     <string name="pref_bridge_out_limit_upper_desc">Enter the highest voltage that the bridge circuit can generate.</string>
+    <string name="pref_bridge_circuit_type">Legend form</string>
+    <string-array name="pref_bridge_circuit_type_entries">
+        <item>Arduino</item>
+        <item>PIC micro-controllers</item>
+    </string-array>
+    <string-array name="pref_bridge_circuit_type_values">
+        <item>ARD</item>
+        <item>PIC</item>
+    </string-array>
 
 </resources>

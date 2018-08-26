@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         GenerateViewFromModel(-1);
         //--- USB Connection
         arduino = new Arduino(getApplicationContext(), 115200);
+        arduino.addVendorId(4799);
 
         arduino.setArduinoListener(new ArduinoListener() {
             @Override
@@ -297,10 +298,10 @@ public class MainActivity extends AppCompatActivity {
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
+        /*AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 5);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
-        AppNavDrawer.addItem(new DividerDrawerItem());
+        AppNavDrawer.addItem(new DividerDrawerItem());*/
 
 
         try {
@@ -414,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
                 PrepareFirstOrderIdentification();
                 break;
             case 2:
-                PrepareSecondOrderIdentification();
+                PrepareSecondOrderGeneralIdentification();
                 break;
             case 3:
                 PrepareFirstOrderWithControllerIdentification();
@@ -616,7 +617,11 @@ public class MainActivity extends AppCompatActivity {
                 TempTextView.setText(getResources().getStringArray(R.array.SIGNAL_GENERATOR_PARAMETERS)[j]+": ");
                 EditText TempEditText = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
                 TempEditText.setSelectAllOnFocus(true);
-                //TempEditText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_CLASS_NUMBER);
+                TempEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                /*
+                //This feature can be used when the bridge circuit is ready to handle the negative voltages
+                if (j==4)
+                    TempEditText.setInputType(TempEditText.getInputType() | InputType.TYPE_NUMBER_FLAG_SIGNED);*/
                 TempEditText.setText(String.valueOf(GeneratedSignals[i].MinMaxDefaultsForFloats[j][2]));
                 TempEditText.setTextColor(Color.BLACK);
                 TempEditText.addTextChangedListener(new ListenerForFunctionGenerator(
@@ -1428,7 +1433,7 @@ public class MainActivity extends AppCompatActivity {
 
         Model.Parameters = new Parameter [2];
         Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
-        Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
+        Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.99);
     }
 
     private void PrepareSecondOrderIdentification() {
@@ -1640,6 +1645,272 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
+    private void PrepareSecondOrderGeneralIdentification() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[00] --> u
+                    Output[01] --> P11
+                    Output[02] --> P12
+                    Output[03] --> P13
+                    Output[04] --> P14
+                    Output[05] --> P15
+                    Output[06] --> P21
+                    Output[07] --> P22
+                    Output[08] --> P23
+                    Output[09] --> P24
+                    Output[10] --> P25
+                    Output[11] --> P31
+                    Output[12] --> P32
+                    Output[13] --> P33
+                    Output[14] --> P34
+                    Output[15] --> P35
+                    Output[16] --> P41
+                    Output[17] --> P42
+                    Output[18] --> P43
+                    Output[19] --> P44
+                    Output[20] --> P45
+                    Output[21] --> P51
+                    Output[22] --> P52
+                    Output[23] --> P53
+                    Output[24] --> P54
+                    Output[25] --> P55
+                    Output[26] --> Theta_1
+                    Output[27] --> Theta_2
+                    Output[28] --> Theta_3
+                    Output[29] --> Theta_4
+                    Output[30] --> Theta_5
+                    Output[31] --> K
+                    Output[32] --> Y Cap Calculated
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> y
+                    E --> e
+                */
+                int MatrixSize = 5;
+                DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
+                Gamma.set(0, 0, Parameters[1]);
+                DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
+                //double Lambda = Parameters[1];
+                double K = Output[31][0];
+                double[] E = new double[3];
+                for (int i=0; i<3; i++)
+                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
+
+
+
+                DMatrixRMaj y = new DMatrixRMaj(1,1);
+                y.set(0, 0, Input[0][0]);
+                DMatrixRMaj Phi = new DMatrixRMaj(MatrixSize,1);
+                Phi.set(0, 0, Output[0][0]);
+                Phi.set(1, 0, Output[0][1]);
+                Phi.set(2, 0, Output[0][2]);
+                Phi.set(3, 0, -Input[0][1]);
+                Phi.set(4, 0, -Input[0][2]);
+                DMatrixRMaj Theta_1 = new DMatrixRMaj(MatrixSize,1);
+                for (int i=0; i<MatrixSize; i++)
+                    Theta_1.set(i,0, Output[i+26][0]);
+                DMatrixRMaj P_1 = new DMatrixRMaj(MatrixSize,MatrixSize);
+                if (K==0) {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, 0);
+                    for (int i=0; i<MatrixSize; i++)
+                        P_1.set(i, i, Parameters[0]);
+                } else {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, Output[(i*MatrixSize+j+1)][0]);
+                }
+                DMatrixRMaj P = new DMatrixRMaj(MatrixSize,MatrixSize);
+                DMatrixRMaj Theta = new DMatrixRMaj(MatrixSize,1);
+                DMatrixRMaj TempMatrix0, TempMatrix1, TempMatrix2, TempMatrix3;
+                DMatrixRMaj e = new DMatrixRMaj(1,1);
+                DMatrixRMaj PhiTranspose = new DMatrixRMaj(1,MatrixSize);
+
+
+                DMatrixRMaj L = new DMatrixRMaj(2,1);
+                Equation eq = new Equation();
+                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", P_1, "P_1", y, "y", Gamma, "Gamma", L, "L", y_hat, "y_hat");
+                eq.process("y_hat = Phi'*Theta_1");
+                eq.process("Epsilon = y - y_hat");
+                eq.process("P_den = Gamma + Phi'*P_1*Phi");
+                eq.process("L = P_1*Phi/P_den(0,0)");
+                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma(0,0)");
+                eq.process("Theta = Theta_1 + L*Epsilon");
+
+                /*
+                // Calculation of e
+                CommonOps_DDRM.transpose(Phi, PhiTranspose);
+                CommonOps_DDRM.mult(PhiTranspose, Theta_1, e);
+                CommonOps_DDRM.changeSign(e);
+                CommonOps_DDRM.addEquals(e,y);
+                // Calculation of P
+                TempMatrix0 = new DMatrixRMaj(MatrixSize,1);
+                TempMatrix1 = new DMatrixRMaj(1,1);
+                TempMatrix2 = new DMatrixRMaj(1,MatrixSize);
+                TempMatrix3 = new DMatrixRMaj(MatrixSize,1);
+                CommonOps_DDRM.mult(P_1,Phi,TempMatrix0);
+                CommonOps_DDRM.mult(PhiTranspose, TempMatrix0, TempMatrix1);
+                CommonOps_DDRM.add(TempMatrix1, Lambda);
+                CommonOps_DDRM.invert(TempMatrix1);
+
+                CommonOps_DDRM.mult(PhiTranspose, P_1, TempMatrix2);
+                CommonOps_DDRM.mult(P_1, Phi, TempMatrix3);
+                CommonOps_DDRM.mult(TempMatrix3, TempMatrix2, P);
+                CommonOps_DDRM.changeSign(P);
+                CommonOps_DDRM.scale(TempMatrix1.get(0,0), P);
+                CommonOps_DDRM.addEquals(P, P_1);
+                CommonOps_DDRM.scale(1/Lambda, P);
+                // Calculations of Theta
+                CommonOps_DDRM.mult(P, Phi, Theta);
+                CommonOps_DDRM.mult(Theta, e, Theta);
+                CommonOps_DDRM.addEquals(Theta, Theta_1);
+                */
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                for (int i=0; i<MatrixSize; i++)
+                    for (int j=0; j<MatrixSize; j++)
+                        OutSignals[1+i*MatrixSize+j] = P.get(i, j);
+                for (int i=0; i<MatrixSize; i++)
+                    OutSignals[i+26] = Theta.get(i,0);
+                OutSignals[31] = K+1;
+                OutSignals[32]
+                        = Theta.get(0,0 ) * Output[0][0]
+                        + Theta.get(1,0 ) * Output[0][1]
+                        + Theta.get(2,0 ) * Output[0][2]
+                        - Theta.get(3,0 ) * Output[32][0]
+                        - Theta.get(4,0 ) * Output[32][1];
+                /*Log.i("Algorithm", "Phi: " + Phi.toString());
+                Log.i("Algorithm", "Theta: "  + Theta.toString());
+                Log.i("Algorithm", "z: "  + z);
+                Log.i("Algorithm", "e: "  + e);
+                Log.i("Algorithm", "P_1: " + P_1.toString());
+                Log.i("Algorithm", "P: "  + P.toString());*/
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[13];
+                DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
+                Equation eq = new Equation();
+                A_D = new DMatrixRMaj(2,2);
+                B_D = new DMatrixRMaj(2,1);
+                C = new DMatrixRMaj(1,2);
+                D = new DMatrixRMaj(1,1);
+                A_C = new DMatrixRMaj(2,2);
+                B_C = new DMatrixRMaj(2,1);
+                //R = new DMatrixRMaj(2,2);
+
+                A_D.set(0, 0, 0);
+                A_D.set(0, 1, 1);
+                A_D.set(1, 0, -Output[25+5][0]);
+                A_D.set(1, 1, -Output[25+4][0]);
+
+                B_D.set(0,0,0);
+                B_D.set(1,0,1);
+
+                C.set(0,0, Output[25+3][0] - Output[25+5][0]*Output[25+1][0]);
+                C.set(0,1, Output[25+2][0] - Output[25+4][0]*Output[25+1][0]);
+
+                D.set(0,0, Output[25+1][0]);
+
+                eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
+                eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
+                eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
+                CommonOps_DDRM.scale(1/Model.T_SForModel, A_C);
+                eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
+
+                /*Log.i("Algorithm", "A_C: " + A_C);
+                Log.i("Algorithm", "B_C: " + B_C);
+                Log.i("Algorithm", "C_C: " + C);
+                Log.i("Algorithm", "D_C: " + D);*/
+
+
+
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Output[32][0];
+                for (int i=0; i<5; i++)
+                    Trajectories[3+i] = Output[i+26][0];
+                Trajectories[8] = D.get(0,0);
+                Trajectories[9] = C.get(0,0)*B_C.get(0,0)
+                        + C.get(0,1)*B_C.get(1,0)
+                        - D.get(0,0)*(A_C.get(0,0) + A_C.get(1,1));
+                Trajectories[10] =
+                        C.get(0,0)*(B_C.get(1,0)*A_C.get(0,1) - B_C.get(0,0)*A_C.get(1,1))
+                                + C.get(0,1)*(B_C.get(0,0)*A_C.get(1,0) - B_C.get(1,0)*A_C.get(0,0))
+                                + D.get(0,0)*(A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0));
+                Trajectories[11] = -(A_C.get(0,0) + A_C.get(1,1));
+                Trajectories[12] = A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0);
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[1];
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=33;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 2;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.estimates2;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Identification of a second-order system";
+        //Model.ImageNames[1] = "Reference Value details";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "u_1(t)";
+        Model.SignalGenerators[1] = "u_2(t)";
+        Model.SignalGenerators[2] = "u_3(t)";
+
+        //Figures
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[3];
+        TempTrajectories[0]= "u(t)";
+        TempTrajectories[1]= "y(t)";
+        TempTrajectories[2]= "Validation y(t) cap";
+        Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
+        TempTrajectories = new String[5];
+        TempTrajectories[0]= "Estimate of \u03F4_1";
+        TempTrajectories[1]= "Estimate of \u03F4_2";
+        TempTrajectories[2]= "Estimate of \u03F4_3";
+        TempTrajectories[3]= "Estimate of \u03F4_4";
+        TempTrajectories[4]= "Estimate of \u03F4_5";
+        Model.Figures[1] = new Figure("Estimate of \u03F4", TempTrajectories);
+        TempTrajectories = new String[5];
+        TempTrajectories[0]= "Estimate of \u03B2_1";
+        TempTrajectories[1]= "Estimate of \u03B2_2";
+        TempTrajectories[2]= "Estimate of \u03B2_3";
+        TempTrajectories[3]= "Estimate of \u03B2_4";
+        TempTrajectories[4]= "Estimate of \u03B2_5";
+        Model.Figures[2] = new Figure("Estimate of \u03B2", TempTrajectories);
+
+        Model.Parameters = new Parameter [2];
+        Model.Parameters[0] = new Parameter("Parameters of the least squares method>>\u03C1", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.99);
+    }
+
     private void PrepareFirstOrderWithControllerIdentification() {
         Model = new Model() {
             @Override
@@ -1828,257 +2099,9 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters = new Parameter [3];
         Model.Parameters[0] = new Parameter("Integral gain>>K_I", 0, 1000, 10);
         Model.Parameters[1] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
-        Model.Parameters[2] = new Parameter("\u03B3", 0, 1, 0.9);
+        Model.Parameters[2] = new Parameter("\u03B3", 0, 1, 0.99);
     }
 
-    private void PrepareSecondOrderGeneralIdentification() {
-        Model = new Model() {
-            @Override
-            public double[] RunAlgorithms(
-                    double[] Parameters,
-                    double[][] Generated,
-                    double[][] Input,
-                    double[][] Output
-            ){
-                /*
-                    Output[00] --> u
-                    Output[01] --> P11
-                    Output[02] --> P12
-                    Output[03] --> P13
-                    Output[04] --> P14
-                    Output[05] --> P15
-                    Output[06] --> P21
-                    Output[07] --> P22
-                    Output[08] --> P23
-                    Output[09] --> P24
-                    Output[10] --> P25
-                    Output[11] --> P31
-                    Output[12] --> P32
-                    Output[13] --> P33
-                    Output[14] --> P34
-                    Output[15] --> P35
-                    Output[16] --> P41
-                    Output[17] --> P42
-                    Output[18] --> P43
-                    Output[19] --> P44
-                    Output[20] --> P45
-                    Output[21] --> P51
-                    Output[22] --> P52
-                    Output[23] --> P53
-                    Output[24] --> P54
-                    Output[25] --> P55
-                    Output[26] --> Theta_1
-                    Output[27] --> Theta_2
-                    Output[28] --> Theta_3
-                    Output[29] --> Theta_4
-                    Output[30] --> Theta_5
-                    Output[31] --> K
-                    Output[32] --> Y Cap Calculated
-                    Generated[0] --> R_1
-                    Generated[1] --> R_2
-                    Generated[2] --> R_3
-                    R = R_1 + R_2 + R_3
-                    Input[0] --> y
-                    E --> e
-                */
-                int MatrixSize = 5;
-                double Lambda = Parameters[1];
-                double K = Output[31][0];
-                double[] E = new double[3];
-                for (int i=0; i<3; i++)
-                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
-
-
-
-                DMatrixRMaj z = new DMatrixRMaj(1,1);
-                z.set(0, 0, Input[0][0]);
-                DMatrixRMaj Phi = new DMatrixRMaj(MatrixSize,1);
-                Phi.set(0, 0, Output[0][0]);
-                Phi.set(1, 0, Output[0][1]);
-                Phi.set(2, 0, Output[0][2]);
-                Phi.set(3, 0, -Input[0][1]);
-                Phi.set(4, 0, -Input[0][2]);
-                DMatrixRMaj Theta_1 = new DMatrixRMaj(MatrixSize,1);
-                for (int i=0; i<MatrixSize; i++)
-                    Theta_1.set(i,0, Output[i+26][0]);
-                DMatrixRMaj P_1 = new DMatrixRMaj(MatrixSize,MatrixSize);
-                if (K==0) {
-                    for (int i=0; i<MatrixSize; i++)
-                        for (int j=0; j<MatrixSize; j++)
-                            P_1.set(i, j, 0);
-                    for (int i=0; i<MatrixSize; i++)
-                        P_1.set(i, i, Parameters[0]);
-                } else {
-                    for (int i=0; i<MatrixSize; i++)
-                        for (int j=0; j<MatrixSize; j++)
-                            P_1.set(i, j, Output[(i*MatrixSize+j+1)][0]);
-                }
-                DMatrixRMaj P = new DMatrixRMaj(MatrixSize,MatrixSize);
-                DMatrixRMaj Theta = new DMatrixRMaj(MatrixSize,1);
-                DMatrixRMaj TempMatrix0, TempMatrix1, TempMatrix2, TempMatrix3;
-                DMatrixRMaj e = new DMatrixRMaj(1,1);
-                DMatrixRMaj PhiTranspose = new DMatrixRMaj(1,MatrixSize);
-                // Calculation of e
-                CommonOps_DDRM.transpose(Phi, PhiTranspose);
-                CommonOps_DDRM.mult(PhiTranspose, Theta_1, e);
-                CommonOps_DDRM.changeSign(e);
-                CommonOps_DDRM.addEquals(e,z);
-                // Calculation of P
-                TempMatrix0 = new DMatrixRMaj(MatrixSize,1);
-                TempMatrix1 = new DMatrixRMaj(1,1);
-                TempMatrix2 = new DMatrixRMaj(1,MatrixSize);
-                TempMatrix3 = new DMatrixRMaj(MatrixSize,1);
-                CommonOps_DDRM.mult(P_1,Phi,TempMatrix0);
-                CommonOps_DDRM.mult(PhiTranspose, TempMatrix0, TempMatrix1);
-                CommonOps_DDRM.add(TempMatrix1, Lambda);
-                CommonOps_DDRM.invert(TempMatrix1);
-
-                CommonOps_DDRM.mult(PhiTranspose, P_1, TempMatrix2);
-                CommonOps_DDRM.mult(P_1, Phi, TempMatrix3);
-                CommonOps_DDRM.mult(TempMatrix3, TempMatrix2, P);
-                CommonOps_DDRM.changeSign(P);
-                CommonOps_DDRM.scale(TempMatrix1.get(0,0), P);
-                CommonOps_DDRM.addEquals(P, P_1);
-                CommonOps_DDRM.scale(1/Lambda, P);
-                // Calculations of Theta
-                CommonOps_DDRM.mult(P, Phi, Theta);
-                CommonOps_DDRM.mult(Theta, e, Theta);
-                CommonOps_DDRM.addEquals(Theta, Theta_1);
-
-
-                double [] OutSignals = new double[NoOfOutputs];
-                OutSignals[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
-                for (int i=0; i<MatrixSize; i++)
-                    for (int j=0; j<MatrixSize; j++)
-                        OutSignals[1+i*MatrixSize+j] = P.get(i, j);
-                for (int i=0; i<MatrixSize; i++)
-                    OutSignals[i+26] = Theta.get(i,0);
-                OutSignals[31] = K+1;
-                OutSignals[32]
-                        = Theta.get(0,0 ) * Output[0][0]
-                        + Theta.get(1,0 ) * Output[0][1]
-                        + Theta.get(2,0 ) * Output[0][2]
-                        - Theta.get(3,0 ) * Output[32][0]
-                        - Theta.get(4,0 ) * Output[32][1];
-                /*Log.i("Algorithm", "Phi: " + Phi.toString());
-                Log.i("Algorithm", "Theta: "  + Theta.toString());
-                Log.i("Algorithm", "z: "  + z);
-                Log.i("Algorithm", "e: "  + e);
-                Log.i("Algorithm", "P_1: " + P_1.toString());
-                Log.i("Algorithm", "P: "  + P.toString());*/
-                return OutSignals;
-            }
-
-            @Override
-            public double[] OutGraphSignals(
-                    double[] Parameters,
-                    double[][] Generated,
-                    double[][] Input,
-                    double[][] Output
-            )
-            {
-                double[] Trajectories = new double[13];
-                DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
-                Equation eq = new Equation();
-                A_D = new DMatrixRMaj(2,2);
-                B_D = new DMatrixRMaj(2,1);
-                C = new DMatrixRMaj(1,2);
-                D = new DMatrixRMaj(1,1);
-                A_C = new DMatrixRMaj(2,2);
-                B_C = new DMatrixRMaj(2,1);
-                //R = new DMatrixRMaj(2,2);
-
-                A_D.set(0, 0, 0);
-                A_D.set(0, 1, 1);
-                A_D.set(1, 0, -Output[25+5][0]);
-                A_D.set(1, 1, -Output[25+4][0]);
-
-                B_D.set(0,0,0);
-                B_D.set(1,0,1);
-
-                C.set(0,0, Output[25+3][0] - Output[25+5][0]*Output[25+1][0]);
-                C.set(0,1, Output[25+2][0] - Output[25+4][0]*Output[25+1][0]);
-
-                D.set(0,0, Output[25+1][0]);
-
-                eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
-                eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
-                eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
-                CommonOps_DDRM.scale(1/Model.T_SForModel, A_C);
-                eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
-
-                /*Log.i("Algorithm", "A_C: " + A_C);
-                Log.i("Algorithm", "B_C: " + B_C);
-                Log.i("Algorithm", "C_C: " + C);
-                Log.i("Algorithm", "D_C: " + D);*/
-
-
-
-                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
-                Trajectories[1] = Input[0][0];
-                Trajectories[2] = Output[32][0];
-                for (int i=0; i<5; i++)
-                    Trajectories[3+i] = Output[i+26][0];
-                Trajectories[8] = D.get(0,0);
-                Trajectories[9] = C.get(0,0)*B_C.get(0,0)
-                        + C.get(0,1)*B_C.get(1,0)
-                        - D.get(0,0)*(A_C.get(0,0) + A_C.get(1,1));
-                Trajectories[10] =
-                        C.get(0,0)*(B_C.get(1,0)*A_C.get(0,1) - B_C.get(0,0)*A_C.get(1,1))
-                                + C.get(0,1)*(B_C.get(0,0)*A_C.get(1,0) - B_C.get(1,0)*A_C.get(0,0))
-                                + D.get(0,0)*(A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0));
-                Trajectories[11] = -(A_C.get(0,0) + A_C.get(1,1));
-                Trajectories[12] = A_C.get(0,0)*A_C.get(1,1) - A_C.get(0,1)*A_C.get(1,0);
-                return Trajectories;
-            }
-        };
-        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
-                + ": "
-                +getResources().getStringArray(R.array.NAV_ITEMS_1)[1];
-        Model.NoOfInputs=1;
-        Model.NoOfOutputs=33;
-        Model.NoOfPastInputsRequired = 2;
-        Model.NoOfPastOuputsRequired = 2;
-        Model.NoOfPastGeneratedValuesRequired = 2;
-        Model.OutPut = new double[1];
-        Model.OutPut[0]=0;
-        Model.Images = new int[1];
-        Model.Images[0] = R.drawable.estimates2;
-        //Model.Images[1] = R.drawable.pid;
-        Model.ImageNames = new String[1];
-        Model.ImageNames[0] = "Identification of the first order system";
-        //Model.ImageNames[1] = "Reference Value details";
-        Model.SignalGenerators = new String[3];
-        Model.SignalGenerators[0] = "u_1(t)";
-        Model.SignalGenerators[1] = "u_2(t)";
-        Model.SignalGenerators[2] = "u_3(t)";
-
-        //Figures
-        Model.Figures = new Figure[3];
-        String[] TempTrajectories = new String[3];
-        TempTrajectories[0]= "Reference r(t)";
-        TempTrajectories[1]= "Output y(t)";
-        TempTrajectories[2]= "Validation Output of the system ycap(t)";
-        Model.Figures[0] = new Figure("Input output graph", TempTrajectories);
-        TempTrajectories = new String[5];
-        TempTrajectories[0]= "\u03F4_1 Cap";
-        TempTrajectories[1]= "\u03F4_2 Cap";
-        TempTrajectories[2]= "\u03F4_3 Cap";
-        TempTrajectories[3]= "\u03F4_4 Cap";
-        TempTrajectories[4]= "\u03F4_5 Cap";
-        Model.Figures[1] = new Figure("Identified parameters (\u03F4)", TempTrajectories);
-        TempTrajectories = new String[5];
-        TempTrajectories[0]= "\u03B2_1 Cap";
-        TempTrajectories[1]= "\u03B2_2 Cap";
-        TempTrajectories[2]= "\u03B2_3 Cap";
-        TempTrajectories[3]= "\u03B2_4 Cap";
-        TempTrajectories[4]= "\u03B2_5 Cap";
-        Model.Figures[2] = new Figure("Identified parameters (\u03B2)", TempTrajectories);
-
-        Model.Parameters = new Parameter [2];
-        Model.Parameters[0] = new Parameter("Identification parameters>>\u03C1", 0, 10000, 1000);
-        Model.Parameters[1] = new Parameter("\u03BB", 0, 1, 0.9);
-    }
 
 
     private void shareImage(Bitmap bitmap){
@@ -2330,7 +2353,17 @@ public class MainActivity extends AppCompatActivity {
             try {
                 /*Log.i("Timing", "Obtained: "+Rec);
                 Log.i("Timing", "Extracted: "+Rec);*/
-                RecData[0] = Double.parseDouble(Rec) / 1024 * 5;
+
+
+                switch (getPrefString("bridge_circuit_type", "ARD")) {
+                    case "ARD":
+                        RecData[0] = Double.parseDouble(Rec) / 1024 * 5;
+                        break;
+                    case "PIC":
+                        RecData[0] = Double.parseDouble(Rec);
+                        Log.i("Timing", "PIC data rec:" + RecData[0]);
+                        break;
+                }
                 isValidRead = true;
             } catch (Exception e) {
                 //Log.i("Timing", "Error in parse");
@@ -2353,13 +2386,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private long ConvertFloatToIntForAO (double OutFloat) {
-        return Math.round(OutFloat*51.0);
+        switch (getPrefString("bridge_circuit_type", "ARD")) {
+            case "ARD":
+                return Math.round(OutFloat * 51.0);
+            case "PIC":
+                Log.i("Timing", "PWM: "+Math.round(OutFloat * 204.6));
+                return Math.round(OutFloat * 204.6);
+        }
+        return 0;
     }
 
     private byte[] ConvertToIntTSendBytesForAdio (long Out) {
-        byte[] OutBytes= {'4', 'a',0};
+        byte[] OutBytes= {'4', 'a', 0, 0};
         OutBytes[1] += getPrefInt("bridge_ao_port",5);
-        OutBytes[2] = (byte) (Math.abs(Out) & 0x0ff);
+        switch (getPrefString("bridge_circuit_type", "ARD")) {
+            case "ARD":
+                OutBytes[2] = (byte) (Out & 0x0ff);
+                break;
+            case "PIC":
+                OutBytes[2] = (byte) (Out & 0x0ff);
+                OutBytes[3] = (byte) ((Out>>8) & 0x0ff);
+                Log.i("PIC", "Out ..."+OutBytes[3]);
+                break;
+        }
+
         return OutBytes;
     }
     private byte[] ConvertToIntTSendBytes (long Out) {
