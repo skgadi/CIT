@@ -148,6 +148,8 @@
     <!-- Graph Window -->
     <string name="pref_header_graphs">Graphs</string>
 
+    <string name="pref_graph_refresh_after">Refresh figures after (samples)</string>
+    <string name="pref_graph_refresh_after_desc">To conserve the hardware graph and instantanious values are displayed after a certain number of cycles.</string>
     <string name="pref_graph_collect_size">Retain sample size</string>
     <string name="pref_graph_collect_size_desc">Retains a sample size to display in the graph. Pinch-zoom can be used to change viewing size.</string>
     <string name="pref_graph_window_height">Window height (dp)</string>

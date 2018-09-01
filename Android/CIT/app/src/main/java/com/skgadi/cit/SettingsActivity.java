@@ -191,6 +191,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference("graph_refresh_after"));
             bindPreferenceSummaryToValue(findPreference("graph_collect_size"));
             bindPreferenceSummaryToValue(findPreference("graph_window_height"));
             bindPreferenceSummaryToValue(findPreference("graph_line_thickness"));

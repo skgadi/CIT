@@ -2453,6 +2453,9 @@ public class MainActivity extends AppCompatActivity {
         boolean RequestSend = true;
         boolean IsFirstProgressOutput=true;
         boolean TimeOutError = false;
+
+        double PlotValues[][];
+        int GraphRefreshAfter=0;
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
@@ -2561,32 +2564,17 @@ public class MainActivity extends AppCompatActivity {
                     Input,
                     Output
             );
+
             Model.OutputTime = Model.SimulationTime;
-            String InstantValues;
-            InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
-            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
-                    + Math.round(Model.T_SForModel *1000);
-            int IterationGraphs=0;
-            for (int i=0; i<Model.Figures.length; i++) {
-                for (int j=0; j< Model.Figures[i].Trajectories.length; j++) {
-                    InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + SignalsToPlot[IterationGraphs];
-                    if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
-                            > getPrefInt("graph_collect_size",200))
-                        LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
-                    LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
-                            (float)Model.OutputTime, (float)PutBetweenRange(SignalsToPlot[IterationGraphs],TrajectoryLimits[0], TrajectoryLimits[1]))
-                    );
-                    LineCharts[i].getLineData().notifyDataChanged();
-                    LineCharts[i].notifyDataSetChanged();
-                    LineCharts[i].invalidate();
-                    IterationGraphs++;
-                }
+
+            PlotValues[(int)(Iteration%GraphRefreshAfter)][0] = Model.OutputTime;
+            for (int i=0; i<SignalsToPlot.length; i++) {
+                PlotValues[(int)(Iteration%GraphRefreshAfter)][i+1] = SignalsToPlot[i];
             }
-            if (IsFirstProgressOutput) for (int i=0; i<Model.Figures.length; i++) {
-                IsFirstProgressOutput=false;
-                ConfigFigure(i);
+
+            if (Iteration%GraphRefreshAfter == (GraphRefreshAfter-1) ) {
+                FillLinePoints(GraphRefreshAfter);
             }
-            InstantaneousValues.setText(InstantValues);
         }
 
         @Override
@@ -2622,13 +2610,18 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
+            int PlotsLength=0;
             for (int i=0; i<Model.Figures.length; i++) {
+                PlotsLength+=Model.Figures[i].Trajectories.length;
                 AddPlots(i);
                 if (getPrefBool("graph_zoom_options", false))
                     ZoomOptions[i].setVisibility(View.VISIBLE);
                 else
                     ZoomOptions[i].setVisibility(View.GONE);
             }
+            GraphRefreshAfter = getPrefInt("graph_refresh_after",100);
+            GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
+            PlotValues = new double[GraphRefreshAfter][PlotsLength+1];
         }
         protected double[] GetParameters () {
             double[] ParameterValues = new double[Model.Parameters.length];
@@ -2649,6 +2642,7 @@ public class MainActivity extends AppCompatActivity {
             return array;
         }
         protected void onCancelled() {
+            FillLinePoints((int)Iteration%GraphRefreshAfter);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             SetProperSimulationStatus();
             EnableDrawer();
@@ -2687,6 +2681,38 @@ public class MainActivity extends AppCompatActivity {
             LineCharts[i].getLegend().setTextSize(GraphFontSize);
             LineCharts[i].getLegend().setFormSize(GraphFontSize);
             LineCharts[i].getLegend().setForm(Legend.LegendForm.valueOf(getPrefString("graph_legend_form", "DEFAULT")));
+        }
+        protected void FillLinePoints(int NumbOfPoints) {
+            String InstantValues;
+            InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
+            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
+                    + Math.round(Model.T_SForModel * 1000);
+            for (int k = 0; k < NumbOfPoints; k++) {
+                int IterationGraphs = 0;
+                for (int i = 0; i < Model.Figures.length; i++) {
+                    for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
+                        if (k==0)
+                            InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + PlotValues[k][IterationGraphs+1];
+                        if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
+                                > getPrefInt("graph_collect_size", 200))
+                            LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
+                        LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
+                                (float) PlotValues[k][0], (float) PutBetweenRange(PlotValues[k][IterationGraphs+1], TrajectoryLimits[0], TrajectoryLimits[1]))
+                        );
+                        IterationGraphs++;
+                    }
+                }
+                if (IsFirstProgressOutput) for (int i = 0; i < Model.Figures.length; i++) {
+                    IsFirstProgressOutput = false;
+                    ConfigFigure(i);
+                }
+            }
+            for (int i = 0; i < Model.Figures.length; i++) {
+                LineCharts[i].getLineData().notifyDataChanged();
+                LineCharts[i].notifyDataSetChanged();
+                LineCharts[i].invalidate();
+            }
+            InstantaneousValues.setText(InstantValues);
         }
     }
 }
