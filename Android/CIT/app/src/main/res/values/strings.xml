@@ -123,6 +123,8 @@
     <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
     <string name="pref_sim_tolerance">Tolerance time (ms)</string>
     <string name="pref_sim_tolerance_desc">Simulation stops if your device is incapable of operating in this range.</string>
+    <string name="pref_sim_stop_sim_after">Run simulation for (ms)</string>
+    <string name="pref_sim_stop_sim_after_desc">Simulation stops at the selected value. Enter a negative number to run the simulation for infiniate duration.</string>
     <string name="pref_sim_actual_sampling_time_type">Select actual sampling time type</string>
     <string-array name="pref_sim_actual_sampling_time_type_entries">
         <item>Direct</item>
@@ -153,7 +155,7 @@
     <string name="pref_graph_line_thickness">Line thickness (pixels)</string>
     <string name="pref_graph_line_thickness_desc">Thickness of the lines in the graphs.</string>
     <string name="pref_graph_cubic">Cubic Bézier curve</string>
-    <string name="pref_graph_cubic_desc">Approximates the curve to avoid sharp edges. It is not recommended.</string>
+    <string name="pref_graph_cubic_desc">Approximates the curve to avoid sharp edges. It is not recommended when you want to observe sharp changes.</string>
     <string name="pref_graph_font_size">Font size</string>
     <string name="pref_graph_font_size_desc">Font size of the axis and legend</string>
     <string name="pref_graph_vertical_upper_lower_limit">Upper and lower limits of the horizontal axes (\u00b1)</string>

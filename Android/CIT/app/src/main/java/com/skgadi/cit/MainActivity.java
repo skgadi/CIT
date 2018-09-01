@@ -2540,6 +2540,10 @@ public class MainActivity extends AppCompatActivity {
                     TimeOutError = true;
                     this.cancel(true);
                 }
+                if (getPrefInt("sim_stop_sim_after",-1)>0)
+                    if (Model.SimulationTime>1.0*getPrefInt("sim_stop_sim_after",-1)/1000.0) {
+                        this.cancel(true);
+                    }
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
                 } catch (Exception e) {

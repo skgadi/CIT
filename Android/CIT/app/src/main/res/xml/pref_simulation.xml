@@ -19,6 +19,15 @@
         android:title="@string/pref_sim_tolerance"
         android:dialogMessage="@string/pref_sim_tolerance_desc"/>
 
+    <EditTextPreference
+        android:defaultValue="-1"
+        android:key="sim_stop_sim_after"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="numberSigned"
+        android:title="@string/pref_sim_stop_sim_after"
+        android:dialogMessage="@string/pref_sim_stop_sim_after_desc"/>
+
     <ListPreference
         android:defaultValue="SIM"
         android:entries="@array/pref_sim_actual_sampling_time_type_entries"
