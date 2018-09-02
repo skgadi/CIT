@@ -1545,7 +1545,7 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[13];
+                double[] Trajectories = new double[10];
                 DMatrixRMaj A_D, B_D, C, D, A_C, B_C, R;
                 Equation eq = new Equation();
                 A_D = new DMatrixRMaj(2,2);
@@ -2535,8 +2535,8 @@ public class MainActivity extends AppCompatActivity {
                             Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
                     }
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
+                    publishProgress((int)((Iteration-1)%GraphRefreshAfter));
                     Iteration++;
-                    publishProgress(0);
                 }
                 if ((Time-ReadTimes[0]) >
                         (Model.PlannedT_S + getPrefInt("sim_sampling_tolerance", 1000)/1000.0)) {
@@ -2558,6 +2558,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... Params) {
+            int IndexForAddingPoint = Params[0];
+            //Log.i("Signal", "IndexForAddingPoint: "+IndexForAddingPoint);
             double[] SignalsToPlot = Model.OutGraphSignals(
                     GetParameters(),
                     PreparedSignals,
@@ -2567,12 +2569,13 @@ public class MainActivity extends AppCompatActivity {
 
             Model.OutputTime = Model.SimulationTime;
 
-            PlotValues[(int)(Iteration%GraphRefreshAfter)][0] = Model.OutputTime;
+            //Log.i("Signal", "PlotValues length:"+PlotValues.length+", "+PlotValues[0].length);
+            PlotValues[IndexForAddingPoint][0] = Model.OutputTime;
             for (int i=0; i<SignalsToPlot.length; i++) {
-                PlotValues[(int)(Iteration%GraphRefreshAfter)][i+1] = SignalsToPlot[i];
+                PlotValues[IndexForAddingPoint][i+1] = SignalsToPlot[i];
             }
 
-            if (Iteration%GraphRefreshAfter == (GraphRefreshAfter-1) ) {
+            if (IndexForAddingPoint == (GraphRefreshAfter-1) ) {
                 FillLinePoints(GraphRefreshAfter);
             }
         }

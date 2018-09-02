@@ -53,7 +53,7 @@ public class DocumentationActivity extends AppCompatActivity {
     }
 
     public void OpenFirmwareURL (View v) {
-        Uri uri = Uri.parse("https://raw.githubusercontent.com/skgadi/ControlToolbox/master/Arduino/CIT/latest.pde");
+        Uri uri = Uri.parse("https://raw.githubusercontent.com/skgadi/ControlToolbox/master/Bridge/Arduino/latest.pde");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }

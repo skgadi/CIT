@@ -14,7 +14,7 @@
     <string name="TIME">Time t</string>
     <string name="GRAPH_CAPTION">Figure</string>
     <string name="GRAPHS">Figures</string>
-    <string name="FIRMWARE">Download the firmware for Arduino from:\n\nhttps://github.com/skgadi/ControlToolbox/blob/master/Arduino/ControlToolBox/adio.pde</string>
+    <string name="FIRMWARE">Download the firmware for Arduino from:\n\nhttps://github.com/skgadi/ControlToolbox/blob/master/Bridge/Arduino/latest.pde</string>
     <string name="OPEN_URL">Open in a browser</string>
     <string-array name="NAV_HEADS">
         <item>System response</item>

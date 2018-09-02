@@ -14,5 +14,6 @@ public class ListenerForGraphZoomCheck implements CheckBox.OnCheckedChangeListen
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         lineChart.getAxisLeft().setStartAtZero(b);
+        lineChart.getAxisRight().setStartAtZero(b);
     }
 }
