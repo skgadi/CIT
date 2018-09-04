@@ -43,6 +43,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout ModelView;
     EditText[] ModelParams;
-    TextView InstantaneousValues;
+    TableLayout InstantaneousValues;
     EditText ModelSamplingTime;
     //GraphView[] ModelGraphs;
     LineChart[] LineCharts;
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                         // do something with the clicked item :D
                         AppNavDrawer.closeDrawer();
                         if (GenerateViewFromModel((int)drawerItem.getIdentifier()))
-                                getSupportActionBar().setSubtitle(Model.ModelName);
+                            getSupportActionBar().setSubtitle(Model.ModelName);
                         SetProperSimulationStatus();
                         return true;
                     }
@@ -325,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void AddItemToNavigation(String Name, int Key) {
         AppNavDrawer.addItem(new PrimaryDrawerItem()
-                .withIdentifier(Key)
-                .withName("\u26AB\u0020"+Name)
+                        .withIdentifier(Key)
+                        .withName("\u26AB\u0020"+Name)
                 //.withIcon(FontAwesome.Icon.faw_server)
         );
     }
@@ -370,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
     private void DrawALine(LinearLayout ParentView) {
         View TempView = new View(getApplicationContext());
         TempView.setMinimumHeight(2);
-        TempView.setBackgroundColor(Color.BLACK);
+        TempView.setBackgroundColor(Color.rgb(150, 65, 165));
         ParentView.addView(TempView);
     }
 
@@ -494,8 +496,8 @@ public class MainActivity extends AppCompatActivity {
         TempSwitchForLayout.setChecked(true);
         TempSwitchForLayout.setText(
                 "T_s = "
-                + String.valueOf(getPrefInt("sim_sampling_time", 100))
-                + " ms"
+                        + String.valueOf(getPrefInt("sim_sampling_time", 100))
+                        + " ms"
         );
         TempSwitchForLayout.setTextSize(18);
         TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
@@ -715,8 +717,7 @@ public class MainActivity extends AppCompatActivity {
         TempSwitchForLayout.setTextSize(18);
         TempSwitchForLayout.setTypeface(null, Typeface.BOLD);
         TempSwitchForLayout.setOnCheckedChangeListener(new LayoutSwitch(TempLayout));
-        InstantaneousValues = new TextView(getApplicationContext());
-        InstantaneousValues.setTextColor(Color.BLACK);
+        InstantaneousValues = (TableLayout) getLayoutInflater().inflate(R.layout.gsk_table_layout, null);
         TempLayout.addView(InstantaneousValues);
         ModelView.addView(TempSwitchForLayout);
         ModelView.addView(TempLayout);
@@ -1762,7 +1763,6 @@ public class MainActivity extends AppCompatActivity {
                 CommonOps_DDRM.mult(PhiTranspose, TempMatrix0, TempMatrix1);
                 CommonOps_DDRM.add(TempMatrix1, Lambda);
                 CommonOps_DDRM.invert(TempMatrix1);
-
                 CommonOps_DDRM.mult(PhiTranspose, P_1, TempMatrix2);
                 CommonOps_DDRM.mult(P_1, Phi, TempMatrix3);
                 CommonOps_DDRM.mult(TempMatrix3, TempMatrix2, P);
@@ -2001,7 +2001,6 @@ public class MainActivity extends AppCompatActivity {
                 CommonOps_DDRM.mult(PhiTranspose, TempMatrix0, TempMatrix1);
                 CommonOps_DDRM.add(TempMatrix1, Lambda);
                 CommonOps_DDRM.invert(TempMatrix1);
-
                 CommonOps_DDRM.mult(PhiTranspose, P_1, TempMatrix2);
                 CommonOps_DDRM.mult(P_1, Phi, TempMatrix3);
                 CommonOps_DDRM.mult(TempMatrix3, TempMatrix2, P);
@@ -2184,22 +2183,25 @@ public class MainActivity extends AppCompatActivity {
                 MainScroll.getChildAt(0).getHeight(),
                 Bitmap.Config.RGB_565);
         Canvas c = new Canvas(bitmap);
-        MainScroll.getChildAt(0).draw(c);
+        if (MainScroll.getChildCount()>0) {
+            MainScroll.draw(c);
 
-        View RootView = MainScroll.getRootView();
-        RootView.setDrawingCacheEnabled(true);
-        Bitmap bitmap1 = RootView.getDrawingCache();
+            View RootView = MainScroll.getRootView();
+            RootView.setDrawingCacheEnabled(true);
+            Bitmap bitmap1 = RootView.getDrawingCache();
 
 
-        int actionBarHeight=56;
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+            int actionBarHeight = 56;
+            TypedValue tv = new TypedValue();
+            if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+                actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+            }
+            return combineImagesVertical(
+                    Bitmap.createBitmap(bitmap1, 0, 0, bitmap1.getWidth(), actionBarHeight)
+                    , bitmap);
+        } else {
+            return bitmap;
         }
-        return combineImagesVertical(
-                Bitmap.createBitmap(bitmap1, 0,0,bitmap1.getWidth(), actionBarHeight)
-                , bitmap);
 
     }
     public Bitmap combineImagesVertical(Bitmap one, Bitmap two) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
@@ -2456,6 +2458,8 @@ public class MainActivity extends AppCompatActivity {
 
         double PlotValues[][];
         int GraphRefreshAfter=0;
+
+        TextView TextViewForInstantValues[];
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
@@ -2625,6 +2629,50 @@ public class MainActivity extends AppCompatActivity {
             GraphRefreshAfter = getPrefInt("graph_refresh_after",100);
             GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
             PlotValues = new double[GraphRefreshAfter][PlotsLength+1];
+
+            //Generating view for Instantaneous Values
+            TextViewForInstantValues = new TextView[PlotsLength+2];
+            InstantaneousValues.removeAllViews();
+            TableRow TempTableRow;
+            TextView TempTextView;
+            //Adding Time
+            TempTableRow = (TableRow) getLayoutInflater().inflate(R.layout.gsk_table_row, null);
+            TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTextView.setText(R.string.TIME);
+            TempTableRow.addView(TempTextView);
+            TextViewForInstantValues[0] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTableRow.addView(TextViewForInstantValues[0]);
+            TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTextView.setText("s");
+            TempTableRow.addView(TempTextView);
+            InstantaneousValues.addView(TempTableRow);
+            //Adding Sampling Time
+            DrawALine(InstantaneousValues);
+            TempTableRow = (TableRow) getLayoutInflater().inflate(R.layout.gsk_table_row, null);
+            TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTextView.setText(R.string.ACTUAL_SAMPLING_TIME);
+            TempTableRow.addView(TempTextView);
+            TextViewForInstantValues[1] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTableRow.addView(TextViewForInstantValues[1]);
+            TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+            TempTextView.setText("ms");
+            TempTableRow.addView(TempTextView);
+            InstantaneousValues.addView(TempTableRow);
+            //Adding Other value
+            int TempIteration = 0;
+            for (int i = 0; i < Model.Figures.length; i++) {
+                for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
+                    DrawALine(InstantaneousValues);
+                    TempTableRow = (TableRow) getLayoutInflater().inflate(R.layout.gsk_table_row, null);
+                    TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+                    TempTextView.setText(Model.Figures[i].Trajectories[j]);
+                    TempTableRow.addView(TempTextView);
+                    TextViewForInstantValues[TempIteration+2] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
+                    TempTableRow.addView(TextViewForInstantValues[TempIteration+2]);
+                    InstantaneousValues.addView(TempTableRow);
+                    TempIteration++;
+                }
+            }
         }
         protected double[] GetParameters () {
             double[] ParameterValues = new double[Model.Parameters.length];
@@ -2694,8 +2742,13 @@ public class MainActivity extends AppCompatActivity {
                 int IterationGraphs = 0;
                 for (int i = 0; i < Model.Figures.length; i++) {
                     for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
-                        if (k==0)
-                            InstantValues = InstantValues + "\n" + Model.Figures[i].Trajectories[j] + ": " + PlotValues[k][IterationGraphs+1];
+                        if (k==(NumbOfPoints-1)) {
+                            if (IterationGraphs==0) {
+                                TextViewForInstantValues[0].setText(String.valueOf(Model.OutputTime));
+                                TextViewForInstantValues[1].setText(String.valueOf(Math.round(Model.T_SForModel * 1000)));
+                            }
+                            TextViewForInstantValues[IterationGraphs+2].setText(String.valueOf(PlotValues[k][IterationGraphs + 1]));
+                        }
                         if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
                                 > getPrefInt("graph_collect_size", 200))
                             LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
@@ -2715,7 +2768,6 @@ public class MainActivity extends AppCompatActivity {
                 LineCharts[i].notifyDataSetChanged();
                 LineCharts[i].invalidate();
             }
-            InstantaneousValues.setText(InstantValues);
         }
     }
 }
