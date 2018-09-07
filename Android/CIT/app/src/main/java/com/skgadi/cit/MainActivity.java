@@ -35,7 +35,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -73,8 +72,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -414,10 +411,10 @@ public class MainActivity extends AppCompatActivity {
                 PrepareOpenLoopModel();
                 break;
             case 1:
-                PrepareFirstOrderIdentification();
+                PrepareGeneralFirstOrderIdentification();
                 break;
             case 2:
-                PrepareSecondOrderGeneralIdentification();
+                PrepareGeneralSecondOrderIdentification();
                 break;
             case 3:
                 PrepareFirstOrderWithControllerIdentification();
@@ -1292,6 +1289,171 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
+    private void PrepareGeneralFirstOrderIdentification() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[0] --> u
+                    Output[1] --> P11
+                    Output[2] --> P12
+                    Output[3] --> P13
+                    Output[4] --> P21
+                    Output[5] --> P22
+                    Output[6] --> P23
+                    Output[7] --> P31
+                    Output[8] --> P32
+                    Output[9] --> P33
+                    Output[10] --> Theta_1
+                    Output[11] --> Theta_2
+                    Output[12] --> Theta_3
+                    Output[13] --> K
+                    Output[14] --> Z Cap Calculated
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> z = y
+                    E --> e
+                */
+                DMatrixRMaj Gamma = new DMatrixRMaj(1,1);
+                Gamma.set(0,0,Parameters[1]);
+                double K = Output[7][0];
+                DMatrixRMaj y = new DMatrixRMaj(1,1);
+                y.set(0,0,Input[0][0]);
+                DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
+                y_hat.set(0,0,0);
+
+                DMatrixRMaj z = new DMatrixRMaj(1,1);
+                z.set(0, 0, Input[0][0]);
+                DMatrixRMaj Phi = new DMatrixRMaj(3,1);
+                Phi.set(0, 0, Input[0][1]);
+                Phi.set(1, 0, Output[0][1]);
+                Phi.set(2, 0, Output[0][2]);
+                DMatrixRMaj Theta_1 = new DMatrixRMaj(3,1);
+                Theta_1.set(0,0, Output[10][0]);
+                Theta_1.set(1,0, Output[11][0]);
+                Theta_1.set(2,0, Output[12][0]);
+                DMatrixRMaj P_1 = new DMatrixRMaj(3,3);
+                int MatrixSize = 3;
+                if (K==0) {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, 0);
+                    for (int i=0; i<MatrixSize; i++)
+                        P_1.set(i, i, Parameters[0]);
+                } else {
+                    for (int i=0; i<MatrixSize; i++)
+                        for (int j=0; j<MatrixSize; j++)
+                            P_1.set(i, j, Output[(i*MatrixSize+j+1)][0]);
+                }
+
+
+                DMatrixRMaj P = new DMatrixRMaj(3,3);
+                DMatrixRMaj Theta = new DMatrixRMaj(3,1);
+
+
+                DMatrixRMaj L = new DMatrixRMaj(3,1);
+                Equation eq = new Equation();
+                eq.alias(Theta_1, "Theta_1", Theta, "Theta", P, "P", Phi, "Phi", P_1, "P_1", y, "y", Gamma, "Gamma", L, "L", y_hat, "y_hat");
+                eq.process("y_hat = Phi'*Theta_1");
+                eq.process("Epsilon = y - y_hat");
+                eq.process("P_den = Gamma + Phi'*P_1*Phi");
+                eq.process("L = P_1*Phi/P_den(0,0)");
+                eq.process("P = (P_1 - P_1*Phi*Phi'*P_1/P_den(0,0))/Gamma(0,0)");
+                eq.process("Theta = Theta_1 + L*Epsilon");
+
+
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                OutSignals[1] = P.get(0,0);
+                OutSignals[2] = P.get(0,1);
+                OutSignals[3] = P.get(0,2);
+                OutSignals[4] = P.get(1,0);
+                OutSignals[5] = P.get(1,1);
+                OutSignals[6] = P.get(1,2);
+                OutSignals[7] = P.get(2,0);
+                OutSignals[8] = P.get(2,1);
+                OutSignals[9] = P.get(2,2);
+                OutSignals[10] = Theta.get(0,0);
+                OutSignals[11] = Theta.get(1,0);
+                OutSignals[12] = Theta.get(2,0);
+                OutSignals[13] = K+1;
+                OutSignals[14] = y_hat.get(0,0);
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[9];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Output[14][0];
+                Trajectories[3] = Output[10][0];
+                Trajectories[4] = Output[11][0];
+                Trajectories[5] = Output[12][0];
+                Trajectories[6] = -Math.log(Output[10][0])/Model.T_SForModel;
+                Trajectories[7] = Output[11][0];
+                Trajectories[8] = Trajectories[6]*(Output[13][0]/(1.0-Output[10][0]) + Output[11][0]);
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_1)[0];
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=15;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 2;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.estimates1;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Identification of a first-order system";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "u_1(t)";
+        Model.SignalGenerators[1] = "u_2(t)";
+        Model.SignalGenerators[2] = "u_3(t)";
+
+        //Figures
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[3];
+        TempTrajectories[0]= "u(t)";
+        TempTrajectories[1]= "y(t)";
+        TempTrajectories[2]= "Validation y(t) cap";
+        Model.Figures[0] = new Figure("Input, output and validation", TempTrajectories);
+        TempTrajectories = new String[3];
+        TempTrajectories[0]= "Estimate of \u03B8_1";
+        TempTrajectories[1]= "Estimate of \u03B8_2";
+        TempTrajectories[2]= "Estimate of \u03B8_3";
+        Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
+        TempTrajectories = new String[3];
+        TempTrajectories[0]= "Estimate of \u03B1_0";
+        TempTrajectories[1]= "Estimate of \u03B1_1";
+        TempTrajectories[2]= "Estimate of \u03B1_2";
+        Model.Figures[2] = new Figure("Estimates of \u03B1_0, \u03B1_1 and \u03B1_2", TempTrajectories);
+
+        Model.Parameters = new Parameter [2];
+        Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
+        Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.99);
+    }
+
     private void PrepareFirstOrderIdentification() {
         Model = new Model() {
             @Override
@@ -1646,7 +1808,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("\u03B3", 0, 1, 0.9);
     }
 
-    private void PrepareSecondOrderGeneralIdentification() {
+    private void PrepareGeneralSecondOrderIdentification() {
         Model = new Model() {
             @Override
             public double[] RunAlgorithms(
