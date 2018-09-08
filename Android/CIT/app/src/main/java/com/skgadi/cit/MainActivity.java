@@ -76,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
@@ -139,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
     FunctionGenerator[] GeneratedSignals;
 
     Simulate SimHandle;
+
+    int LinesColor = Color.rgb(150, 65, 165);
 
 
 
@@ -366,10 +369,16 @@ public class MainActivity extends AppCompatActivity {
         return dp;
     }
 
-    private void DrawALine(LinearLayout ParentView) {
+    private void DrawAVLine(LinearLayout ParentView) {
+        View TempVSep = new View(getApplicationContext());
+        TempVSep.setLayoutParams(new TableRow.LayoutParams(2, TableRow.LayoutParams.MATCH_PARENT));
+        TempVSep.setBackgroundColor(LinesColor);
+        ParentView.addView(TempVSep);
+    }
+    private void DrawAHLine(LinearLayout ParentView) {
         View TempView = new View(getApplicationContext());
         TempView.setMinimumHeight(2);
-        TempView.setBackgroundColor(Color.rgb(150, 65, 165));
+        TempView.setBackgroundColor(LinesColor);
         ParentView.addView(TempView);
     }
 
@@ -453,9 +462,9 @@ public class MainActivity extends AppCompatActivity {
         TextView TempTextView;
         LinearLayout TempLayout;
         Switch TempSwitchForLayout;
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         //Add an Image
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         for (int i=0; i<Model.Images.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
@@ -481,10 +490,10 @@ public class MainActivity extends AppCompatActivity {
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
             TempSwitchForLayout.setChecked(false);
-            DrawALine(ModelView);
+            DrawAHLine(ModelView);
         }
         // Sampling Time
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         TempLayout = new LinearLayout(getApplicationContext());
         TempLayout.setOrientation(LinearLayout.VERTICAL);
         TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
@@ -519,10 +528,10 @@ public class MainActivity extends AppCompatActivity {
         ModelView.addView(TempSwitchForLayout);
         ModelView.addView(TempLayout);
         TempSwitchForLayout.setChecked(false);
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         //Parameters
         if (Model.Parameters.length>0) {
-            DrawALine(ModelView);
+            DrawAHLine(ModelView);
             TempLayout = new LinearLayout(getApplicationContext());
             TempLayout.setOrientation(LinearLayout.VERTICAL);
             TempSwitchForLayout = (Switch) getLayoutInflater().inflate(R.layout.gsk_switch, null);
@@ -569,10 +578,10 @@ public class MainActivity extends AppCompatActivity {
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
             TempSwitchForLayout.setChecked(false);
-            DrawALine(ModelView);
+            DrawAHLine(ModelView);
         }
         //Function generator
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         GeneratedSignals = new FunctionGenerator[Model.SignalGenerators.length];
         for (int i=0; i<Model.SignalGenerators.length; i++) {
             TempLayout = new LinearLayout(getApplicationContext());
@@ -646,11 +655,11 @@ public class MainActivity extends AppCompatActivity {
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
             TempSwitchForLayout.setChecked(false);
-            DrawALine(ModelView);
+            DrawAHLine(ModelView);
         }
 
         //Graphs
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
         //ModelGraphs = new GraphView[Model.Figures.length];
         LineCharts = new LineChart[Model.Figures.length];
         ZoomOptions = new LinearLayout[Model.Figures.length];
@@ -699,9 +708,9 @@ public class MainActivity extends AppCompatActivity {
             ModelView.addView(TempSwitchForLayout);
             ModelView.addView(TempLayout);
             TempSwitchForLayout.setChecked(false);
-            DrawALine(ModelView);
+            DrawAHLine(ModelView);
         }
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
 
         //Instantaneous Values
         TempLayout = new LinearLayout(getApplicationContext());
@@ -719,8 +728,8 @@ public class MainActivity extends AppCompatActivity {
         ModelView.addView(TempSwitchForLayout);
         ModelView.addView(TempLayout);
         TempSwitchForLayout.setChecked(false);
-        DrawALine(ModelView);
-        DrawALine(ModelView);
+        DrawAHLine(ModelView);
+        DrawAHLine(ModelView);
 
         //InstantaneousValues
     }
@@ -2621,7 +2630,9 @@ public class MainActivity extends AppCompatActivity {
         double PlotValues[][];
         int GraphRefreshAfter=0;
 
+        int OutputSignalsCount =0;
         TextView TextViewForInstantValues[];
+        String CurrentOutputValuesToDisplay[];
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
@@ -2701,49 +2712,61 @@ public class MainActivity extends AppCompatActivity {
                             Output[i] = PutElementToFIFO(Output[i], TempOutput[i]);
                     }
                     WriteToUSB(PutBetweenRange(Output[0][0], AnalogOutLimits[0], AnalogOutLimits[1]));
-                    publishProgress((int)((Iteration-1)%GraphRefreshAfter));
+
+                    //Preparing output display
+                    CurrentOutputValuesToDisplay[0] = String.valueOf(Time);
+                    CurrentOutputValuesToDisplay[1] = String.format(Locale.US,"%G",(Model.T_SForModel*1000));
+                    double[] SignalsToPlot = Model.OutGraphSignals(
+                            GetParameters(),
+                            PreparedSignals,
+                            Input,
+                            Output
+                    );
+                    for (int i=0; i<OutputSignalsCount; i++)
+                        CurrentOutputValuesToDisplay[2+i] = String.format(Locale.US,"%G",SignalsToPlot[i]);
+                    int IterationGraphs=0;
+                    for (int i = 0; i < Model.Figures.length; i++) {
+                        for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
+                            if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
+                                    > getPrefInt("graph_collect_size", 200))
+                                LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
+                            LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
+                                    (float) Model.SimulationTime, (float) PutBetweenRange(SignalsToPlot[IterationGraphs], TrajectoryLimits[0], TrajectoryLimits[1]))
+                            );
+                            IterationGraphs++;
+                        }
+                    }
+                    if ((Iteration)%GraphRefreshAfter == 0)
+                        publishProgress(0);
+
+                    //Increasing the iteration
                     Iteration++;
                 }
                 if ((Time-ReadTimes[0]) >
                         (Model.PlannedT_S + getPrefInt("sim_sampling_tolerance", 1000)/1000.0)) {
                     TimeOutError = true;
-                    this.cancel(true);
+                    SimHandle.cancel(true);
+                    break;
                 }
                 if (getPrefInt("sim_stop_sim_after",-1)>0)
                     if (Model.SimulationTime>1.0*getPrefInt("sim_stop_sim_after",-1)/1000.0) {
-                        this.cancel(true);
+                        SimHandle.cancel(true);
+                        break;
                     }
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
                 } catch (Exception e) {
                     Model.PlannedT_S = getPrefInt("sim_sampling_time", 100)/1000.0;
                 }
+                GraphRefreshAfter = (int) Math.round(getPrefInt("graph_refresh_after",200)/1000.0/Model.PlannedT_S);
+                GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
             }
             return null;
         }
 
         @Override
         protected void onProgressUpdate(Integer... Params) {
-            int IndexForAddingPoint = Params[0];
-            //Log.i("Signal", "IndexForAddingPoint: "+IndexForAddingPoint);
-            double[] SignalsToPlot = Model.OutGraphSignals(
-                    GetParameters(),
-                    PreparedSignals,
-                    Input,
-                    Output
-            );
-
-            Model.OutputTime = Model.SimulationTime;
-
-            //Log.i("Signal", "PlotValues length:"+PlotValues.length+", "+PlotValues[0].length);
-            PlotValues[IndexForAddingPoint][0] = Model.OutputTime;
-            for (int i=0; i<SignalsToPlot.length; i++) {
-                PlotValues[IndexForAddingPoint][i+1] = SignalsToPlot[i];
-            }
-
-            if (IndexForAddingPoint == (GraphRefreshAfter-1) ) {
-                FillLinePoints(GraphRefreshAfter);
-            }
+            FillLinePoints(GraphRefreshAfter);
         }
 
         @Override
@@ -2779,22 +2802,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            int PlotsLength=0;
             for (int i=0; i<Model.Figures.length; i++) {
-                PlotsLength+=Model.Figures[i].Trajectories.length;
+                OutputSignalsCount +=Model.Figures[i].Trajectories.length;
                 AddPlots(i);
                 if (getPrefBool("graph_zoom_options", false))
                     ZoomOptions[i].setVisibility(View.VISIBLE);
                 else
                     ZoomOptions[i].setVisibility(View.GONE);
             }
-            GraphRefreshAfter = getPrefInt("graph_refresh_after",100);
+            GraphRefreshAfter = (int) Math.round(getPrefInt("graph_refresh_after",200)/1000.0/Model.PlannedT_S);
             GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
-            PlotValues = new double[GraphRefreshAfter][PlotsLength+1];
+            PlotValues = new double[GraphRefreshAfter][OutputSignalsCount +1];
 
             //Generating view for Instantaneous Values
-            TextViewForInstantValues = new TextView[PlotsLength+2];
+            CurrentOutputValuesToDisplay = new String[OutputSignalsCount +2];
+            TextViewForInstantValues = new TextView[OutputSignalsCount +2];
             InstantaneousValues.removeAllViews();
+            DrawAHLine(InstantaneousValues);
+            DrawAHLine(InstantaneousValues);
             TableRow TempTableRow;
             TextView TempTextView;
             //Adding Time
@@ -2802,20 +2827,24 @@ public class MainActivity extends AppCompatActivity {
             TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTextView.setText(R.string.TIME);
             TempTableRow.addView(TempTextView);
+            DrawAVLine(TempTableRow);
             TextViewForInstantValues[0] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTableRow.addView(TextViewForInstantValues[0]);
+            DrawAVLine(TempTableRow);
             TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTextView.setText("s");
             TempTableRow.addView(TempTextView);
             InstantaneousValues.addView(TempTableRow);
             //Adding Sampling Time
-            DrawALine(InstantaneousValues);
+            DrawAHLine(InstantaneousValues);
             TempTableRow = (TableRow) getLayoutInflater().inflate(R.layout.gsk_table_row, null);
             TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTextView.setText(R.string.ACTUAL_SAMPLING_TIME);
             TempTableRow.addView(TempTextView);
+            DrawAVLine(TempTableRow);
             TextViewForInstantValues[1] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTableRow.addView(TextViewForInstantValues[1]);
+            DrawAVLine(TempTableRow);
             TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
             TempTextView.setText("ms");
             TempTableRow.addView(TempTextView);
@@ -2824,13 +2853,15 @@ public class MainActivity extends AppCompatActivity {
             int TempIteration = 0;
             for (int i = 0; i < Model.Figures.length; i++) {
                 for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
-                    DrawALine(InstantaneousValues);
+                    DrawAHLine(InstantaneousValues);
                     TempTableRow = (TableRow) getLayoutInflater().inflate(R.layout.gsk_table_row, null);
                     TempTextView = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
                     TempTextView.setText(Model.Figures[i].Trajectories[j]);
                     TempTableRow.addView(TempTextView);
+                    DrawAVLine(TempTableRow);
                     TextViewForInstantValues[TempIteration+2] = (TextView) getLayoutInflater().inflate(R.layout.gsk_text_view, null);
                     TempTableRow.addView(TextViewForInstantValues[TempIteration+2]);
+                    DrawAVLine(TempTableRow);
                     InstantaneousValues.addView(TempTableRow);
                     TempIteration++;
                 }
@@ -2864,7 +2895,7 @@ public class MainActivity extends AppCompatActivity {
                         getResources().getStringArray(R.array.TOASTS)[14],
                         Toast.LENGTH_LONG).show();
         }
-        protected void AddPlots(int i) {
+        void AddPlots(int i) {
             LineData lineData = new LineData();
             for (int j=0; j<Model.Figures[i].Trajectories.length; j++) {
                 List<Entry> entries = new ArrayList<Entry>();
@@ -2880,7 +2911,7 @@ public class MainActivity extends AppCompatActivity {
             }
             LineCharts[i].setData(lineData);
         }
-        protected void ConfigFigure(int i) {
+        void ConfigFigure(int i) {
             LineCharts[i].setMinimumHeight(
                     Math.round(convertDpToPixel(Float.valueOf(getPrefInt("graph_window_height",200)),getApplicationContext()))
             );
@@ -2895,35 +2926,12 @@ public class MainActivity extends AppCompatActivity {
             LineCharts[i].getLegend().setFormSize(GraphFontSize);
             LineCharts[i].getLegend().setForm(Legend.LegendForm.valueOf(getPrefString("graph_legend_form", "DEFAULT")));
         }
-        protected void FillLinePoints(int NumbOfPoints) {
-            String InstantValues;
-            InstantValues = getString(R.string.TIME) + ": " + Model.OutputTime;
-            InstantValues = InstantValues + "\n" + getString(R.string.ACTUAL_SAMPLING_TIME) + ": "
-                    + Math.round(Model.T_SForModel * 1000);
-            for (int k = 0; k < NumbOfPoints; k++) {
-                int IterationGraphs = 0;
-                for (int i = 0; i < Model.Figures.length; i++) {
-                    for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
-                        if (k==(NumbOfPoints-1)) {
-                            if (IterationGraphs==0) {
-                                TextViewForInstantValues[0].setText(String.valueOf(Model.OutputTime));
-                                TextViewForInstantValues[1].setText(String.valueOf(Math.round(Model.T_SForModel * 1000)));
-                            }
-                            TextViewForInstantValues[IterationGraphs+2].setText(String.valueOf(PlotValues[k][IterationGraphs + 1]));
-                        }
-                        if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
-                                > getPrefInt("graph_collect_size", 200))
-                            LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
-                        LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
-                                (float) PlotValues[k][0], (float) PutBetweenRange(PlotValues[k][IterationGraphs+1], TrajectoryLimits[0], TrajectoryLimits[1]))
-                        );
-                        IterationGraphs++;
-                    }
-                }
-                if (IsFirstProgressOutput) for (int i = 0; i < Model.Figures.length; i++) {
-                    IsFirstProgressOutput = false;
-                    ConfigFigure(i);
-                }
+        void FillLinePoints(int NumbOfPoints) {
+            for (int i=0; i<(OutputSignalsCount + 2); i++)
+                TextViewForInstantValues[i].setText(CurrentOutputValuesToDisplay[i]);
+            if (IsFirstProgressOutput) for (int i = 0; i < Model.Figures.length; i++) {
+                IsFirstProgressOutput = false;
+                ConfigFigure(i);
             }
             for (int i = 0; i < Model.Figures.length; i++) {
                 LineCharts[i].getLineData().notifyDataChanged();

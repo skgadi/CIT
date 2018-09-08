@@ -21,7 +21,7 @@ public abstract class Model {
     public int NoOfPastOuputsRequired;
     public int NoOfPastGeneratedValuesRequired;
     public double SimulationTime;
-    public double OutputTime;
+    //public double OutputTime;
     public abstract double[] RunAlgorithms(
             double[] Parameters,
             double[][] Generated,
