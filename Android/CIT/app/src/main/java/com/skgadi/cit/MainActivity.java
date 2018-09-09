@@ -1341,9 +1341,9 @@ public class MainActivity extends AppCompatActivity {
                 DMatrixRMaj z = new DMatrixRMaj(1,1);
                 z.set(0, 0, Input[0][0]);
                 DMatrixRMaj Phi = new DMatrixRMaj(3,1);
-                Phi.set(0, 0, Input[0][1]);
+                Phi.set(0, 0, Output[0][0]);
                 Phi.set(1, 0, Output[0][1]);
-                Phi.set(2, 0, Output[0][2]);
+                Phi.set(2, 0, Input[0][1]);
                 DMatrixRMaj Theta_1 = new DMatrixRMaj(3,1);
                 Theta_1.set(0,0, Output[10][0]);
                 Theta_1.set(1,0, Output[11][0]);
@@ -1408,15 +1408,16 @@ public class MainActivity extends AppCompatActivity {
             )
             {
                 double[] Trajectories = new double[9];
+                double Theta_3_star = (Output[12][0]>0.01?Output[12][0]:0.01);
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
                 Trajectories[2] = Output[14][0];
                 Trajectories[3] = Output[10][0];
                 Trajectories[4] = Output[11][0];
                 Trajectories[5] = Output[12][0];
-                Trajectories[6] = -Math.log(Output[10][0])/Model.T_SForModel;
-                Trajectories[7] = Output[11][0];
-                Trajectories[8] = Trajectories[6]*(Output[13][0]/(1.0-Output[10][0]) + Output[11][0]);
+                Trajectories[6] = Output[10][0];
+                Trajectories[8] = -Math.log(Theta_3_star)/Model.T_SForModel;
+                Trajectories[7] = Trajectories[8]*((Output[11][0]+Output[10][0]*Output[12][0])/(1-Output[12][0])+Output[10][0]);
                 return Trajectories;
             }
         };
@@ -1453,10 +1454,10 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[2]= "Estimate of \u03B8_3";
         Model.Figures[1] = new Figure("Estimate of \u03B8", TempTrajectories);
         TempTrajectories = new String[3];
-        TempTrajectories[0]= "Estimate of \u03B1_0";
-        TempTrajectories[1]= "Estimate of \u03B1_1";
-        TempTrajectories[2]= "Estimate of \u03B1_2";
-        Model.Figures[2] = new Figure("Estimates of \u03B1_0, \u03B1_1 and \u03B1_2", TempTrajectories);
+        TempTrajectories[0]= "Estimate of \u03B1_1";
+        TempTrajectories[1]= "Estimate of \u03B1_2";
+        TempTrajectories[2]= "Estimate of \u03B1_3";
+        Model.Figures[2] = new Figure("Estimates of \u03B1_1, \u03B1_2 and \u03B1_3", TempTrajectories);
 
         Model.Parameters = new Parameter [2];
         Model.Parameters[0] = new Parameter("Parameters of the Least Squares method>>\u03C1", 0, 10000, 1000);
@@ -2005,7 +2006,7 @@ public class MainActivity extends AppCompatActivity {
 
                 eq.alias(A_D, "A_D", B_D, "B_D", A_C, "A_C", B_C, "B_C");
                 eq.process("R = (A_D - eye(2))*inv(A_D + eye(2))");
-                eq.process("A_C = 2*R*(eye(2) - 8/21*R*R - 4/105*R*R*R*R)*inv(eye(2) - 5/7*R*R)");
+                eq.process("A_C = 2*R*(eye(2) - 8/21.0*R*R - 4/105.0*R*R*R*R)*inv(eye(2) - 5/7.0*R*R)");
                 CommonOps_DDRM.scale(1/Model.T_SForModel, A_C);
                 eq.process("B_C = A_C * inv(A_D-eye(2)) * B_D");
 
