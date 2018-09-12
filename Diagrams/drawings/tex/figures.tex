@@ -126,8 +126,8 @@
 		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
-			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
-			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\boldsymbol{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+			\boldsymbol{P}(k) &=\dfrac{1}{\gamma}\left[\boldsymbol{P}(k-1)-\dfrac{\boldsymbol{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\boldsymbol{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\boldsymbol{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
 			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
 			\end{align}
 		};
@@ -262,7 +262,7 @@
 		(SummingPoint);
 		\draw [arrow] (SummingPoint) -- (Output);
 		\draw [arrow] (SummingPoint) |- node[pos=0.98, anchor=north west]{$e_m(t)$} (Adaptation);
-		\draw [arrow] (Adaptation) -| node [pos=1, anchor=north east]{${{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t)$, $\dot{\hat{L}}(t)$}(35mm,-30mm) |- (Control1);
+		\draw [arrow] (Adaptation) -| node [pos=1, anchor=north east]{${{\overset{.}{\mathop{\widehat{\boldsymbol{K}}}}\,}_{c}}(t)$, $\dot{\hat{L}}(t)$}(35mm,-30mm) |- (Control1);
 		\draw [arrow] (PlantRight) |- (35mm,-9mm) |- (Control2);
 		
 		\node [above right = 0.1 of RefModel.east]{$y_m(t)$};
@@ -271,24 +271,24 @@
 		
 		\node (Equation000) [text width = 17cm, below = 1.25cm of Adaptation, align = left] {
 			Model:
-			\[{{\overset{.}{\mathop{\mathbf{x}}}\,}_{m}}(t)={{{\mathbf{A}}}_{mc}}{{\mathbf{x}}_{m}}(t)+{{{\mathbf{B}}}_{mc}}r(t)\]
-			\[{{\mathbf{A}}_{mc}}=\left[ \begin{matrix}
+			\[{{\overset{.}{\mathop{\boldsymbol{x}}}\,}_{m}}(t)={{{\boldsymbol{A}}}_{mc}}{{\boldsymbol{x}}_{m}}(t)+{{{\boldsymbol{B}}}_{mc}}r(t)\]
+			\[{{\boldsymbol{A}}_{mc}}=\left[ \begin{matrix}
 			0 & 1  \\
 			-{{\beta }_{0m}} & -{{\beta }_{1m}}  \\
-			\end{matrix} \right],\qquad {{\mathbf{B}}_{mc}}=\left[ \begin{matrix}
+			\end{matrix} \right],\qquad {{\boldsymbol{B}}_{mc}}=\left[ \begin{matrix}
 			0  \\
 			{{\beta }_{2m}}  \\
-			\end{matrix} \right],\qquad {{\mathbf{x}}_{m}}(t)={{[{{y}_{m}}(t),\ {{\dot{y}}_{m}}(t)]}^{T}}\]
+			\end{matrix} \right],\qquad {{\boldsymbol{x}}_{m}}(t)={{[{{y}_{m}}(t),\ {{\dot{y}}_{m}}(t)]}^{T}}\]
 			
 			Control law:\\
-			\[u(t)={{\widehat{\mathbf{K}}}_{c}}(t)\mathbf{x}(t)+\hat{L}(t)r(t)\]	
+			\[u(t)={{\widehat{\boldsymbol{K}}}_{c}}(t)\boldsymbol{x}(t)+\hat{L}(t)r(t)\]	
 			Adaptation law:\\
 			\begin{align}
-			{{\overset{.}{\mathop{\widehat{\mathbf{K}}}}\,}_{c}}(t) &=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t){{\mathbf{x}}^{T}}(t)\nonumber\\
-			\dot{\hat{L}}(t)&=\gamma \mathbf{B}_{mc}^{T}\mathcal{P}\mathbf{E}(t)r(t)\nonumber
+			{{\overset{.}{\mathop{\widehat{\boldsymbol{K}}}}\,}_{c}}(t) &=\gamma \boldsymbol{B}_{mc}^{T}\mathcal{P}\boldsymbol{E}(t){{\boldsymbol{x}}^{T}}(t)\nonumber\\
+			\dot{\hat{L}}(t)&=\gamma \boldsymbol{B}_{mc}^{T}\mathcal{P}\boldsymbol{E}(t)r(t)\nonumber
 			\end{align}
-			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\mathbf{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\mathbf{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$, and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$  satisfies:
-			\[\mathbf{A}_{mc}^{T}\mathcal{P}+\mathcal{P}\mathbf{A}_{mc}^{T}=-{{\mathbf{I}}_{2x2}}\]
+			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\boldsymbol{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\boldsymbol{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$, and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$  satisfies:
+			\[\boldsymbol{A}_{mc}^{T}\mathcal{P}+\mathcal{P}\boldsymbol{A}_{mc}^{T}=-{{\boldsymbol{I}}_{2x2}}\]
 			
 		};
 		\end{tikzpicture}
@@ -300,16 +300,19 @@
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Excitation) [align=center] {Excitation\\$u(t)=u_1(t)+u_2(t)+u_3(t)$};
-		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\alpha_1}{s+\alpha_0}$};
+		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\alpha_1s + \alpha_2}{s+\alpha_3}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
+		\node (Identification) [block, text width = 8.5cm, below = 4.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
-			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
-			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
-			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			& \widehat{\boldsymbol{\theta }}(k)=\widehat{\boldsymbol{\theta }}(k-1)+L(k)\epsilon (k) \nonumber\\
+			& L(k)=\frac{\boldsymbol{P}(k-1)\phi (k)}{\gamma +{{\phi }^{T}}(k)\boldsymbol{P}(k-1)\phi (k)} \nonumber\\ 
+			& \boldsymbol{P}(k)=\frac{1}{\gamma }\left[ \boldsymbol{P}(k-1)-\frac{\boldsymbol{P}(k-1)\phi (k)\phi {{(k)}^{T}}\boldsymbol{P}(k-1)}{\gamma +{{\phi }^{T}}(k)\boldsymbol{P}(k-1)\phi (k)} \right] \nonumber\\ 
+			& \epsilon (k)=y(k)-\overset{\scriptscriptstyle\frown}{y}(k) \nonumber\\ 
+			& \overset{\scriptscriptstyle\frown}{y}(k)={{\phi }^{T}}(k)\widehat{\boldsymbol{\theta }}(k-1)  \nonumber
 			\end{align}
+			
 		};
 		\node (Output) [right = of Plant, right = 2cm, align=center] {Output\\$y(t)$};
 		\node (CapValues) [right = of Identification, right = 2cm, align=center] {Estimates\\$\hat{\theta}(k)$};
@@ -321,26 +324,34 @@
 		\draw [arrow] (PlantRight) -- +(0, -1.25) -| +(-7,-1.25) |- (Identification1);
 		\draw [arrow] (PlantLeft) |- (Identification2);
 		\draw [arrow] (Identification) -- (CapValues);
-		\node (Equation000) [text width = 12cm, below = 1cm of Identification, align = left] {
-			$\mathbf{P}(0) = \mathbf{P_0} = \mathbf{P_0}^\intercal>0$, $\mathbf{P_0} = \rho
+		\node (Equation000) [text width = 15cm, below = 1cm of Identification, align = left] {
+			$\boldsymbol{P}(0) = \boldsymbol{P_0} = \boldsymbol{P_0}^\intercal>0$, $\boldsymbol{P_0} = \rho
 			\begin{bmatrix}
-			1 & 0 \\
-			0 & 1
+			1 & 0 & 0 \\
+			0 & 1 & 0 \\
+			0 & 0 & 1 
 			\end{bmatrix}$,
 			$\boldsymbol{\phi} = \begin{bmatrix}
-			y(k-1) &
-			u(k-1)
+			u(k) &
+			u(k-1) &
+			y(k-1)
 			\end{bmatrix}^\intercal$, \\
 			$\boldsymbol{\theta} = \begin{bmatrix}
 			\theta_1 &
-			\theta_2
+			\theta_2 &
+			\theta_3
 			\end{bmatrix}^\intercal$,
 			$\hat{\boldsymbol{\theta}} = \begin{bmatrix}
 			\hat{\theta}_1 &
-			\hat{\theta}_2
-			\end{bmatrix}^\intercal$,
-			$\hat{\alpha}_0 = \frac{-\ln{\hat{\theta_1}}}{T_S}$,
-			$\hat{\alpha}_1 = \frac{\hat{\alpha}_0\hat{\theta_2}}{1-\hat{\theta_1}}$, and \\$T_S$ is sampling time.
+			\hat{\theta}_2 &
+			\hat{\theta}_3
+			\end{bmatrix}^\intercal$,\\
+			${{\hat{\alpha }}_{1}}(k)={{\hat{\theta }}_{1}}(k)$, ${{\hat{\alpha }}_{2}}(k)={{\hat{\alpha }}_{3}}(k)\left[ \frac{{{{\hat{\theta }}}_{2}}(k)+{{{\hat{\theta }}}_{1}}(k){{{\hat{\theta }}}_{3}}(k)}{1-{{{\hat{\theta }}}_{3}}(k)}+{{{\hat{\theta }}}_{1}}(k) \right]$, ${{\hat{\alpha }}_{3}}(k)=-\frac{\text{ln}({{{\hat{\theta }}}_{3*}}(k))}{{{T}_{s}}}$,\\
+			${{\hat{\theta }}_{3*}}(k)=\left\{ \begin{matrix}
+			{{{\hat{\theta }}}_{3}}(k) & \text{if} & {{{\hat{\theta }}}_{3}}(k)>0.01  \\
+			0.01 & \text{if} & {{{\hat{\theta }}}_{3*}}(k)\le 0.01  \\
+			\end{matrix} \right.$
+			and $T_S$ is sampling time.
 		};
 		\end{tikzpicture}
 		\caption{First order system identification}
@@ -351,16 +362,19 @@
 		\centering
 		\begin{tikzpicture}[node distance = 10mm, auto]
 		\node (Excitation) [align=center] {Excitation\\\\$u(t)=u_1(t)+u_2(t)+u_3(t)$};
-		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\beta_2}{s^2 + \beta_1s + \beta_0}$};
+		\node (Plant) [block, text width = 5cm, right = of Excitation, right = 2cm] {Plant \\[0.3cm] $G(s) = \frac{\beta_1s^2+\beta_2s + \beta_3}{s^2 + \beta_4s + \beta_5}$};
 		\node (PlantRight) [support, right = of Plant, right = 1cm, fill,circle,scale=0.3] {};
 		\node (PlantLeft) [support, left = of Plant, left = 1cm, fill,circle,scale=0.3] {};
-		\node (Identification) [block, text width = 8.5cm, below = 3.5 of Plant.west, anchor=west] {Least Squares identification method
+		\node (Identification) [block, text width = 8.5cm, below = 4.5 of Plant.west, anchor=west] {Least Squares identification method
 			\\[0.1cm]
 			\begin{align}
-			\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
-			\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
-			\epsilon(k) &=y(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
+			& \widehat{\boldsymbol{\theta }}(k)=\widehat{\boldsymbol{\theta }}(k-1)+L(k)\epsilon (k) \nonumber\\
+			& L(k)=\frac{\boldsymbol{P}(k-1)\phi (k)}{\gamma +{{\phi }^{T}}(k)\boldsymbol{P}(k-1)\phi (k)} \nonumber\\ 
+			& \boldsymbol{P}(k)=\frac{1}{\gamma }\left[ \boldsymbol{P}(k-1)-\frac{\boldsymbol{P}(k-1)\phi (k)\phi {{(k)}^{T}}\boldsymbol{P}(k-1)}{\gamma +{{\phi }^{T}}(k)\boldsymbol{P}(k-1)\phi (k)} \right] \nonumber\\ 
+			& \epsilon (k)=y(k)-\overset{\scriptscriptstyle\frown}{y}(k) \nonumber\\ 
+			& \overset{\scriptscriptstyle\frown}{y}(k)={{\phi }^{T}}(k)\widehat{\boldsymbol{\theta }}(k-1)  \nonumber
 			\end{align}
+			
 		};
 		\node (Output) [right = of Plant, right = 2cm, align=center] {Output\\$y(t)$};
 		\node (CapValues) [right = of Identification, right = 2cm, align=center] {Estimates\\$\hat{\theta}(k)$};
@@ -374,60 +388,65 @@
 		\draw [arrow] (Identification) -- (CapValues);
 		\node (Equation000) [text width = 15cm, below = 1cm of Identification, align = left] {
 			Discretized plant model:
-			$y(k)=\theta_{1}y(k-1)+\theta_{2}y(k-2)+\theta_{3}u(k-1)+\theta_{4}u(k-2)=\boldsymbol{ \phi}^{T}(k)\boldsymbol{ \theta}$, \\
-			$\boldsymbol{ \theta}=[\theta_{1}, \ \theta_{2}, \ \theta_{3}, \ \theta_{4}]^{T}$,\\
-			$\boldsymbol{ \phi}(k)=[y(k-1), \ y(k-2), \ u(k-1), \ u(k-2)]^{T}$,\\
-			$\hat{\boldsymbol{ \theta}}(k)=[\hat{\theta}_{1}(k), \ \hat{\theta}_{2}(k), \ \hat{\theta}_{3}(k), \ \hat{\theta}_{4}(k)]^{T}$,\\
+			\begin{align}
+			& y(k)={{\theta }_{1}}u(k)+{{\theta }_{2}}u(k-1)+{{\theta }_{3}}u(k-2)-{{\theta }_{4}}y(k-1)-{{\theta }_{5}}y(k-2)={{\phi }^{T}}(k)\boldsymbol{\theta } \nonumber\\ 
+			& \boldsymbol{\theta }={{[{{\theta }_{1}},\ {{\theta }_{2}},\ {{\theta }_{3}},\ {{\theta }_{4}},{{\theta }_{5}}]}^{T}},\qquad \phi (k)={{[u(k),u(k-1),\ u(k-2),-y(k-1),\ -y(k-2)]}^{T}} \nonumber
+			\end{align}
+			
+			$\hat{\boldsymbol{ \theta}}(k)=[\hat{\theta}_{1}(k), \ \hat{\theta}_{2}(k), \ \hat{\theta}_{3}(k), \ \hat{\theta}_{4}(k), \ \hat{\theta}_{5}(k)]^{T}$,\\
 			$T_S$ is sampling time, \\
 			$\boldsymbol{P}(0) = \boldsymbol{P_0} = \boldsymbol{P_0}^\intercal>0$,
 			$\boldsymbol{P_0} = \rho
 			\begin{bmatrix}
-				1 & 0 & 0 & 0 \\
-				0 & 1 & 0 & 0 \\
-				0 & 0 & 1 & 0 \\
-				0 & 0 & 0 & 1 		
+				1 & 0 & 0 & 0 & 0 \\
+				0 & 1 & 0 & 0 & 0 \\
+				0 & 0 & 1 & 0 & 0 \\
+				0 & 0 & 0 & 1 & 0 \\
+				0 & 0 & 0 & 0 & 1 \\
 			\end{bmatrix}$.\\
 			Discretized plant model in state space:\\
 			\begin{align}
-			\mathbf{x}(k+1)&=\hat{\mathbf{A}}_{d}\mathbf{x}(k)+\hat{\mathbf{B}}_{d}u(k) \nonumber\\ 
-			y(k+1)&=\hat{\mathbf{C}}_{d}\mathbf{x}(k) \nonumber
+			\boldsymbol{x}(k+1)&=\hat{\boldsymbol{A}}_{d}\boldsymbol{x}(k)+\hat{\boldsymbol{B}}_{d}u(k) \nonumber\\ 
+			y(k+1)&=\hat{\boldsymbol{C}}_{d}\boldsymbol{x}(k) +\hat{{D}}_{d}u(k)\nonumber
 			\end{align}\\
 			where 
-			\[\hat{\mathbf{A}}_{d}=\left[    
+			\[\hat{\boldsymbol{A}}_{d}=\left[    
 			\begin{array}{cc}
 			0 & 1 \\
-			-\hat{\theta}_{2} & -\hat{\theta}_{1}
+			-\hat{\theta}_{5} & -\hat{\theta}_{4}
 			\end{array}
 			\right], \qquad
-			\hat{\mathbf{B}}_{d}=\left[    
+			\hat{\boldsymbol{B}}_{d}=\left[    
 			\begin{array}{c}
 			0  \\
 			1
 			\end{array}
 			\right], \qquad
-			\hat{\mathbf{C}}_{d}=[\hat{\theta}_{4}, \ \hat{\theta}_{3}]\].
+			\hat{\boldsymbol{C}}_{d}=[{{\hat{\theta }}_{3}}-{{\hat{\theta }}_{5}}{{\hat{\theta }}_{1}},\ {{\hat{\theta }}_{2}}-{{\hat{\theta }}_{4}}{{\hat{\theta }}_{1}}],\qquad
+			 {{\widehat{\text{D}}}_{d}}={{\hat{\theta }}_{1}}\].
 			Estimated continuous model is:
 			\begin{align}
-				\overset{.}{\mathop{\mathbf{x}}}\,(t)&={{\widehat{\mathbf{A}}}_{c}}x(t)+{{\widehat{\mathbf{B}}}_{c}}u(t) \nonumber \\ 
-				y(t)&={{\widehat{\mathbf{C}}}_{c}}\mathbf{x}(t) \nonumber
+				\overset{.}{\mathop{\boldsymbol{x}}}\,(t)&={{\widehat{\boldsymbol{A}}}_{c}}x(t)+{{\widehat{\boldsymbol{B}}}_{c}}u(t) \nonumber \\ 
+				y(t)&={{\widehat{\boldsymbol{C}}}_{c}}\boldsymbol{x}(t)+{{\widehat{{D}}}_{c}}u(t) \nonumber
 			\end{align}
-			
 			where
-			
 			\begin{align}
 			& {{\widehat{\mathbf{A}}}_{c}}=\left[ \begin{matrix}
 			{{a}_{11}} & {{a}_{12}}  \\
 			{{a}_{21}} & {{a}_{22}}  \\
-			\end{matrix} \right]=\frac{2}{T}\mathbf{R}\left[ {{\mathbf{I}}_{2x2}}-\frac{8}{21}{{\mathbf{R}}^{2}}-\frac{4}{105}{{\mathbf{R}}^{4}} \right]{{\left[ {{\mathbf{I}}_{2x2}}-\frac{5}{7}{{\mathbf{R}}^{2}} \right]}^{-1}} \nonumber\\ 
+			\end{matrix} \right]=\frac{2}{{{T}_{s}}}\mathbf{R}\left[ {{\mathbf{I}}_{2x2}}-\frac{8}{21}{{\mathbf{R}}^{2}}-\frac{4}{105}{{\mathbf{R}}^{4}} \right]{{\left[ {{\mathbf{I}}_{2x2}}-\frac{5}{7}{{\mathbf{R}}^{2}} \right]}^{-1}} \nonumber\\ 
 			& {{\widehat{\mathbf{B}}}_{c}}=\left[ \begin{matrix}
 			{{b}_{11}}  \\
 			{{b}_{21}}  \\
-			\end{matrix} \right]={{\widehat{\mathbf{A}}}_{c}}{{\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]}^{-1}}{{\widehat{\mathbf{B}}}_{d}},\qquad {{\widehat{\mathbf{C}}}_{c}}=[{{c}_{11}},\ {{c}_{12}}]={{\widehat{\mathbf{C}}}_{d}} \nonumber\\ 
-			& \mathbf{R}=\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]{{\left[ {{\widehat{\mathbf{A}}}_{d}}+{{\mathbf{I}}_{2x2}} \right]}^{-1}} \nonumber 
+			\end{matrix} \right]={{\widehat{\mathbf{A}}}_{c}}{{\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]}^{-1}}{{\widehat{\mathbf{B}}}_{d}},\qquad {{\widehat{\mathbf{C}}}_{c}}=[{{c}_{11}},\ {{c}_{12}}]={{\widehat{\mathbf{C}}}_{d}},\qquad {{\widehat{\text{D}}}_{c}}={{\widehat{\text{D}}}_{d}} \nonumber\\ 
+			& \mathbf{R}=\left[ {{\widehat{\mathbf{A}}}_{d}}-{{\mathbf{I}}_{2x2}} \right]{{\left[ {{\widehat{\mathbf{A}}}_{d}}+{{\mathbf{I}}_{2x2}} \right]}^{-1}} \nonumber
 			\end{align}
-			
 			So, we calculate:
-			\[{{\hat{\beta }}_{0}}(k)={{a}_{11}}{{a}_{22}}-{{a}_{12}}{{a}_{21}},\quad {{\hat{\beta }}_{1}}=-({{a}_{11}}+{{a}_{22}}),\quad {{\hat{\beta }}_{2}}={{c}_{11}}({{b}_{21}}{{a}_{12}}-{{b}_{11}}{{a}_{22}})+{{c}_{12}}({{b}_{11}}{{a}_{21}}-{{b}_{21}}{{a}_{11}})\]
+			\begin{align}
+			& {{{\hat{\beta }}}_{1}}={{\widehat{\text{D}}}_{c}},\quad {{{\hat{\beta }}}_{2}}={{c}_{11}}{{b}_{11}}+{{c}_{12}}{{b}_{21}}-{{\widehat{\text{D}}}_{c}}\left[ {{a}_{11}}+{{a}_{22}} \right], \nonumber\\ 
+			& {{{\hat{\beta }}}_{3}}={{c}_{11}}({{b}_{21}}{{a}_{12}}-{{b}_{11}}{{a}_{22}})+{{c}_{12}}({{b}_{11}}{{a}_{21}}-{{b}_{21}}{{a}_{11}})+{{{\hat{\beta }}}_{5}}{{\widehat{\text{D}}}_{c}},\quad {{{\hat{\beta }}}_{4}}=-({{a}_{11}}+{{a}_{22}}),\quad {{{\hat{\beta }}}_{5}}={{a}_{11}}{{a}_{22}}-{{a}_{12}}{{a}_{21}} \nonumber 
+			\end{align}
+
 		};
 		\end{tikzpicture}
 		\caption{Second order system identification}
@@ -448,8 +467,8 @@
 		\node (Identification) [block, text width = 9cm, below = 2cm of Plant] {Least Squares identification method
 			\\[0.3cm]
 			\begin{align}
-				\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\mathbf{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
-				\mathbf{P}(k) &=\dfrac{1}{\gamma}\left[\mathbf{P}(k-1)-\dfrac{\mathbf{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\mathbf{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\mathbf{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
+				\hat{\boldsymbol{ \theta}}(k) &=\hat{\boldsymbol{ \theta}}(k-1)+\boldsymbol{P}(k)\boldsymbol{ \phi}(k)\epsilon(k) \nonumber\\ 
+				\boldsymbol{P}(k) &=\dfrac{1}{\gamma}\left[\boldsymbol{P}(k-1)-\dfrac{\boldsymbol{P}(k-1)\boldsymbol{ \phi}(k)\boldsymbol{ \phi}(k)^{T}\boldsymbol{P}(k-1)}{\gamma+\boldsymbol{ \phi}^{T}(k)\boldsymbol{P}(k-1)\boldsymbol{ \phi}(k)}\right] \nonumber\\ 
 				e(k) &=z(k)-\boldsymbol{ \phi}^{T}(k)\hat{\boldsymbol{ \theta}}(k-1) \nonumber 
 			\end{align}
 

@@ -55,6 +55,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -78,8 +79,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import me.aflak.arduino.Arduino;
-import me.aflak.arduino.ArduinoListener;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         GenerateViewFromModel(-1);
         //--- USB Connection
         arduino = new Arduino(getApplicationContext(), 115200);
-        arduino.addVendorId(4799);
+        //arduino.addVendorId(4799);
 
         arduino.setArduinoListener(new ArduinoListener() {
             @Override
@@ -286,17 +285,17 @@ public class MainActivity extends AppCompatActivity {
         AppNavDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         String[] ScreensList = getResources().getStringArray(R.array.SCREENS_LIST);
 
-        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[0]);
+        //AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[0]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_0)[0], 0);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
         AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[1]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[0], 1);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[1], 2);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[2], 3);
+        //AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_1)[2], 3);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[2]);
+        //AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[2]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
@@ -328,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
     private void AddItemToNavigation(String Name, int Key) {
         AppNavDrawer.addItem(new PrimaryDrawerItem()
                         .withIdentifier(Key)
-                        .withName("\u26AB\u0020"+Name)
-                //.withIcon(FontAwesome.Icon.faw_server)
+                        .withName(Name)
+                .withIcon(FontAwesome.Icon.faw_star)
         );
     }
 
