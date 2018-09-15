@@ -2674,14 +2674,28 @@ public class MainActivity extends AppCompatActivity {
                             }
                             break;
                         case "WMA":
-                            NumForWMA = NumForWMA + WeightForWMA*ActualT_S[0] - TotalForWMA;
-                            TotalForWMA = TotalForWMA + ActualT_S[0] - ActualT_S[ActualT_S.length-1];
-                            Model.T_SForModel = NumForWMA/DenForWMA;
+                            if (DataPointsForMA>Iteration) {
+                                if (Iteration>1)
+                                    Model.T_SForModel = (ActualT_S[0] + Model.T_SForModel*(Iteration-1))/Iteration;
+                                else
+                                    Model.T_SForModel = ActualT_S[0];
+                            } else {
+                                NumForWMA = NumForWMA + WeightForWMA * ActualT_S[0] - TotalForWMA;
+                                TotalForWMA = TotalForWMA + ActualT_S[0] - ActualT_S[ActualT_S.length - 1];
+                                Model.T_SForModel = NumForWMA / DenForWMA;
+                            }
                             break;
                         case "EMA":
-                            EMASum = ActualT_S[0] + (1-EMAAlpha)*EMASum;
-                            EMACount = 1 + (1-EMAAlpha)*EMACount;
-                            Model.T_SForModel = EMASum/EMACount;
+                            if (DataPointsForMA>Iteration) {
+                                if (Iteration>1)
+                                    Model.T_SForModel = (ActualT_S[0] + Model.T_SForModel*(Iteration-1))/Iteration;
+                                else
+                                    Model.T_SForModel = ActualT_S[0];
+                            } else {
+                                EMASum = ActualT_S[0] + (1 - EMAAlpha) * EMASum;
+                                EMACount = 1 + (1 - EMAAlpha) * EMACount;
+                                Model.T_SForModel = EMASum / EMACount;
+                            }
                             break;
                         default:
                             break;

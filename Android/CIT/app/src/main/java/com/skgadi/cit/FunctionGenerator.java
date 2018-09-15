@@ -23,7 +23,7 @@ public class FunctionGenerator {
     public double Time;
     public boolean Compliment;
     public double[][] MinMaxDefaultsForFloats = {
-            {0, 5, 0.25}, {0, 5, 0}, {0, 10, 0}, {0, 100, 50}, {-5, 5, 0}
+            {0, 20, 1}, {0, 5, 0}, {0, 10, 0}, {0, 100, 50}, {-5, 5, 0}
     };
     public FunctionGenerator() {
         Type = SignalType.STEP;

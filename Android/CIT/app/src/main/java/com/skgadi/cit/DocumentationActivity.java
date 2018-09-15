@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.skgadi.cit.R;
 
 public class DocumentationActivity extends AppCompatActivity {
@@ -22,6 +24,10 @@ public class DocumentationActivity extends AppCompatActivity {
     private Switch DSwitch02;
     private Switch DSwitch03;
 
+    SubsamplingScaleImageView ImageView01;
+    SubsamplingScaleImageView ImageView02;
+    SubsamplingScaleImageView ImageView03;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,23 +36,25 @@ public class DocumentationActivity extends AppCompatActivity {
 
 
         //Added by SKGadi
+        ImageView02 = findViewById(R.id.imageView2);
+        ImageView03 = findViewById(R.id.imageView3);
+
+        ImageView02.setImage(ImageSource.resource(R.drawable.bridge_circuit_first_order_bb));
+        ImageView03.setImage(ImageSource.resource(R.drawable.bridge_circuit_second_order_bb));
+
         LLayout00 = findViewById(R.id.DocumentLayout00);
-        LLayout01 = findViewById(R.id.DocumentLayout01);
         LLayout02 = findViewById(R.id.DocumentLayout02);
         LLayout03 = findViewById(R.id.DocumentLayout03);
 
         DSwitch00 = findViewById(R.id.Switch00);
-        DSwitch01 = findViewById(R.id.Switch01);
         DSwitch02 = findViewById(R.id.Switch02);
         DSwitch03 = findViewById(R.id.Switch03);
 
         DSwitch00.setOnCheckedChangeListener(new LayoutSwitch(LLayout00));
-        DSwitch01.setOnCheckedChangeListener(new LayoutSwitch(LLayout01));
         DSwitch02.setOnCheckedChangeListener(new LayoutSwitch(LLayout02));
         DSwitch03.setOnCheckedChangeListener(new LayoutSwitch(LLayout03));
 
         DSwitch00.setTextSize(18);
-        DSwitch01.setTextSize(18);
         DSwitch02.setTextSize(18);
         DSwitch03.setTextSize(18);
 

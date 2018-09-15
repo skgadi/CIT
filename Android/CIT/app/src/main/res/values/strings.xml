@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CIT</string>
     <string name="app_name_full">Control &amp; Identification Toolbox</string>
-    <string name="Documentation_Title">Documentation</string>
+    <string name="Documentation_Title">Software and hardware</string>
     <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
     <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order filter for testing the CIT</string>
     <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order filter for testing the CIT</string>
@@ -26,8 +26,8 @@
         <item>System response</item>
     </string-array>
     <string-array name="NAV_ITEMS_1">
-        <item>Open-loop first-order system</item>
-        <item>Open-loop second-order system</item>
+        <item>First-order system</item>
+        <item>Second-order system</item>
         <item>First-order system with integral action</item>
     </string-array>
     <string-array name="NAV_ITEMS_2">
@@ -71,7 +71,7 @@
         <item>Identification of a second order system</item>
         <item>System identification of first order with integral controller</item>
     </string-array>
-    <string name="BUTTON_DOCUMENTATION">Documentation</string>
+    <string name="BUTTON_DOCUMENTATION">Software and hardware</string>
     <string name="BUTTON_SETTINGS">Settings</string>
     <string name="BUTTON_SHARE">Share</string>
     <string name="BUTTON_DOWNLOAD">Download</string>
@@ -104,7 +104,7 @@
         <item>This is not a valid integer number. Enter a number in the range</item>
         <item>Please press any of the buttons to exit this window.</item>
         <item>Bridge circuit is disconnected.</item>
-        <item>Bridge is slow. Simulation is stopped to avoid system hanging. Check the following to troubleshoot. \n1) Flash the bridge circuit with proper firmware. Look into documents for more information.\n2) Disconnect and reconnect the bridge circuit.\n3) If you want more tolerance time, please change in the settings.</item>
+        <item>Bridge is slow. Simulation is stopped to avoid system hanging. Check the following to troubleshoot. \n1) Flash the bridge circuit with proper firmware. Look into Software and hardware section for more information.\n2) Disconnect and reconnect the bridge circuit.\n3) If you want more tolerance time, please change in the settings.</item>
         <item>You cannot complete this without writing permissions to your storage device.</item>
     </string-array>
     <string name="title_activity_settings">Settings</string>

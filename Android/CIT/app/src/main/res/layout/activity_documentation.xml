@@ -67,42 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
-            <Switch
-                android:id="@+id/Switch01"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/DOCUMENT_IMAGE_CAPTION_00" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-            <LinearLayout
-                android:id="@+id/DocumentLayout01"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_00"
-                    android:cropToPadding="false"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/bridge_circuit_bb" />
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
             <Switch
                 android:id="@+id/Switch02"
                 android:layout_width="match_parent"
@@ -119,15 +85,11 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <ImageView
+                <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_01"
-                    android:cropToPadding="false"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/bridge_circuit_first_order_bb" />
+                    android:layout_height="match_parent"
+                    android:minHeight="200dp" />
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -155,15 +117,11 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <ImageView
+                <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
                     android:id="@+id/imageView3"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/DOCUMENT_IMAGE_CAPTION_02"
-                    android:cropToPadding="false"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/bridge_circuit_second_order_bb" />
+                    android:layout_height="match_parent"
+                    android:minHeight="200dp" />
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
