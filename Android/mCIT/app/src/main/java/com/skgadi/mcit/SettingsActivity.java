@@ -222,10 +222,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("bridge_ai_port"));
-            bindPreferenceSummaryToValue(findPreference("bridge_ao_port"));
-            bindPreferenceSummaryToValue(findPreference("bridge_out_limit_lower"));
+            bindPreferenceSummaryToValue(findPreference("bridge_encoder_a"));
+            bindPreferenceSummaryToValue(findPreference("bridge_encoder_b"));
+            bindPreferenceSummaryToValue(findPreference("bridge_ao_port_plus"));
+            bindPreferenceSummaryToValue(findPreference("bridge_ao_port_minus"));
             bindPreferenceSummaryToValue(findPreference("bridge_out_limit_upper"));
+            bindPreferenceSummaryToValue(findPreference("bridge_counts_per_rev"));
+            bindPreferenceSummaryToValue(findPreference("bridge_encoder_max_count"));
+            bindPreferenceSummaryToValue(findPreference("bridge_motor_max_rpm"));
         }
 
         @Override

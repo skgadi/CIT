@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView TextForImageSharing;
     Bitmap bitmap;
 
-    double[] AnalogOutLimits = {0, 5};
+    double[] AnalogOutLimits = {-5, 5};
     double[] TrajectoryLimits = {-10000, 10000};
 
     Toolbar AppToolbar;
@@ -141,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
     Simulate SimHandle;
 
     int LinesColor = Color.rgb(150, 65, 165);
+
+
+    long PrevEncoderValue=0;
 
 
 
@@ -624,7 +627,7 @@ public class MainActivity extends AppCompatActivity {
                 TempTextView.setText(getResources().getStringArray(R.array.SIGNAL_GENERATOR_PARAMETERS)[j]+": ");
                 EditText TempEditText = (EditText) getLayoutInflater().inflate(R.layout.gsk_text_editor, null);
                 TempEditText.setSelectAllOnFocus(true);
-                TempEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                TempEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL| InputType.TYPE_NUMBER_FLAG_SIGNED);
                 /*
                 //This feature can be used when the bridge circuit is ready to handle the negative voltages
                 if (j==4)
@@ -2520,70 +2523,72 @@ public class MainActivity extends AppCompatActivity {
     }
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
-        //Log.i("Timing", "Found New data:" + new String(data));
+        Log.i("Timing", "Found New data:" + new String(data));
         if (Rec.contains("\n") && Rec.contains("\r")) {
+            Log.i("Timing", "Contains \\n \\r.");
             PrevString = "";
             try {
                 /*Log.i("Timing", "Obtained: "+Rec);
                 Log.i("Timing", "Extracted: "+Rec);*/
-
-
-                switch (getPrefString("bridge_circuit_type", "ARD")) {
-                    case "ARD":
-                        RecData[0] = Double.parseDouble(Rec) / 1024 * 5;
-                        break;
-                    case "PIC":
-                        RecData[0] = Double.parseDouble(Rec);
-                        Log.i("Timing", "PIC data rec:" + RecData[0]);
-                        break;
+                long PresEncoderValue=0;
+                int PresentEncoderValue = 0;
+                PresEncoderValue = Math.round(Float.parseFloat(Rec));
+                PresentEncoderValue = (int) ((PresEncoderValue & (0x00ff)) | (PresEncoderValue & (0x00ff00)));
+                if (Math.abs(PresentEncoderValue-PrevEncoderValue)<((getPrefInt("bridge_counts_per_rev", 64)/60.0)*getPrefInt("bridge_motor_max_rpm", 64)))
+                    RecData[0] += ((PresentEncoderValue - PrevEncoderValue)/(getPrefInt("bridge_counts_per_rev", 64)*1.0))*(2*Math.PI); //8384
+                else {
+                    if (PresentEncoderValue>PrevEncoderValue)
+                        RecData[0] += (((PresentEncoderValue - getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("bridge_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
+                    else
+                        RecData[0] += (((PresentEncoderValue + getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("bridge_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
                 }
+                Log.i("Timing", "PrevEncoderValue "+ PrevEncoderValue +"; PresentEncoderValue: "+ PresentEncoderValue +"; RecData: "+RecData[0]);
+                PrevEncoderValue = PresentEncoderValue;
                 isValidRead = true;
             } catch (Exception e) {
-                //Log.i("Timing", "Error in parse");
+                Log.i("Timing", "Error in parse");
             }
         } else if (Purged)
             PrevString = Rec;
     }
 
     private void RequestAIAdio() {
-        byte[] OutBytes= {'3', 'a'};
-        OutBytes[1] += getPrefInt("bridge_ai_port",0);
+        Log.i("Timing", "Sent G0");
+        byte[] OutBytes= {'G', '0'};
         arduino.send(OutBytes);
     }
     private void RequestAI() {
         byte[] OutBytes= {(byte)0x32,0,0,};
         arduino.send(OutBytes);
     }
+
     private void WriteToUSB(double Value) {
-        arduino.send(ConvertToIntTSendBytesForAdio(ConvertFloatToIntForAO(Value)));
+        Log.i("Timing", "Send WriteToUSB");
+        byte[][] SendBytes;
+        SendBytes = ConvertToIntTSendBytesForAdio(ConvertFloatToIntForAO(Value));
+        if (Value>0) {
+            arduino.send(SendBytes[1]);
+            arduino.send(SendBytes[0]);
+        } else {
+
+            arduino.send(SendBytes[0]);
+            arduino.send(SendBytes[1]);
+        }
     }
 
     private long ConvertFloatToIntForAO (double OutFloat) {
-        switch (getPrefString("bridge_circuit_type", "ARD")) {
-            case "ARD":
-                return Math.round(OutFloat * 51.0);
-            case "PIC":
-                Log.i("Timing", "PWM: "+Math.round(OutFloat * 204.6));
-                return Math.round(OutFloat * 204.6);
-        }
-        return 0;
+        return Math.round(OutFloat * 51.0);
     }
 
-    private byte[] ConvertToIntTSendBytesForAdio (long Out) {
-        byte[] OutBytes= {'4', 'a', 0, 0};
-        OutBytes[1] += getPrefInt("bridge_ao_port",5);
-        switch (getPrefString("bridge_circuit_type", "ARD")) {
-            case "ARD":
-                OutBytes[2] = (byte) (Out & 0x0ff);
-                break;
-            case "PIC":
-                OutBytes[2] = (byte) (Out & 0x0ff);
-                OutBytes[3] = (byte) ((Out>>8) & 0x0ff);
-                Log.i("PIC", "Out ..."+OutBytes[3]);
-                break;
-        }
-
-        return OutBytes;
+    private byte[][] ConvertToIntTSendBytesForAdio (long Out) {
+        byte[][] Outers= {{'4', 'a', 0}, {'4', 'a', 0}};
+        Outers[0][1] += getPrefInt("bridge_ao_port_plus",5);
+        Outers[1][1] += getPrefInt("bridge_ao_port_minus",6);
+        if (Out>0)
+            Outers[0][2] = (byte) (Out & 0x0ff);
+        else
+            Outers[1][2] = (byte) ((-Out) & 0x0ff);
+        return Outers;
     }
     private byte[] ConvertToIntTSendBytes (long Out) {
         byte[] OutBytes= {(byte)0x31, 0,0};
@@ -2785,12 +2790,23 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute () {
+            //--- Configuring Encoder
+            int Temp_Encoder_A_Terminal = 0x61 + getPrefInt("bridge_encoder_a", 2);
+            int Temp_Encoder_B_Terminal = 0x61 + getPrefInt("bridge_encoder_b", 3);
+            byte[] EncoderCode = {0x45, 0x30, (byte)Temp_Encoder_A_Terminal, (byte)Temp_Encoder_B_Terminal};
+            arduino.send(EncoderCode);
+            arduino.send(new byte[]{'H', '0'});
+
+            PrevEncoderValue = 0;
+            RecData = new double[] {0, 0, 0};
+
+
             TimeOutError = false;
             DisableDrawer();
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
             IsFirstProgressOutput = true;
-            AnalogOutLimits[0] =  getPrefInt("bridge_out_limit_lower", 0);
+            AnalogOutLimits[0] =  -getPrefInt("bridge_out_limit_upper", 5);
             AnalogOutLimits[1] =  getPrefInt("bridge_out_limit_upper", 5);
             TrajectoryLimits[0] = -getPrefInt("graph_vertical_upper_lower_limit", 10000);
             TrajectoryLimits[1] = getPrefInt("graph_vertical_upper_lower_limit", 10000);

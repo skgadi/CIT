@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:defaultValue="ARD"
-        android:entries="@array/pref_bridge_circuit_type_entries"
-        android:entryValues="@array/pref_bridge_circuit_type_values"
-        android:key="bridge_circuit_type"
-        android:summary="%s"
-        android:title="@string/pref_bridge_circuit_type" />
-
     <EditTextPreference
-        android:defaultValue="0"
-        android:key="bridge_ai_port"
+        android:defaultValue="2"
+        android:key="bridge_encoder_a"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number"
-        android:title="@string/pref_bridge_ai_port"
-        android:dialogMessage="@string/pref_bridge_ai_port_desc"/>
+        android:title="@string/pref_bridge_encoder_a"
+        android:dialogMessage="@string/pref_bridge_encoder_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="3"
+        android:key="bridge_encoder_b"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_bridge_encoder_b"
+        android:dialogMessage="@string/pref_bridge_encoder_desc"/>
 
     <EditTextPreference
         android:defaultValue="5"
-        android:key="bridge_ao_port"
+        android:key="bridge_ao_port_plus"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number"
-        android:title="@string/pref_bridge_ao_port"
+        android:title="@string/pref_bridge_ao_port_plus"
         android:dialogMessage="@string/pref_bridge_ao_port_desc"/>
 
     <EditTextPreference
-        android:defaultValue="0"
-        android:key="bridge_out_limit_lower"
+        android:defaultValue="6"
+        android:key="bridge_ao_port_minus"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:inputType="number"
-        android:title="@string/pref_bridge_out_limit_lower"
-        android:dialogMessage="@string/pref_bridge_out_limit_lower_desc"/>
+        android:title="@string/pref_bridge_ao_port_minus"
+        android:dialogMessage="@string/pref_bridge_ao_port_desc"/>
 
     <EditTextPreference
         android:defaultValue="5"
@@ -43,5 +44,32 @@
         android:inputType="number"
         android:title="@string/pref_bridge_out_limit_upper"
         android:dialogMessage="@string/pref_bridge_out_limit_upper_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="64"
+        android:key="bridge_counts_per_rev"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_bridge_counts_per_rev"
+        android:dialogMessage="@string/pref_bridge_counts_per_rev_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="65535"
+        android:key="bridge_encoder_max_count"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_bridge_encoder_max_count"
+        android:dialogMessage="@string/pref_bridge_encoder_max_count_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="11000"
+        android:key="bridge_motor_max_rpm"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_bridge_motor_max_rpm"
+        android:dialogMessage="@string/pref_bridge_motor_max_rpm_desc"/>
 
 </PreferenceScreen>
