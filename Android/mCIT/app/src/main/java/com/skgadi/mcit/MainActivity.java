@@ -300,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
         //AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[2]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[1], 7);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
         /*AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
@@ -438,6 +439,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 6:
                 PrepareSecondOrderAdaptiveControlModel();
+                break;
+            case 7:
+                PreparePIDModelForVel();
                 break;
             default:
                 FoundItem = false;
@@ -868,6 +872,84 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
         Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
     }
+
+    private void PreparePIDModelForVel() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                double K_P = Parameters[0];
+                double K_I = Parameters[1];
+                double K_D = Parameters[2];
+                double a = K_P + K_I* T_SForModel /2.0 + K_D/ T_SForModel;
+                double b = -K_P + K_I* T_SForModel /2.0 - 2.0*K_D/ T_SForModel;
+                double c = K_D/ T_SForModel;
+                double[] E = new double[3];
+                for (int i=0; i<3; i++)
+                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[1][i]);
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[1] = Output[1][0] + a * E[0] + b * E[1] + c * E[2];
+                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[4];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[1][0];
+                Trajectories[2] = Trajectories[0]-Input[1][0];
+                Trajectories[3] = Output[0][0];
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[2]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_2)[0];
+        Model.NoOfInputs=2;
+        Model.NoOfOutputs=2;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 1;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.pid;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Closed loop system with PID  controller";
+        //Model.ImageNames[1] = "Reference Value details";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "r_1(t)";
+        Model.SignalGenerators[1] = "r_2(t)";
+        Model.SignalGenerators[2] = "r_3(t)";
+        Model.Figures = new Figure[2];
+        String[] TempTrajectories = new String[2];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[1] = new Figure("Error e(t) and Control u(t)", TempTrajectories);
+        Model.Parameters = new Parameter [5];
+        Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
+        Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
+        Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
+        Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
+        Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
+    }
+
 
     private void PrepareFirstOrderAdaptiveControlModel() {
         Model = new Model() {
@@ -1336,16 +1418,16 @@ public class MainActivity extends AppCompatActivity {
                 Gamma.set(0,0,Parameters[1]);
                 double K = Output[7][0];
                 DMatrixRMaj y = new DMatrixRMaj(1,1);
-                y.set(0,0,Input[0][0]);
+                y.set(0,0,Input[1][0]);
                 DMatrixRMaj y_hat = new DMatrixRMaj(1,1);
                 y_hat.set(0,0,0);
 
                 DMatrixRMaj z = new DMatrixRMaj(1,1);
-                z.set(0, 0, Input[0][0]);
+                z.set(0, 0, Input[1][0]);
                 DMatrixRMaj Phi = new DMatrixRMaj(3,1);
                 Phi.set(0, 0, Output[0][0]);
                 Phi.set(1, 0, Output[0][1]);
-                Phi.set(2, 0, Input[0][1]);
+                Phi.set(2, 0, Input[1][1]);
                 DMatrixRMaj Theta_1 = new DMatrixRMaj(3,1);
                 Theta_1.set(0,0, Output[10][0]);
                 Theta_1.set(1,0, Output[11][0]);
@@ -1412,7 +1494,7 @@ public class MainActivity extends AppCompatActivity {
                 double[] Trajectories = new double[9];
                 double Theta_3_star = (Output[12][0]>0.01?Output[12][0]:0.01);
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
-                Trajectories[1] = Input[0][0];
+                Trajectories[1] = Input[1][0];
                 Trajectories[2] = Output[14][0];
                 Trajectories[3] = Output[10][0];
                 Trajectories[4] = Output[11][0];
@@ -1426,7 +1508,7 @@ public class MainActivity extends AppCompatActivity {
         Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[1]
                 + ": "
                 +getResources().getStringArray(R.array.NAV_ITEMS_1)[0];
-        Model.NoOfInputs=1;
+        Model.NoOfInputs=2;
         Model.NoOfOutputs=15;
         Model.NoOfPastInputsRequired = 2;
         Model.NoOfPastOuputsRequired = 2;
@@ -2521,6 +2603,7 @@ public class MainActivity extends AppCompatActivity {
     private void DataRecUpdateAdio (byte[] data) {
 
     }
+    double[] VelCalcPrevForAvg = {0, 0, 0};
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
         Log.i("Timing", "Found New data:" + new String(data));
@@ -2530,8 +2613,10 @@ public class MainActivity extends AppCompatActivity {
             try {
                 /*Log.i("Timing", "Obtained: "+Rec);
                 Log.i("Timing", "Extracted: "+Rec);*/
+
                 long PresEncoderValue=0;
                 int PresentEncoderValue = 0;
+                double PrevRecData = RecData[0];
                 PresEncoderValue = Math.round(Float.parseFloat(Rec));
                 PresentEncoderValue = (int) ((PresEncoderValue & (0x00ff)) | (PresEncoderValue & (0x00ff00)));
                 if (Math.abs(PresentEncoderValue-PrevEncoderValue)<((getPrefInt("bridge_counts_per_rev", 64)/60.0)*getPrefInt("bridge_motor_max_rpm", 64)))
@@ -2542,6 +2627,28 @@ public class MainActivity extends AppCompatActivity {
                     else
                         RecData[0] += (((PresentEncoderValue + getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("bridge_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
                 }
+                RecData[1] = (RecData[0] - PrevRecData)/Model.T_SForModel;
+                switch (getPrefString("bridge_velocity_avg_type", "SIM")) {
+                    case "NONE":
+                    case "HANN":
+                    case "HAMMING":
+                    case "BLACKMAN":
+                    case "BLACKMAN_HARRIS":
+                    case "BLACKMAN_NUTTALL":
+                    case "FLAT_TOP":
+                    case "GAUSS":
+                    case "TRIANGULAR":
+                    case "BARTLETT":
+                    case "BARTLETT_HANN":
+                    case "KAISER":
+                     default:
+                         RecData[1] = 0.35875*RecData[1]
+                                + 0.48829*VelCalcPrevForAvg[0]
+                                + 0.14128*VelCalcPrevForAvg[1]
+                                + 0.01168*VelCalcPrevForAvg[2];
+                        break;
+                }
+                PutElementToFIFO(VelCalcPrevForAvg, RecData[1]);
                 Log.i("Timing", "PrevEncoderValue "+ PrevEncoderValue +"; PresentEncoderValue: "+ PresentEncoderValue +"; RecData: "+RecData[0]);
                 PrevEncoderValue = PresentEncoderValue;
                 isValidRead = true;
@@ -2608,6 +2715,13 @@ public class MainActivity extends AppCompatActivity {
         if (value<MinValue)
             return MinValue;
         return value;
+    }
+    protected double[] PutElementToFIFO (double[] array, double element){
+        for (int i=(array.length-1); i>0; i--) {
+            array[i] = array[i-1];
+        }
+        array[0] = element;
+        return array;
     }
 
     /*
@@ -2907,13 +3021,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return ParameterValues;
-        }
-        protected double[] PutElementToFIFO (double[] array, double element){
-            for (int i=(array.length-1); i>0; i--) {
-                array[i] = array[i-1];
-            }
-            array[0] = element;
-            return array;
         }
         protected void onCancelled() {
             FillLinePoints((int)Iteration%GraphRefreshAfter);

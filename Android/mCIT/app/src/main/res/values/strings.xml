@@ -26,12 +26,13 @@
         <item>System response</item>
     </string-array>
     <string-array name="NAV_ITEMS_1">
-        <item>First-order system</item>
-        <item>Second-order system</item>
+        <item>First-order system (Velocity)</item>
+        <item>Second-order system (Position)</item>
         <item>First-order system with integral action</item>
     </string-array>
     <string-array name="NAV_ITEMS_2">
-        <item>PID controller</item>
+        <item>PID controller for position</item>
+        <item>PID controller for velocity</item>
     </string-array>
     <string-array name="NAV_ITEMS_3">
         <item>First-order system</item>
@@ -197,5 +198,35 @@
     <string name="pref_bridge_encoder_max_count_desc">Enter unsigned maximum counter capacity</string>
     <string name="pref_bridge_motor_max_rpm">Maximum motor RPM</string>
     <string name="pref_bridge_motor_max_rpm_desc">Enter the maximum speed that the motor can achieve in RPM</string>
+    <string name="pref_bridge_velocity_avg_type">Velocity filter</string>
+    <string-array name="pref_bridge_velocity_avg_type_entries">
+        <item>None</item>
+        <item>Hann filter</item>
+        <item>Hamming filter</item>
+        <item>Blackman filter</item>
+        <item>Blackman-Harris filter</item>
+        <item>Blackman-Nuttall filter</item>
+        <item>Flat top filter</item>
+        <item>Gauss filter</item>
+        <item>Triangular filter</item>
+        <item>Bartlett filter</item>
+        <item>Bartlett-Hann filter</item>
+        <item>Kaiser filter</item>
+    </string-array>
+    <string-array name="pref_bridge_velocity_avg_type_values">
+        <item>NONE</item>
+        <item>HANN</item>
+        <item>HAMMING</item>
+        <item>BLACKMAN</item>
+        <item>BLACKMAN_HARRIS</item>
+        <item>BLACKMAN_NUTTALL</item>
+        <item>FLAT_TOP</item>
+        <item>GAUSS</item>
+        <item>TRIANGULAR</item>
+        <item>BARTLETT</item>
+        <item>BARTLETT_HANN</item>
+        <item>KAISER</item>
+    </string-array>
+
 
 </resources>

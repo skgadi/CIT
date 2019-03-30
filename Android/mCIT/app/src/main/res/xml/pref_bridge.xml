@@ -72,4 +72,12 @@
         android:title="@string/pref_bridge_motor_max_rpm"
         android:dialogMessage="@string/pref_bridge_motor_max_rpm_desc"/>
 
+    <ListPreference
+        android:defaultValue="Hann filter"
+        android:entries="@array/pref_bridge_velocity_avg_type_entries"
+        android:entryValues="@array/pref_bridge_velocity_avg_type_values"
+        android:key="bridge_velocity_avg_type"
+        android:summary="%s"
+        android:title="@string/pref_bridge_velocity_avg_type" />
+
 </PreferenceScreen>
