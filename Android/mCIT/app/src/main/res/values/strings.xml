@@ -20,7 +20,7 @@
         <item>System response</item>
         <item>Parameter identification</item>
         <item>Traditional closed-loop control</item>
-        <item>Model Reference Adaptive Control (MRAC)</item>
+        <item>Anti-windup control</item>
     </string-array>
     <string-array name="NAV_ITEMS_0">
         <item>System response</item>
@@ -35,8 +35,8 @@
         <item>PID controller for velocity</item>
     </string-array>
     <string-array name="NAV_ITEMS_3">
-        <item>First-order system</item>
-        <item>Second-order system</item>
+        <item>PID position controller with anti-windup</item>
+        <item>PID velocity controller with anti-windup</item>
     </string-array>
 
     <string-array name="SIM_VIEW_HEADS">

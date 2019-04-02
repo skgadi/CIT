@@ -300,13 +300,13 @@ public class MainActivity extends AppCompatActivity {
 
         //AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[2]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[1], 7);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[1], 5);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        /*AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 5);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
-        AppNavDrawer.addItem(new DividerDrawerItem());*/
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 6);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 7);
+        AppNavDrawer.addItem(new DividerDrawerItem());
+
 
 
         try {
@@ -435,13 +435,13 @@ public class MainActivity extends AppCompatActivity {
                 PreparePIDModel();
                 break;
             case 5:
-                PrepareFirstOrderAdaptiveControlModel();
+                PreparePIDModelForVel();
                 break;
             case 6:
-                PrepareSecondOrderAdaptiveControlModel();
+                PreparePIDAntiWindupModel();
                 break;
             case 7:
-                PreparePIDModelForVel();
+                PreparePIDAntiWindupModelForVel();
                 break;
             default:
                 FoundItem = false;
@@ -915,7 +915,7 @@ public class MainActivity extends AppCompatActivity {
         };
         Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[2]
                 + ": "
-                +getResources().getStringArray(R.array.NAV_ITEMS_2)[0];
+                +getResources().getStringArray(R.array.NAV_ITEMS_2)[1];
         Model.NoOfInputs=2;
         Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 2;
@@ -948,6 +948,192 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
         Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
         Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
+    }
+
+    private void PreparePIDAntiWindupModel() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                double MaxVoltage = getPrefInt("bridge_out_limit_upper", 12);
+                double K_P = Parameters[0];
+                double K_I = Parameters[1];
+                double K_D = Parameters[2];
+                double K_A = Parameters[5];
+                double Beta_1 = 2*K_P*T_SForModel + 2*K_D + K_I*T_SForModel*T_SForModel;
+                double Beta_2 = -2*K_D + 2*K_I*T_SForModel*T_SForModel;
+                double Beta_3 = -2*K_P*T_SForModel + Beta_2;
+                double Beta_4 = 2*K_D;
+                double Beta_5 = T_SForModel*(2 + K_A*T_SForModel);
+                double Beta_6 = -K_A*T_SForModel*T_SForModel;
+                double Beta_7 = T_SForModel*(2 - K_A*T_SForModel);
+                double[] E = new double[4];
+                for (int i=0; i<4; i++)
+                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[1] = (
+                        Beta_6*Output[1][0] + Beta_7*Output[1][1] + Beta_1*E[0] + Beta_2*E[1] + Beta_3*E[2] + Beta_4*E[3]
+                )/Beta_5 + (
+                        Output[2][0] - 2*Output[2][1] + Output[2][2]
+                        )*K_A*T_SForModel*T_SForModel/Beta_5;
+                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
+                OutSignals[2] = OutSignals[1];
+                if (OutSignals[2]>MaxVoltage)
+                    OutSignals[2] = MaxVoltage;
+                if (OutSignals[2]< -MaxVoltage)
+                    OutSignals[2] = -MaxVoltage;
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[4];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Trajectories[0]-Input[0][0];
+                Trajectories[3] = Output[0][0];
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[3]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[0];
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=3;
+        Model.NoOfPastInputsRequired = 4;
+        Model.NoOfPastOuputsRequired = 4;
+        Model.NoOfPastGeneratedValuesRequired = 4;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.pid;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Closed loop system with PID  controller";
+        //Model.ImageNames[1] = "Reference Value details";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "r_1(t)";
+        Model.SignalGenerators[1] = "r_2(t)";
+        Model.SignalGenerators[2] = "r_3(t)";
+        Model.Figures = new Figure[2];
+        String[] TempTrajectories = new String[2];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[1] = new Figure("Error e(t) and Control u(t)", TempTrajectories);
+        Model.Parameters = new Parameter [6];
+        Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
+        Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
+        Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
+        Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
+        Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
+        Model.Parameters[5] = new Parameter("Anti-windup factor>>K_A", 0, 100, 1);
+    }
+
+    private void PreparePIDAntiWindupModelForVel() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                double MaxVoltage = getPrefInt("bridge_out_limit_upper", 12);
+                double K_P = Parameters[0];
+                double K_I = Parameters[1];
+                double K_D = Parameters[2];
+                double K_A = Parameters[5];
+                double Beta_1 = 2*K_P*T_SForModel + 2*K_D + K_I*T_SForModel*T_SForModel;
+                double Beta_2 = -2*K_D + 2*K_I*T_SForModel*T_SForModel;
+                double Beta_3 = -2*K_P*T_SForModel + Beta_2;
+                double Beta_4 = 2*K_D;
+                double Beta_5 = T_SForModel*(2 + K_A*T_SForModel);
+                double Beta_6 = -K_A*T_SForModel*T_SForModel;
+                double Beta_7 = T_SForModel*(2 - K_A*T_SForModel);
+                double[] E = new double[4];
+                for (int i=0; i<4; i++)
+                    E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[1][i]);
+                double [] OutSignals = new double[NoOfOutputs];
+                OutSignals[1] = (
+                        Beta_6*Output[1][0] + Beta_7*Output[1][1] + Beta_1*E[0] + Beta_2*E[1] + Beta_3*E[2] + Beta_4*E[3]
+                )/Beta_5 + (
+                        Output[2][0] - 2*Output[2][1] + Output[2][2]
+                )*K_A*T_SForModel*T_SForModel/Beta_5;
+                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
+                OutSignals[2] = OutSignals[1];
+                if (OutSignals[2]>MaxVoltage)
+                    OutSignals[2] = MaxVoltage;
+                if (OutSignals[2]< -MaxVoltage)
+                    OutSignals[2] = -MaxVoltage;
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[4];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Trajectories[0]-Input[0][0];
+                Trajectories[3] = Output[0][0];
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[3]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[1];
+        Model.NoOfInputs=2;
+        Model.NoOfOutputs=3;
+        Model.NoOfPastInputsRequired = 4;
+        Model.NoOfPastOuputsRequired = 4;
+        Model.NoOfPastGeneratedValuesRequired = 4;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.pid;
+        //Model.Images[1] = R.drawable.pid;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Closed loop system with PID  controller";
+        //Model.ImageNames[1] = "Reference Value details";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "r_1(t)";
+        Model.SignalGenerators[1] = "r_2(t)";
+        Model.SignalGenerators[2] = "r_3(t)";
+        Model.Figures = new Figure[2];
+        String[] TempTrajectories = new String[2];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        Model.Figures[0] = new Figure("Reference r(t) and Output y(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[1] = new Figure("Error e(t) and Control u(t)", TempTrajectories);
+        Model.Parameters = new Parameter [6];
+        Model.Parameters[0] = new Parameter("Controller parameters>>K_P", 0, 100, 1);
+        Model.Parameters[1] = new Parameter("K_I", 0, 10, 10);
+        Model.Parameters[2] = new Parameter("K_D", 0, 1, 0);
+        Model.Parameters[3] = new Parameter("Disturbance parameters>>Constant perturbation (d_1)", -1, 1, 0);
+        Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
+        Model.Parameters[5] = new Parameter("Anti-windup factor>>K_A", 0, 100, 1);
     }
 
 
