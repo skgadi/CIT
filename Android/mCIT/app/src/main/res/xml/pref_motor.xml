@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="64"
+        android:key="motor_counts_per_rev"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_motor_counts_per_rev"
+        android:dialogMessage="@string/pref_motor_counts_per_rev_desc"/>
+
+
+    <EditTextPreference
+        android:defaultValue="11000"
+        android:key="motor_max_rpm"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_motor_max_rpm"
+        android:dialogMessage="@string/pref_motor_max_rpm_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="1"
+        android:key="motor_gear_ratio"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_motor_gear_ratio"
+        android:dialogMessage="@string/pref_motor_gear_ratio_desc"/>
+
+
+</PreferenceScreen>

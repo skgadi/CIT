@@ -146,7 +146,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || SimulationFragment.class.getName().equals(fragmentName)
                 || GraphFragment.class.getName().equals(fragmentName)
-                || BridgeFragment.class.getName().equals(fragmentName);
+                || BridgeFragment.class.getName().equals(fragmentName)
+                || MotorFragment.class.getName().equals(fragmentName);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -227,9 +228,35 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("bridge_ao_port_plus"));
             bindPreferenceSummaryToValue(findPreference("bridge_ao_port_minus"));
             bindPreferenceSummaryToValue(findPreference("bridge_out_limit_upper"));
-            bindPreferenceSummaryToValue(findPreference("bridge_counts_per_rev"));
             bindPreferenceSummaryToValue(findPreference("bridge_encoder_max_count"));
-            bindPreferenceSummaryToValue(findPreference("bridge_motor_max_rpm"));
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class MotorFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_motor);
+            setHasOptionsMenu(true);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            bindPreferenceSummaryToValue(findPreference("motor_counts_per_rev"));
+            bindPreferenceSummaryToValue(findPreference("motor_max_rpm"));
+            bindPreferenceSummaryToValue(findPreference("motor_gear_ratio"));
         }
 
         @Override

@@ -53,5 +53,19 @@
         android:inputType="number"
         android:title="@string/pref_sim_wma_weight"
         android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
+    <ListPreference
+        android:defaultValue="HANN"
+        android:entries="@array/pref_sim_velocity_avg_type_entries"
+        android:entryValues="@array/pref_sim_velocity_avg_type_values"
+        android:key="sim_velocity_avg_type"
+        android:summary="%s"
+        android:title="@string/pref_sim_velocity_avg_type" />
+    <ListPreference
+        android:defaultValue="RPM"
+        android:entries="@array/pref_sim_rotation_unit_entries"
+        android:entryValues="@array/pref_sim_rotation_unit_values"
+        android:key="sim_rotation_unit"
+        android:summary="%s"
+        android:title="@string/pref_sim_rotation_unit" />
 
 </PreferenceScreen>

@@ -45,14 +45,6 @@
         android:title="@string/pref_bridge_out_limit_upper"
         android:dialogMessage="@string/pref_bridge_out_limit_upper_desc"/>
 
-    <EditTextPreference
-        android:defaultValue="64"
-        android:key="bridge_counts_per_rev"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:inputType="number"
-        android:title="@string/pref_bridge_counts_per_rev"
-        android:dialogMessage="@string/pref_bridge_counts_per_rev_desc"/>
 
     <EditTextPreference
         android:defaultValue="65535"
@@ -63,21 +55,5 @@
         android:title="@string/pref_bridge_encoder_max_count"
         android:dialogMessage="@string/pref_bridge_encoder_max_count_desc"/>
 
-    <EditTextPreference
-        android:defaultValue="11000"
-        android:key="bridge_motor_max_rpm"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:inputType="number"
-        android:title="@string/pref_bridge_motor_max_rpm"
-        android:dialogMessage="@string/pref_bridge_motor_max_rpm_desc"/>
-
-    <ListPreference
-        android:defaultValue="Hann filter"
-        android:entries="@array/pref_bridge_velocity_avg_type_entries"
-        android:entryValues="@array/pref_bridge_velocity_avg_type_values"
-        android:key="bridge_velocity_avg_type"
-        android:summary="%s"
-        android:title="@string/pref_bridge_velocity_avg_type" />
 
 </PreferenceScreen>

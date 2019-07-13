@@ -17,4 +17,9 @@
         android:icon="@drawable/icon_bridge"
         android:title="@string/pref_header_bridge" />
 
+    <header
+        android:fragment="com.skgadi.mcit.SettingsActivity$MotorFragment"
+        android:icon="@drawable/ic_settings_purple_24dp"
+        android:title="@string/pref_header_motor" />
+
 </preference-headers>

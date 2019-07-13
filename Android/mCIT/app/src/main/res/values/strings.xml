@@ -118,7 +118,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Simulation window preferences  -->
-    <string name="pref_header_simulation">Simulation</string>
+    <string name="pref_header_simulation">Simulation settings</string>
 
     <string name="pref_sim_sampling_time">Sampling time (ms)</string>
     <string name="pref_sim_sampling_time_desc">Sampling time is the time interval between two consecutive samples</string>
@@ -145,9 +145,49 @@
     <string name="pref_sim_ma_data_points_desc">When simple is selected, this value is ignored.</string>
     <string name="pref_sim_wma_weight">Weight for weighted moving average</string>
     <string name="pref_sim_wma_weight_desc">In the calculation of WMA, this weight is used for the most recent and a step of 1 each previous sampling time.</string>
+    <string name="pref_sim_velocity_avg_type">Velocity filter</string>
+    <string-array name="pref_sim_velocity_avg_type_entries">
+        <item>None</item>
+        <item>Hann filter</item>
+        <item>Hamming filter</item>
+        <item>Blackman filter</item>
+        <item>Blackman-Harris filter</item>
+        <item>Blackman-Nuttall filter</item>
+        <item>Flat top filter</item>
+        <item>Gauss filter</item>
+        <item>Triangular filter</item>
+        <item>Bartlett filter</item>
+        <item>Bartlett-Hann filter</item>
+        <item>Kaiser filter</item>
+    </string-array>
+    <string-array name="pref_sim_velocity_avg_type_values">
+        <item>NONE</item>
+        <item>HANN</item>
+        <item>HAMMING</item>
+        <item>BLACKMAN</item>
+        <item>BLACKMAN_HARRIS</item>
+        <item>BLACKMAN_NUTTALL</item>
+        <item>FLAT_TOP</item>
+        <item>GAUSS</item>
+        <item>TRIANGULAR</item>
+        <item>BARTLETT</item>
+        <item>BARTLETT_HANN</item>
+        <item>KAISER</item>
+    </string-array>
+    <string name="pref_sim_rotation_unit">Unit for angular position &amp; velocity</string>
+    <string-array name="pref_sim_rotation_unit_entries">
+        <item>Number of rotations &amp; Rotations per minute</item>
+        <item>Radians &amp; Radians per second</item>
+        <item>Degree &amp; Degrees per second</item>
+    </string-array>
+    <string-array name="pref_sim_rotation_unit_values">
+        <item>RPM</item>
+        <item>RAD</item>
+        <item>DEG</item>
+    </string-array>
 
     <!-- Graph Window -->
-    <string name="pref_header_graphs">Graphs</string>
+    <string name="pref_header_graphs">Graphs settings</string>
 
     <string name="pref_graph_refresh_after">Refresh period (ms)</string>
     <string name="pref_graph_refresh_after_desc">Refreshing at high rate may hinder the real-time clock.</string>
@@ -180,7 +220,7 @@
     <string name="pref_graph_zoom_options_desc">Zoom options are visible under the graphs.</string>
 
     <!-- Bridge Window -->
-    <string name="pref_header_bridge">Bridge device</string>
+    <string name="pref_header_bridge">Bridge device settings</string>
 
     <string name="pref_bridge_encoder_a">Enter digital input for encoder\'s A pin</string>
     <string name="pref_bridge_encoder_b">Enter digital input for encoder\'s B pin</string>
@@ -192,41 +232,17 @@
     <string name="pref_bridge_out_limit_lower_desc">Enter the lowest voltage that the bridge circuit can generate.</string>
     <string name="pref_bridge_out_limit_upper">Bridge circuit\'s analog output upper limit</string>
     <string name="pref_bridge_out_limit_upper_desc">Enter the highest voltage that the bridge circuit can generate.</string>
-    <string name="pref_bridge_counts_per_rev">Counts per revolution</string>
-    <string name="pref_bridge_counts_per_rev_desc">Enter counts per revolution of your encoder.</string>
     <string name="pref_bridge_encoder_max_count">Encoder counter unsigned maximum limint </string>
     <string name="pref_bridge_encoder_max_count_desc">Enter unsigned maximum counter capacity</string>
-    <string name="pref_bridge_motor_max_rpm">Maximum motor RPM</string>
-    <string name="pref_bridge_motor_max_rpm_desc">Enter the maximum speed that the motor can achieve in RPM</string>
-    <string name="pref_bridge_velocity_avg_type">Velocity filter</string>
-    <string-array name="pref_bridge_velocity_avg_type_entries">
-        <item>None</item>
-        <item>Hann filter</item>
-        <item>Hamming filter</item>
-        <item>Blackman filter</item>
-        <item>Blackman-Harris filter</item>
-        <item>Blackman-Nuttall filter</item>
-        <item>Flat top filter</item>
-        <item>Gauss filter</item>
-        <item>Triangular filter</item>
-        <item>Bartlett filter</item>
-        <item>Bartlett-Hann filter</item>
-        <item>Kaiser filter</item>
-    </string-array>
-    <string-array name="pref_bridge_velocity_avg_type_values">
-        <item>NONE</item>
-        <item>HANN</item>
-        <item>HAMMING</item>
-        <item>BLACKMAN</item>
-        <item>BLACKMAN_HARRIS</item>
-        <item>BLACKMAN_NUTTALL</item>
-        <item>FLAT_TOP</item>
-        <item>GAUSS</item>
-        <item>TRIANGULAR</item>
-        <item>BARTLETT</item>
-        <item>BARTLETT_HANN</item>
-        <item>KAISER</item>
-    </string-array>
+    <!-- Motor Window -->
+    <string name="pref_header_motor">Motor settings</string>
+
+    <string name="pref_motor_counts_per_rev">Encoder counts per revolution</string>
+    <string name="pref_motor_counts_per_rev_desc">Enter counts per revolution of your encoder.</string>
+    <string name="pref_motor_max_rpm">Maximum motor RPM</string>
+    <string name="pref_motor_max_rpm_desc">Enter the maximum speed that the motor can achieve in RPM</string>
+    <string name="pref_motor_gear_ratio">Gear ratio</string>
+    <string name="pref_motor_gear_ratio_desc">Input the gear ration from motor shaft to the output shaft. Use 1 for no gear condition.</string>
 
 
 </resources>

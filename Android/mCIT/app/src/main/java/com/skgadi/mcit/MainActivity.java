@@ -762,9 +762,11 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[2];
+                double[] Trajectories = new double[4];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
+                Trajectories[2] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[3] = Input[1][0];
                 return Trajectories;
             }
         };
@@ -772,7 +774,7 @@ public class MainActivity extends AppCompatActivity {
                 + ": "
                 +getResources().getStringArray(R.array.NAV_ITEMS_0)[0];
         Model.NoOfInputs=1;
-        Model.NoOfOutputs=1;
+        Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 0;
         Model.NoOfPastOuputsRequired = 0;
         Model.NoOfPastGeneratedValuesRequired = 0;
@@ -788,11 +790,14 @@ public class MainActivity extends AppCompatActivity {
         Model.SignalGenerators[0] = "u_1(t)";
         Model.SignalGenerators[1] = "u_2(t)";
         Model.SignalGenerators[2] = "u_3(t)";
-        Model.Figures = new Figure[1];
+        Model.Figures = new Figure[2];
         String[] TempTrajectories = new String[2];
         TempTrajectories[0]= "Input u(t)";
-        TempTrajectories[1]= "Output y(t)";
-        Model.Figures[0] = new Figure("Input u(t) and Output y(t)", TempTrajectories);
+        TempTrajectories[1]= "Position \u03F4(t)";
+        Model.Figures[0] = new Figure("Input u(t) and Position \u03B8(t)", TempTrajectories);
+        TempTrajectories[0]= "Input u(t)";
+        TempTrajectories[1]= "velocity \u0460(t)";
+        Model.Figures[1] = new Figure("Input u(t) and velocity \u03C9(t)", TempTrajectories);
         Model.Parameters = new Parameter [0];
     }
 
@@ -2805,16 +2810,25 @@ public class MainActivity extends AppCompatActivity {
                 double PrevRecData = RecData[0];
                 PresEncoderValue = Math.round(Float.parseFloat(Rec));
                 PresentEncoderValue = (int) ((PresEncoderValue & (0x00ff)) | (PresEncoderValue & (0x00ff00)));
-                if (Math.abs(PresentEncoderValue-PrevEncoderValue)<((getPrefInt("bridge_counts_per_rev", 64)/60.0)*getPrefInt("bridge_motor_max_rpm", 64)))
-                    RecData[0] += ((PresentEncoderValue - PrevEncoderValue)/(getPrefInt("bridge_counts_per_rev", 64)*1.0))*(2*Math.PI); //8384
+                if (Math.abs(PresentEncoderValue-PrevEncoderValue)<((getPrefInt("motor_counts_per_rev", 64)/60.0)*getPrefInt("motor_max_rpm", 11000)))
+                    RecData[0] += ((PresentEncoderValue - PrevEncoderValue)/(getPrefInt("motor_counts_per_rev", 64)*1.0))*(2*Math.PI); //8384
                 else {
                     if (PresentEncoderValue>PrevEncoderValue)
-                        RecData[0] += (((PresentEncoderValue - getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("bridge_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
+                        RecData[0] += (((PresentEncoderValue - getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("motor_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
                     else
-                        RecData[0] += (((PresentEncoderValue + getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("bridge_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
+                        RecData[0] += (((PresentEncoderValue + getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("motor_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
                 }
+                switch (getPrefString("sim_rotation_unit", "RPM")){
+                    case "RPM":
+                        RecData[0] = RecData[0]/(2 * Math.PI);
+                        break;
+                    case "DEG":
+                        RecData[0] = RecData[0]*180/(Math.PI);
+                        break;
+                };
                 RecData[1] = (RecData[0] - PrevRecData)/Model.T_SForModel;
-                switch (getPrefString("bridge_velocity_avg_type", "SIM")) {
+                if (getPrefString("sim_rotation_unit", "RPM") == "RPM") RecData[1] = RecData[1]*60;
+                switch (getPrefString("sim_velocity_avg_type", "SIM")) {
                     case "NONE":
                     case "HANN":
                     case "HAMMING":
