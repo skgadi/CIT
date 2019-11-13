@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Control & Identification Toolbox (CIT) (CIT)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css" />
+</head>
+
+<body>
+    <div id="logItems"></div>
+    <div class="w3-btn w3-theme" id="FindDevices">Check bluetooth devices</div>
+    <script>
+        function appendLog(a) {
+            document.getElementById("logItems").innerHTML += a + "<br/>";
+        }
+        appendLog("navigator.bluetooth.requestDevice");
+        appendLog(navigator.bluetooth.requestDevice);
+        document.getElementById("FindDevices").addEventListener('pointerup', function (event) {
+            navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true
+                })
+                .then(device => {
+                    appendLog("hey");
+                })
+                .catch(error => {
+                    appendLog(error);
+                });
+        });
+    </script>
+</body>
+
+</html>
