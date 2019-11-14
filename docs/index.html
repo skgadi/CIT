@@ -13,22 +13,49 @@
     <div id="logItems"></div>
     <div class="w3-btn w3-theme" id="FindDevices">Check bluetooth devices</div>
     <script>
-        function appendLog(a) {
+        var gDevice, gCharacteristic;
+        function log(a) {
             document.getElementById("logItems").innerHTML += a + "<br/>";
         }
-        appendLog("navigator.bluetooth.requestDevice");
-        appendLog(navigator.bluetooth.requestDevice);
+        log("navigator.bluetooth.requestDevice");
+        log(navigator.bluetooth.requestDevice);
         document.getElementById("FindDevices").addEventListener('pointerup', function (event) {
+            onButtonClick();
+        });
+
+        function onButtonClick() {
+            log('Requesting Bluetooth Device...');
             navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true
+                    filters: [{
+                        services: ['battery_service']
+                    }]
                 })
                 .then(device => {
-                    appendLog("hey");
+                    gDevice = device
+                    log('Connecting to GATT Server...');
+                    return device.gatt.connect();
+                })
+                .then(server => {
+                    log('Getting Battery Service...');
+                    return server.getPrimaryService('battery_service');
+                })
+                .then(service => {
+                    log('Getting Battery Level Characteristic...');
+                    return service.getCharacteristic('battery_level');
+                })
+                .then(characteristic => {
+                    log('Reading Battery Level...');
+                    gCharacteristic = characteristic;
+                    return characteristic.readValue();
+                })
+                .then(value => {
+                    let batteryLevel = value.getUint8(0);
+                    log('> Battery Level is ' + batteryLevel + '%');
                 })
                 .catch(error => {
-                    appendLog(error);
+                    log('Argh! ' + error);
                 });
-        });
+        }
     </script>
 </body>
 
