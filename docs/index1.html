@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Control & Identification Toolbox (CIT) (CIT)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css" />
+</head>
+
+<body>
+    <input class="w3-input" id="InputString">
+    <div class="w3-btn w3-theme" id="SendString">Check bluetooth devices</div>
+    <br>
+    <div id="logItems"></div>
+    <div class="w3-btn w3-theme" id="FindDevices">Check bluetooth devices</div>
+    <script>
+        var gDevice, gCharacteristic, gService, gCharacteristic1;
+
+        function log(a) {
+            document.getElementById("logItems").innerHTML += a + "<br/>";
+        }
+        log(navigator.bluetooth.requestDevice);
+        document.getElementById("FindDevices").addEventListener('pointerup', function (event) {
+            onButtonClick();
+        });
+
+        document.getElementById("SendString").addEventListener('pointerup', function (event) {
+            console.log(document.getElementById("InputString").value);
+            gService.getCharacteristic(0x2A18).then((Characteristic) => {
+                gCharacteristic1 = Characteristic;
+                gCharacteristic1.writeValue(str2ab(document.getElementById("InputString").value));
+            });
+        });
+
+        function onButtonClick() {
+            log('Requesting Bluetooth Device...');
+            navigator.bluetooth.requestDevice({
+                    filters: [{
+                        services: ['battery_service']
+                    }]
+                })
+                .then(device => {
+                    gDevice = device
+                    log('Connecting to GATT Server...');
+                    return device.gatt.connect();
+                })
+                .then(server => {
+                    log('Getting Battery Service...');
+                    return server.getPrimaryService('battery_service');
+                })
+                .then(service => {
+                    log('Getting Battery Level Characteristic...');
+                    gService = service;
+                    return service.getCharacteristic('battery_level');
+                })
+                .then(characteristic => {
+                    log('Reading Battery Level...');
+                    gCharacteristic = characteristic;
+                    return characteristic.readValue();
+                })
+                .then(value => {
+                    let batteryLevel = value.getUint8(0);
+                    log('> Battery Level is ' + batteryLevel + '%');
+                })
+                .catch(error => {
+                    log('Argh! ' + error);
+                });
+        }
+
+        function str2ab(str) {
+            var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+            var bufView = new Uint16Array(buf);
+            for (var i = 0, strLen = str.length; i < strLen; i++) {
+                bufView[i] = str.charCodeAt(i);
+            }
+            return buf;
+        }
+    </script>
+</body>
+
+</html>

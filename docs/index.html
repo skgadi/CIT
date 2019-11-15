@@ -6,78 +6,103 @@
     <title>Control & Identification Toolbox (CIT) (CIT)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-deep-purple.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+        integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
+
+
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="/css/main.min.css" />
 </head>
 
 <body>
-    <input class="w3-input" id="InputString">
-    <div class="w3-btn w3-theme" id="SendString">Check bluetooth devices</div>
-    <br>
-    <div id="logItems"></div>
-    <div class="w3-btn w3-theme" id="FindDevices">Check bluetooth devices</div>
-    <script>
-        var gDevice, gCharacteristic, gService, gCharacteristic1;
+    <div class="mainWrapper" id="app">
+        <header class="w3-theme">
+            <div class="w3-row">
+                <div class="w3-col s1">
+                    <img src="favicon-96x96.png" style="height: 42px;" />
+                </div>
+                <div class="w3-col s10 w3-center">
+                    <div>{{cLang.appName}}</div>
+                    <div class="w3-small">{{cLang.appFName}}</div>
+                </div>
+                <div class="w3-col s1">
+                    <select class="w3-select" v-model="sLang">
+                        <option v-for="(item, idx) in lang" :value="idx">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        <select class="w3-select" v-model="sAlgorithm">
+            <option v-for="(item, idx) in cLang.algorithms" :value="idx">{{item.name}}</option>
+        </select>
+        <div>
+            <div class="w3-theme mainTab" @click="display.diagram = !display.diagram">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.diagram"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                {{cLang.mTabs.diagram}}
+            </div>
+            <div v-if="display.diagram">
+                <img :src="'images/'+cLang.algorithms[sAlgorithm].diagram" class="w3-block"/>
+            </div>
+        </div>
+        <div>
+            <div class="w3-theme mainTab" @click="display.bridgeDevice = !display.bridgeDevice">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.bridgeDevice"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                {{cLang.mTabs.bridgeDevice}}
+            </div>
+            <div v-if="display.bridgeDevice"></div>
+        </div>
+        <div>
+            <div class="w3-theme mainTab" @click="display.params = !display.params">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.params"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                {{cLang.mTabs.params}}
+            </div>
+            <div v-if="display.params"></div>
+        </div>
+        <div>
+            <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                {{cLang.mTabs.graphs}}
+            </div>
+            <div v-if="display.graphs"></div>
+        </div>
+        <!--div>
+            <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                {{cLang.mTabs.graphs}}
+            </div>
+            <div v-if="display.graphs"></div>
+        </div-->
+    </div>
 
-        function log(a) {
-            document.getElementById("logItems").innerHTML += a + "<br/>";
-        }
-        log(navigator.bluetooth.requestDevice);
-        document.getElementById("FindDevices").addEventListener('pointerup', function (event) {
-            onButtonClick();
-        });
 
-        document.getElementById("SendString").addEventListener('pointerup', function (event) {
-            console.log(document.getElementById("InputString").value);
-            gService.getCharacteristic(0x2A18).then((Characteristic) => {
-                gCharacteristic1 = Characteristic;
-                gCharacteristic1.writeValue(str2ab(document.getElementById("InputString").value));
-            });
-        });
-
-        function onButtonClick() {
-            log('Requesting Bluetooth Device...');
-            navigator.bluetooth.requestDevice({
-                    filters: [{
-                        services: ['battery_service']
-                    }]
-                })
-                .then(device => {
-                    gDevice = device
-                    log('Connecting to GATT Server...');
-                    return device.gatt.connect();
-                })
-                .then(server => {
-                    log('Getting Battery Service...');
-                    return server.getPrimaryService('battery_service');
-                })
-                .then(service => {
-                    log('Getting Battery Level Characteristic...');
-                    gService = service;
-                    return service.getCharacteristic('battery_level');
-                })
-                .then(characteristic => {
-                    log('Reading Battery Level...');
-                    gCharacteristic = characteristic;
-                    return characteristic.readValue();
-                })
-                .then(value => {
-                    let batteryLevel = value.getUint8(0);
-                    log('> Battery Level is ' + batteryLevel + '%');
-                })
-                .catch(error => {
-                    log('Argh! ' + error);
-                });
-        }
-
-        function str2ab(str) {
-            var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-            var bufView = new Uint16Array(buf);
-            for (var i = 0, strLen = str.length; i < strLen; i++) {
-                bufView[i] = str.charCodeAt(i);
-            }
-            return buf;
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="js.min.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,16 @@
+body {
+    background-color: seashell;
+    font-family: "Computer Modern Serif", sans-serif;
+    margin: auto;
+    max-width: 900px;
+}
+
+.mainWrapper {
+    /*background-color: pink;*/
+    border: 2px solid rgb(90, 47, 146);
+}
+
+.mainTab {
+    border-top: 2px solid slateblue;
+    cursor: pointer;
+}
