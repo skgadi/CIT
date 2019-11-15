@@ -10,17 +10,28 @@
 </head>
 
 <body>
+    <input class="w3-input" id="InputString">
+    <div class="w3-btn w3-theme" id="SendString">Check bluetooth devices</div>
+    <br>
     <div id="logItems"></div>
     <div class="w3-btn w3-theme" id="FindDevices">Check bluetooth devices</div>
     <script>
-        var gDevice, gCharacteristic;
+        var gDevice, gCharacteristic, gService, gCharacteristic1;
+
         function log(a) {
             document.getElementById("logItems").innerHTML += a + "<br/>";
         }
-        log("navigator.bluetooth.requestDevice");
         log(navigator.bluetooth.requestDevice);
         document.getElementById("FindDevices").addEventListener('pointerup', function (event) {
             onButtonClick();
+        });
+
+        document.getElementById("SendString").addEventListener('pointerup', function (event) {
+            console.log(document.getElementById("InputString").value);
+            gService.getCharacteristic(0x2A18).then((Characteristic) => {
+                gCharacteristic1 = Characteristic;
+                gCharacteristic1.writeValue(str2ab(document.getElementById("InputString").value));
+            });
         });
 
         function onButtonClick() {
@@ -41,6 +52,7 @@
                 })
                 .then(service => {
                     log('Getting Battery Level Characteristic...');
+                    gService = service;
                     return service.getCharacteristic('battery_level');
                 })
                 .then(characteristic => {
@@ -55,6 +67,15 @@
                 .catch(error => {
                     log('Argh! ' + error);
                 });
+        }
+
+        function str2ab(str) {
+            var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+            var bufView = new Uint16Array(buf);
+            for (var i = 0, strLen = str.length; i < strLen; i++) {
+                bufView[i] = str.charCodeAt(i);
+            }
+            return buf;
         }
     </script>
 </body>

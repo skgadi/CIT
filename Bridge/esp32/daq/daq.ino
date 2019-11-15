@@ -17,6 +17,7 @@ bool _BLEClientConnected = false;
 
 #define BatteryService BLEUUID((uint16_t)0x180F) 
 BLECharacteristic BatteryLevelCharacteristic(BLEUUID((uint16_t)0x2A19), BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+BLECharacteristic ValueCharac(BLEUUID((uint16_t)0x2A18), BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY);
 //BLEDescriptor BatteryLevelDescriptor(BLEUUID((uint16_t)0x2901));
 
 class MyServerCallbacks : public BLEServerCallbacks {
@@ -39,6 +40,7 @@ void InitBLE() {
   BLEService *pBattery = pServer->createService(BatteryService);
 
   pBattery->addCharacteristic(&BatteryLevelCharacteristic);
+  pBattery->addCharacteristic(&ValueCharac);
   //BatteryLevelDescriptor.setValue("Percentage 0 - 100");
   //BatteryLevelCharacteristic.addDescriptor(&BatteryLevelDescriptor);
   BatteryLevelCharacteristic.addDescriptor(new BLE2902());
@@ -57,11 +59,13 @@ void setup() {
 }
 
   uint8_t level = 57;
-  
+  char af[100];
 void loop() {
 
   BatteryLevelCharacteristic.setValue(&level, 1);
   BatteryLevelCharacteristic.notify();
+  //String a = ValueCharac.getValue().c_str();
+  Serial.println(ValueCharac.getValue().c_str());
   delay(5000);
 
   level++;
