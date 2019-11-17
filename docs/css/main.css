@@ -21,3 +21,7 @@ body {
     cursor: pointer;
     padding: 8px;
 }
+
+input[type=number] {
+    text-align: right;
+}

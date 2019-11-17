@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Control & Identification Toolbox (CIT) (CIT)</title>
+    <title>Control & Identification Toolbox (CIT)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-deep-purple.css" />
@@ -83,26 +83,38 @@
                     <div class="w3-row-padding">
                         <div class="w3-col s6">
                             <label v-html="item0"></label>
-                            <select class="w3-select" v-model="sInputs[idx0]">
+                            <select class="w3-select" v-model="sOutputs[idx0]">
                                 <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx">{{item}}</option>
                             </select>
                         </div>
                         <div class="w3-col s3">
                             <label>{{cLang.gain}}</label>
-                            <input class="w3-input">
+                            <input class="w3-input" v-model.number="oGains[idx0]" type="number">
                         </div>
                         <div class="w3-col s3">
                             <label>{{cLang.offset}}</label>
-                            <input class="w3-input">
+                            <input class="w3-input" v-model.number="oOffsets[idx0]" type="number">
                         </div>
                     </div>
                 </template>
                 <!--Inputs-->
                 <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].inputs">
-                    <label v-html="item0"></label>
-                    <select class="w3-select" v-model="sInputs[idx0]">
-                        <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx">{{item}}</option>
-                    </select>
+                    <div class="w3-row-padding">
+                        <div class="w3-col s6">
+                            <label v-html="item0"></label>
+                            <select class="w3-select" v-model="sInputs[idx0]">
+                                <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx">{{item}}</option>
+                            </select>
+                        </div>
+                        <div class="w3-col s3">
+                            <label>{{cLang.gain}}</label>
+                            <input class="w3-input" v-model.number="iGains[idx0]" type="number">
+                        </div>
+                        <div class="w3-col s3">
+                            <label>{{cLang.offset}}</label>
+                            <input class="w3-input" v-model.number="iOffsets[idx0]" type="number">
+                        </div>
+                    </div>
                 </template>
             </div>
         </div>
