@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-deep-purple.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/skgadi/cm-wf/fonts.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
         integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
 
@@ -36,7 +35,13 @@
 </head>
 
 <body>
-    <div class="mainWrapper" id="app">
+    <div style="text-align: center;" class="loading" id="loading">
+        <span>Please wait while app is loading. </span><br />
+        <i class="fas fa-cog fa-spin fa-2x"></i><br />
+        <span>If it takes longer than a minute, check your internet connection and try again.</span>
+    </div>
+
+    <div class="mainWrapper" id="app" style="display: none;">
         <header class="w3-theme">
             <div class="w3-row">
                 <div class="w3-col s1">
@@ -63,7 +68,7 @@
                 {{cLang.mTabs.diagram}}
             </div>
             <div v-if="display.diagram">
-                <img :src="'images/'+cLang.algorithms[sAlgorithm].diagram" class="w3-block"/>
+                <img :src="'images/'+cLang.algorithms[sAlgorithm].diagram" class="w3-block" />
             </div>
         </div>
         <div>
@@ -72,7 +77,34 @@
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
                 {{cLang.mTabs.bridgeDevice}}
             </div>
-            <div v-if="display.bridgeDevice"></div>
+            <div v-if="display.bridgeDevice">
+                <!--Outputs-->
+                <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].outputs">
+                    <div class="w3-row-padding">
+                        <div class="w3-col s6">
+                            <label v-html="item0"></label>
+                            <select class="w3-select" v-model="sInputs[idx0]">
+                                <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx">{{item}}</option>
+                            </select>
+                        </div>
+                        <div class="w3-col s3">
+                            <label>{{cLang.gain}}</label>
+                            <input class="w3-input">
+                        </div>
+                        <div class="w3-col s3">
+                            <label>{{cLang.offset}}</label>
+                            <input class="w3-input">
+                        </div>
+                    </div>
+                </template>
+                <!--Inputs-->
+                <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].inputs">
+                    <label v-html="item0"></label>
+                    <select class="w3-select" v-model="sInputs[idx0]">
+                        <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx">{{item}}</option>
+                    </select>
+                </template>
+            </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.params = !display.params">
@@ -101,6 +133,8 @@
     </div>
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-MML-AM_CHTML"
+        integrity="sha256-nlrDrBTHxJJlDDX22AS33xYI1OJHnGMDhiYMSe2U0e0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script type="text/javascript" src="js.min.js"></script>
 </body>
