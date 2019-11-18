@@ -25,3 +25,7 @@ body {
 input[type=number] {
     text-align: right;
 }
+
+.w3-input, .w3-select {
+    border-color: green;
+}
