@@ -1,5 +1,5 @@
 body {
-    background-color: seashell;
+    background-color: whitesmoke;
     font-family: "Computer Modern Serif", sans-serif;
     margin: auto;
     max-width: 900px;
@@ -28,4 +28,11 @@ input[type=number] {
 
 .w3-input, .w3-select {
     border-color: green;
+}
+
+iframe {
+    border: none;
+    margin: 0;
+    padding: 0;
+    display:block;
 }

@@ -48,38 +48,36 @@
                     <img src="favicon-96x96.png" style="height: 42px;" />
                 </div>
                 <div class="w3-col s10 w3-center">
-                    <div>{{cLang.appName}}</div>
-                    <div class="w3-small">{{cLang.appFName}}</div>
+                    <div v-html="cLang.appName"></div>
+                    <div class="w3-small" v-html="cLang.appFName"></div>
                 </div>
                 <div class="w3-col s1">
                     <select class="w3-select" v-model="sLang">
-                        <option v-for="(item, idx) in lang" :value="idx">{{item.name}}</option>
+                        <option v-for="(item, idx) in lang" :value="idx" v-html="item.name"></option>
                     </select>
                 </div>
             </div>
         </header>
         <div class="w3-panel">
-            <label>Algorithm selection</label>
+            <label v-html="cLang.aSelection"></label>
             <select class="w3-select" v-model="sAlgorithm">
-                <option v-for="(item, idx) in cLang.algorithms" :value="idx">{{item.name}}</option>
+                <option v-for="(item, idx) in cLang.algorithms" :value="idx" v-html="item.name"></option>
             </select>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.diagram = !display.diagram">
                 <i class="fas fa-chevron-down fa-fw" v-if="display.diagram"></i>
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
-                {{cLang.mTabs.mModel}}
+                <span v-html="cLang.mTabs.mModel"></span>
             </div>
-            <div v-show="display.diagram">
-                <iframe src="https://docs.google.com/gview?url=https://cit.skgadi.com/mModels/ol-system.pdf&embedded=true"
-                    style="width:100%; height:700px;" frameborder="0"></iframe>
+            <div v-show="display.diagram" v-html="mModel">
             </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.bridgeDevice = !display.bridgeDevice">
                 <i class="fas fa-chevron-down fa-fw" v-if="display.bridgeDevice"></i>
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
-                {{cLang.mTabs.bridgeDevice}}
+                <span v-html="cLang.mTabs.bridgeDevice"></span>
             </div>
             <div v-if="display.bridgeDevice" class="w3-padding-16">
                 <!--Outputs-->
@@ -88,15 +86,15 @@
                         <div class="w3-col s6">
                             <label v-html="item0"></label>
                             <select class="w3-select" v-model="sOutputs[idx0]">
-                                <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx">{{item}}</option>
+                                <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx" v-html="item"></option>
                             </select>
                         </div>
                         <div class="w3-col s3">
-                            <label>{{cLang.gain}}</label>
+                            <label v-html="cLang.gain"></label>
                             <input class="w3-input" v-model.number="oGains[idx0]" type="number">
                         </div>
                         <div class="w3-col s3">
-                            <label>{{cLang.offset}}</label>
+                            <label v-html="cLang.offset"></label>
                             <input class="w3-input" v-model.number="oOffsets[idx0]" type="number">
                         </div>
                     </div>
@@ -107,15 +105,15 @@
                         <div class="w3-col s6">
                             <label v-html="item0"></label>
                             <select class="w3-select" v-model="sInputs[idx0]">
-                                <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx">{{item}}</option>
+                                <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx" v-html="item"></option>
                             </select>
                         </div>
                         <div class="w3-col s3">
-                            <label>{{cLang.gain}}</label>
+                            <label v-html="cLang.gain"></label>
                             <input class="w3-input" v-model.number="iGains[idx0]" type="number">
                         </div>
                         <div class="w3-col s3">
-                            <label>{{cLang.offset}}</label>
+                            <label v-html="cLang.offset"></label>
                             <input class="w3-input" v-model.number="iOffsets[idx0]" type="number">
                         </div>
                     </div>
@@ -126,26 +124,34 @@
             <div class="w3-theme mainTab" @click="display.params = !display.params">
                 <i class="fas fa-chevron-down fa-fw" v-if="display.params"></i>
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
-                {{cLang.mTabs.params}}
+                <span v-html="cLang.mTabs.params"></span>
             </div>
-            <div v-if="display.params"></div>
+            <div v-if="display.params">
+                <div v-if="cLang.algorithms[sAlgorithm].params" class="w3-padding-16">
+                    <div class="w3-row-padding">
+                        <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].params">
+                            <div class="w3-col s6">
+                                <label v-html="item.name"></label>
+                                <input class="w3-input" v-model.number="params[idx]" type="number">
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div v-else>
+                    <div class="w3-panel" v-html="cLang.noParams"></div>
+                </div>
+
+            </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
                 <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
-                {{cLang.mTabs.graphs}}
+                <span v-html="cLang.mTabs.graphs"></span>
             </div>
             <div v-if="display.graphs"></div>
         </div>
-        <!--div>
-            <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
-                {{cLang.mTabs.graphs}}
-            </div>
-            <div v-if="display.graphs"></div>
-        </div-->
     </div>
 
 

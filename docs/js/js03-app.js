@@ -16,6 +16,7 @@ var app = new Vue({
         sOutputs: {},
         oGains: {},
         oOffsets: {},
+        params: {},
         defaults: {
             sInputs: "analog",
             iGains: 1,
@@ -40,16 +41,19 @@ var app = new Vue({
     computed: {
         cLang: function () {
             return this.lang[this.sLang];
+        },
+        mModel: function () {
+            return `<iframe src='https://docs.google.com/gview?url=https://cit.skgadi.com/m-models/${this.cLang.algorithms[this.sAlgorithm].documentation}&embedded=true' style='width:100%; height:300px;' frameborder='0'></iframe>`;
         }
     },
     methods: {
         resetInvalidsToDefault: function () {
-            Object.keys(this.cLang.algorithms[this.sAlgorithm].inputs).forEach((key)=>{
+            Object.keys(this.cLang.algorithms[this.sAlgorithm].inputs).forEach((key) => {
                 if (app.$data.sInputs[key] === undefined) app.$set(app.$data.sInputs, key, app.$data.defaults.sInputs);
                 if (app.$data.iOffsets[key] === undefined) app.$set(app.$data.iOffsets, key, app.$data.defaults.iOffsets);
                 if (app.$data.iGains[key] === undefined) app.$set(app.$data.iGains, key, app.$data.defaults.iGains);
             });
-            Object.keys(this.cLang.algorithms[this.sAlgorithm].outputs).forEach((key)=>{
+            Object.keys(this.cLang.algorithms[this.sAlgorithm].outputs).forEach((key) => {
                 if (!app.$data.sOutputs[key]) app.$set(app.$data.sOutputs, key, app.$data.defaults.sOutputs);
                 if (app.$data.oOffsets[key] === undefined) app.$set(app.$data.oOffsets, key, app.$data.defaults.oOffsets);
                 if (app.$data.oGains[key] === undefined) app.$set(app.$data.oGains, key, app.$data.defaults.oGains);
