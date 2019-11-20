@@ -5,7 +5,7 @@ var app = new Vue({
         sLang: "en",
         sAlgorithm: "sResponse",
         display: {
-            "diagram": false,
+            "mModel": false,
             "bridgeDevice": false,
             "params": false,
             "fGens": false,

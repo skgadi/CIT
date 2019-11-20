@@ -65,18 +65,16 @@
             </select>
         </div>
         <div>
-            <div class="w3-theme mainTab" @click="display.diagram = !display.diagram">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.diagram"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
+            <div class="w3-theme mainTab" @click="display.mModel = !display.mModel">
+                <i :class="'fas fa-chevron-' + (!!display.mModel ? 'down':'right') + ' fa-fw'"></i>
                 <span v-html="cLang.mTabs.mModel"></span>
             </div>
-            <div v-show="display.diagram" v-html="mModel">
+            <div v-show="display.mModel" v-html="mModel">
             </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.bridgeDevice = !display.bridgeDevice">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.bridgeDevice"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                <i :class="'fas fa-chevron-' + (!!display.bridgeDevice ? 'down':'right') + ' fa-fw'"></i>
                 <span v-html="cLang.mTabs.bridgeDevice"></span>
             </div>
             <div v-if="display.bridgeDevice" class="w3-padding-16">
@@ -122,8 +120,7 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.params = !display.params">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.params"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                <i :class="'fas fa-chevron-' + (!!display.params ? 'down':'right') + ' fa-fw'"></i>
                 <span v-html="cLang.mTabs.params"></span>
             </div>
             <div v-if="display.params">
@@ -146,16 +143,23 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.fGens = !display.fGens">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.fGens"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                <i :class="'fas fa-chevron-' + (!!display.fGens ? 'down':'right') + ' fa-fw'"></i>
                 <span v-html="cLang.mTabs.fGens"></span>
             </div>
-            <div v-if="display.fGens"></div>
+            <div v-if="display.fGens">
+                <div class="w3-panel">
+                    <div class="w3-card">
+                        <header class="w3-blue">hey</header>
+                    </div>
+                    <template>
+                        <div>hello</div>
+                    </template>
+                </div>
+            </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
-                <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
-                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                <i :class="'fas fa-chevron-' + (!!display.graphs ? 'down':'right') + ' fa-fw'"></i>
                 <span v-html="cLang.mTabs.graphs"></span>
             </div>
             <div v-if="display.graphs"></div>
