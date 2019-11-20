@@ -145,6 +145,14 @@
             </div>
         </div>
         <div>
+            <div class="w3-theme mainTab" @click="display.fGens = !display.fGens">
+                <i class="fas fa-chevron-down fa-fw" v-if="display.fGens"></i>
+                <i class="fas fa-chevron-right fa-fw" v-else></i>
+                <span v-html="cLang.mTabs.fGens"></span>
+            </div>
+            <div v-if="display.fGens"></div>
+        </div>
+        <div>
             <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
                 <i class="fas fa-chevron-down fa-fw" v-if="display.graphs"></i>
                 <i class="fas fa-chevron-right fa-fw" v-else></i>
