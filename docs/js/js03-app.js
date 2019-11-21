@@ -50,6 +50,7 @@ var app = new Vue({
     },
     methods: {
         resetInvalidsToDefault: function () {
+            //Input and outputs
             Object.keys(this.cLang.algorithms[this.sAlgorithm].inputs).forEach((key) => {
                 if (app.$data.sInputs[key] === undefined) app.$set(app.$data.sInputs, key, app.$data.defaults.sInputs);
                 if (app.$data.iOffsets[key] === undefined) app.$set(app.$data.iOffsets, key, app.$data.defaults.iOffsets);
@@ -60,11 +61,6 @@ var app = new Vue({
                 if (app.$data.oOffsets[key] === undefined) app.$set(app.$data.oOffsets, key, app.$data.defaults.oOffsets);
                 if (app.$data.oGains[key] === undefined) app.$set(app.$data.oGains, key, app.$data.defaults.oGains);
             });
-            if (!!this.cLang.algorithms[this.sAlgorithm].params) {
-                Object.keys(this.cLang.algorithms[this.sAlgorithm].params).forEach((key) => {
-                    if (app.$data.params[key] === undefined) app.$set(app.$data.params, key, app.cLang.algorithms[app.sAlgorithm].params[key].dValue);
-                });
-            }
             Object.keys(app.$data.defaults).forEach(function (key) {
                 Object.keys(app.$data[key]).forEach(function (key1) {
                     if (!app.$data[key][key1]) {
@@ -72,6 +68,18 @@ var app = new Vue({
                     }
                 })
             });
+            //Params
+            if (!!this.cLang.algorithms[this.sAlgorithm].params) {
+                Object.keys(this.cLang.algorithms[this.sAlgorithm].params).forEach((key) => {
+                    if (app.$data.params[key] === undefined) app.$set(app.$data.params, key, app.cLang.algorithms[app.sAlgorithm].params[key].dValue);
+                });
+            }
+            //fGens
+            if (!!this.cLang.algorithms[this.sAlgorithm].fGens) {
+                Object.keys(this.cLang.algorithms[this.sAlgorithm].params).forEach((key) => {
+                    if (app.$data.fGens[key] === undefined) app.$set(app.$data.fGens, key, {sType: 'step', params: {amp: 1}});
+                });
+            }
         }
     }
 });

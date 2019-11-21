@@ -38,13 +38,24 @@ iframe {
 }
 
 .animate{
-    -moz-transition: all 0.2s linear;
-    -webkit-transition: all 0.2s linear;
-    transition: all 0.2s linear;
+    -moz-transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+    transition: all 0.3s linear;
 }
 
 .animate.rotate{
     -moz-transform:rotate(90deg);
     -webkit-transform:rotate(90deg);
     transform:rotate(90deg);
+}
+
+.animate.fade{
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.animate.un-fade{
+    opacity: 1;
+    height: auto;
 }

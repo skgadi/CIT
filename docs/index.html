@@ -69,7 +69,7 @@
                 <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.mModel}"></i>
                 <span v-html="cLang.mTabs.mModel"></span>
             </div>
-            <div v-show="display.mModel" v-html="mModel">
+            <div class="animate" :class="(display.mModel?'un-fade':'fade')" v-html="mModel">
             </div>
         </div>
         <div>
@@ -77,45 +77,49 @@
                 <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.bridgeDevice}"></i>
                 <span v-html="cLang.mTabs.bridgeDevice"></span>
             </div>
-            <div v-if="display.bridgeDevice" class="w3-padding-16">
-                <!--Outputs-->
-                <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].outputs">
-                    <div class="w3-row-padding">
-                        <div class="w3-col s6">
-                            <label v-html="item0"></label>
-                            <select class="w3-select" v-model="sOutputs[idx0]">
-                                <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx" v-html="item"></option>
-                            </select>
+            <div class="animate " :class="(display.bridgeDevice?'un-fade':'fade')">
+                <div class="w3-padding-16">
+                    <!--Outputs-->
+                    <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].outputs">
+                        <div class="w3-row-padding">
+                            <div class="w3-col s6">
+                                <label v-html="item0"></label>
+                                <select class="w3-select" v-model="sOutputs[idx0]">
+                                    <option v-for="(item, idx) in cLang.bridge.oTypes" :value="idx" v-html="item">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="w3-col s3">
+                                <label v-html="cLang.gain"></label>
+                                <input class="w3-input" v-model.number="oGains[idx0]" type="number">
+                            </div>
+                            <div class="w3-col s3">
+                                <label v-html="cLang.offset"></label>
+                                <input class="w3-input" v-model.number="oOffsets[idx0]" type="number">
+                            </div>
                         </div>
-                        <div class="w3-col s3">
-                            <label v-html="cLang.gain"></label>
-                            <input class="w3-input" v-model.number="oGains[idx0]" type="number">
+                    </template>
+                    <!--Inputs-->
+                    <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].inputs">
+                        <div class="w3-row-padding">
+                            <div class="w3-col s6">
+                                <label v-html="item0"></label>
+                                <select class="w3-select" v-model="sInputs[idx0]">
+                                    <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx" v-html="item">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="w3-col s3">
+                                <label v-html="cLang.gain"></label>
+                                <input class="w3-input" v-model.number="iGains[idx0]" type="number">
+                            </div>
+                            <div class="w3-col s3">
+                                <label v-html="cLang.offset"></label>
+                                <input class="w3-input" v-model.number="iOffsets[idx0]" type="number">
+                            </div>
                         </div>
-                        <div class="w3-col s3">
-                            <label v-html="cLang.offset"></label>
-                            <input class="w3-input" v-model.number="oOffsets[idx0]" type="number">
-                        </div>
-                    </div>
-                </template>
-                <!--Inputs-->
-                <template v-for="(item0, idx0) in cLang.algorithms[sAlgorithm].inputs">
-                    <div class="w3-row-padding">
-                        <div class="w3-col s6">
-                            <label v-html="item0"></label>
-                            <select class="w3-select" v-model="sInputs[idx0]">
-                                <option v-for="(item, idx) in cLang.bridge.iTypes" :value="idx" v-html="item"></option>
-                            </select>
-                        </div>
-                        <div class="w3-col s3">
-                            <label v-html="cLang.gain"></label>
-                            <input class="w3-input" v-model.number="iGains[idx0]" type="number">
-                        </div>
-                        <div class="w3-col s3">
-                            <label v-html="cLang.offset"></label>
-                            <input class="w3-input" v-model.number="iOffsets[idx0]" type="number">
-                        </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
         </div>
         <div>
@@ -123,7 +127,7 @@
                 <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.params}"></i>
                 <span v-html="cLang.mTabs.params"></span>
             </div>
-            <div v-if="display.params">
+            <div class="animate" :class="(display.params?'un-fade':'fade')">
                 <div v-if="cLang.algorithms[sAlgorithm].params" class="w3-padding-16">
                     <div class="w3-row-padding">
                         <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].params">
@@ -147,17 +151,20 @@
                 <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.fGens}"></i>
                 <span v-html="cLang.mTabs.fGens"></span>
             </div>
-            <div v-if="display.fGens">
+            <div class="animate" :class="(display.fGens?'un-fade':'fade')">
                 <div class="w3-panel">
-                <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].fGens">
-                    {{item.name}}
-                    <div class="w3-border w3-border-theme">
-                        <!--select class="w3-class">
-                            <option v-for="() in item."></option>
-                        </select-->
-                    </div>
-                </template>
-            </div>
+                    <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].fGens">
+                        {{item.name}}
+                        <div class="w3-border w3-border-theme">
+                            <template>
+                                <select class="w3-select">
+                                    <option v-for="(item, idx) in cLang.fGens.sTypes" :value="idx" v-html="item.name">
+                                    </option>
+                                </select>
+                            </template>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
         <div>
@@ -165,7 +172,8 @@
                 <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.graphs}"></i>
                 <span v-html="cLang.mTabs.graphs"></span>
             </div>
-            <div v-if="display.graphs">
+            <!--class="animate" :class="(display.graphs?'un-fade':'fade')"-->
+            <div class="animate" :class="(display.graphs?'un-fade':'fade')">
                 Hello <br />
                 Hello <br />
                 Hello <br />
