@@ -66,7 +66,7 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.mModel = !display.mModel">
-                <i :class="'fas fa-chevron-' + (!!display.mModel ? 'down':'right') + ' fa-fw'"></i>
+                <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.mModel}"></i>
                 <span v-html="cLang.mTabs.mModel"></span>
             </div>
             <div v-show="display.mModel" v-html="mModel">
@@ -74,7 +74,7 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.bridgeDevice = !display.bridgeDevice">
-                <i :class="'fas fa-chevron-' + (!!display.bridgeDevice ? 'down':'right') + ' fa-fw'"></i>
+                <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.bridgeDevice}"></i>
                 <span v-html="cLang.mTabs.bridgeDevice"></span>
             </div>
             <div v-if="display.bridgeDevice" class="w3-padding-16">
@@ -120,7 +120,7 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.params = !display.params">
-                <i :class="'fas fa-chevron-' + (!!display.params ? 'down':'right') + ' fa-fw'"></i>
+                <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.params}"></i>
                 <span v-html="cLang.mTabs.params"></span>
             </div>
             <div v-if="display.params">
@@ -129,7 +129,8 @@
                         <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].params">
                             <div class="w3-col s6">
                                 <label v-html="item.name"></label>
-                                <input class="w3-input" v-model.number="params[idx]" type="number">
+                                <input class="w3-input" v-model.number="params[idx]" type="number" :min="item.min"
+                                    :max="item.max">
                             </div>
                         </template>
                     </div>
@@ -143,26 +144,35 @@
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.fGens = !display.fGens">
-                <i :class="'fas fa-chevron-' + (!!display.fGens ? 'down':'right') + ' fa-fw'"></i>
+                <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.fGens}"></i>
                 <span v-html="cLang.mTabs.fGens"></span>
             </div>
             <div v-if="display.fGens">
                 <div class="w3-panel">
-                    <div class="w3-card">
-                        <header class="w3-blue">hey</header>
+                <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].fGens">
+                    {{item.name}}
+                    <div class="w3-border w3-border-theme">
+                        <!--select class="w3-class">
+                            <option v-for="() in item."></option>
+                        </select-->
                     </div>
-                    <template>
-                        <div>hello</div>
-                    </template>
-                </div>
+                </template>
+            </div>
             </div>
         </div>
         <div>
             <div class="w3-theme mainTab" @click="display.graphs = !display.graphs">
-                <i :class="'fas fa-chevron-' + (!!display.graphs ? 'down':'right') + ' fa-fw'"></i>
+                <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.graphs}"></i>
                 <span v-html="cLang.mTabs.graphs"></span>
             </div>
-            <div v-if="display.graphs"></div>
+            <div v-if="display.graphs">
+                Hello <br />
+                Hello <br />
+                Hello <br />
+                Hello <br />
+                Hello <br />
+                Hello <br />
+            </div>
         </div>
     </div>
 

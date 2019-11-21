@@ -18,6 +18,7 @@ var app = new Vue({
         oGains: {},
         oOffsets: {},
         params: {},
+        fGens: {},
         defaults: {
             sInputs: "analog",
             iGains: 1,
