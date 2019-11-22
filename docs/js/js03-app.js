@@ -76,7 +76,7 @@ var app = new Vue({
             }
             //fGens
             if (!!this.cLang.algorithms[this.sAlgorithm].fGens) {
-                Object.keys(this.cLang.algorithms[this.sAlgorithm].params).forEach((key) => {
+                Object.keys(this.cLang.algorithms[this.sAlgorithm].fGens).forEach((key) => {
                     if (app.$data.fGens[key] === undefined) app.$set(app.$data.fGens, key, {sType: 'step', params: {amp: 1}});
                 });
             }

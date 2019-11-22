@@ -155,8 +155,9 @@
                 <div class="w3-panel">
                     <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].fGens">
                         {{item.name}}
-                        <div class="w3-border w3-border-theme">
+                        <div class="w3-border w3-border-theme w3-padding-16 w3-container">
                             <template>
+                                <label v-html="cLang.fGens.sType"></label>
                                 <select class="w3-select">
                                     <option v-for="(item, idx) in cLang.fGens.sTypes" :value="idx" v-html="item.name">
                                     </option>
