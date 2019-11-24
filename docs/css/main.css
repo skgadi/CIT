@@ -22,7 +22,7 @@ body {
     padding: 8px;
 }
 
-input[type=number] {
+.errValidation {
     text-align: right;
 }
 
