@@ -67,6 +67,34 @@ iframe {
     /*grid-auto-rows: minmax(100px, auto);*/
 }
 
-.gridASpace>div {
-    vertical-align: middle;
+.fGens-chkBox {
+    margin: auto 0;
+}
+
+.add-btn-fGens {
+    position: relative;
+    text-align: center;
+}
+
+.add-btn-fGens hr {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    border: 4px solid rgb(106, 90, 205);
+    border-radius: 4px;
+    z-index: -1;
+}
+
+.add-btn-fGens div {
+    margin: 4px;
+    background-color: rgb(106, 255, 205);
+    border-width: 4px !important;
+}
+
+.add-btn-fGens span {
+    vertical-align: top;
+    color: red;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
 }

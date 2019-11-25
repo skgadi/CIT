@@ -28,6 +28,11 @@ var app = new Vue({
       sOutputs: "dc0",
       oGains: 1,
       oOffsets: 0
+    },
+    dFGen: {
+      sType: 'step',
+      params: {},
+      iSignal: false
     }
   },
   watch: {
@@ -95,6 +100,9 @@ var app = new Vue({
     }
   },
   methods: {
+    addToFGens: function (a, b) {
+      this.fGens[a].splice(b, 0, Object.assign({}, this.dFGen));
+    },
     clearErrors: function () {
       this.$set(this, "errors", []);
     },
@@ -178,31 +186,32 @@ var app = new Vue({
         TempKeys = Object.keys(this.cLang.algorithms[this.sAlgorithm].fGens);
         for (var i = 0; i < TempKeys.length; i++) {
           var key = TempKeys[i];
-          if (this.fGens[key] === undefined) {
-            this.$set(this.fGens, key, [{
-              sType: 'step',
-              params: {},
-              iSignal: false
-            }]);
+          if (this.fGens[key] === undefined || this.fGens[key].length === 0) {
+            this.$set(this.fGens, key, [Object.assign({},this.dFGen)]);
             this.$nextTick(this.validateInputs);
             return;
           }
-          for (var i = 0; i < this.fGens[key].length; i++) {
-            var tempSType = this.fGens[key][i].sType;
-            console.log(tempSType);
+          for (var ii = 0; ii < this.fGens[key].length; ii++) {
+            var tempSType = this.fGens[key][ii].sType;
             for (var j = 0; j < this.cLang.fGens.sTypes[tempSType].params.length; j++) {
               var tempParam = this.cLang.fGens.sTypes[tempSType].params[j];
-              if (this.fGens[key][i].params[tempParam] === undefined) {
-                this.$set(this.fGens[key][i].params, tempParam, this.cLang.fGens.params[tempParam]);
-                this.$set(this.fGens[key][i].params, tempParam, this.cLang.fGens.params[tempParam]);
+              if (this.fGens[key][ii].params[tempParam] === undefined) {
+                this.$set(this.fGens[key][ii].params, tempParam, Object.assign({}, this.cLang.fGens.params[tempParam]));
+                console.log("1 -- " + ii + ' -- '+j);
+                console.log(tempSType);
+                console.log(tempParam);
+                console.log(JSON.stringify (this.fGens[key][ii].params[tempParam]));
                 this.$nextTick(this.validateInputs);
                 return;
               }
             }
-            var tempPresParams = Object.keys(this.fGens[key][i].params);
+            var tempPresParams = Object.keys(this.fGens[key][ii].params);
             for (var j = 0; j <  tempPresParams.length; j++) {
               if (this.cLang.fGens.sTypes[tempSType].params.indexOf (tempPresParams[j])<0) {
-                this.$delete(this.fGens[key][i].params, tempPresParams[j]);
+                console.log("2 -- " + ii + ' -- '+j);
+                console.log(tempPresParams);
+
+                this.$delete(this.fGens[key][ii].params, tempPresParams[j]);
                 this.$nextTick(this.validateInputs);
                 return;
               }

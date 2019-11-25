@@ -165,7 +165,7 @@
                   <div>
                     <label v-html="cLang.fGens.sType"></label>
                     <select class="w3-select" v-model="fGens[idx][idx1].sType">
-                      <option v-for="(item, idx) in cLang.fGens.sTypes" :value="idx" v-html="item.name">
+                      <option v-for="(itemm, idxx) in cLang.fGens.sTypes" :value="idxx" v-html="itemm.name">
                       </option>
                     </select>
                   </div>
@@ -177,10 +177,18 @@
                         :min="cLang.fGens.params[idx2].min" :max="cLang.fGens.params[idx2].max">
                     </div>
                   </template>
-                  <div>
+                  <div class="fGens-chkBox">
                     <input class="w3-check" type="checkbox" v-model="fGens[idx][idx1].iSignal" :id="'iSignalLabel_'+ idx + '_' + idx1">
                     <label v-html="cLang.fGens.iSignal" :for="'iSignalLabel_'+ idx + '_' + idx1"></label>
                   </div>
+                </div>
+                <div class="add-btn-fGens">
+                  <hr/>
+                  <div class="w3-btn w3-circle w3-xlarge w3-border-theme w3-border" @click='addToFGens(idx, idx1)'>+</div>
+                  <span class="fa-stack">
+                      <i class="far fa-circle fa-stack-2x"></i>
+                      <i class="fas fa-trash-alt fa-stack-1x"></i>
+                    </span>
                 </div>
               </template>
             </div>
