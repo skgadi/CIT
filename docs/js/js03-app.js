@@ -181,12 +181,33 @@ var app = new Vue({
           if (this.fGens[key] === undefined) {
             this.$set(this.fGens, key, [{
               sType: 'step',
-              params: {
-                amp: 1
-              }
+              params: {},
+              iSignal: false
             }]);
             this.$nextTick(this.validateInputs);
             return;
+          }
+          for (var i = 0; i < this.fGens[key].length; i++) {
+            var tempSType = this.fGens[key][i].sType;
+            console.log(tempSType);
+            for (var j = 0; j < this.cLang.fGens.sTypes[tempSType].params.length; j++) {
+              var tempParam = this.cLang.fGens.sTypes[tempSType].params[j];
+              if (this.fGens[key][i].params[tempParam] === undefined) {
+                this.$set(this.fGens[key][i].params, tempParam, this.cLang.fGens.params[tempParam]);
+                this.$set(this.fGens[key][i].params, tempParam, this.cLang.fGens.params[tempParam]);
+                this.$nextTick(this.validateInputs);
+                return;
+              }
+            }
+            var tempPresParams = Object.keys(this.fGens[key][i].params);
+            for (var j = 0; j <  tempPresParams.length; j++) {
+              if (this.cLang.fGens.sTypes[tempSType].params.indexOf (tempPresParams[j])<0) {
+                this.$delete(this.fGens[key][i].params, tempPresParams[j]);
+                this.$nextTick(this.validateInputs);
+                return;
+              }
+            }
+
           }
         }
       }

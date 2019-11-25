@@ -91,11 +91,13 @@
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.gain"></label>
-                <input class="w3-input errValidation" v-model="oGains[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
+                <input class="w3-input errValidation" v-model="oGains[idx0]" min="-Infinity" max="Infinity"
+                  :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.offset"></label>
-                <input class="w3-input errValidation" v-model="oOffsets[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
+                <input class="w3-input errValidation" v-model="oOffsets[idx0]" min="-Infinity" max="Infinity"
+                  :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
               </div>
             </div>
           </template>
@@ -111,11 +113,13 @@
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.gain"></label>
-                <input class="w3-input errValidation" v-model="iGains[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
+                <input class="w3-input errValidation" v-model="iGains[idx0]" min="-Infinity" max="Infinity"
+                  :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.offset"></label>
-                <input class="w3-input errValidation" v-model="iOffsets[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
+                <input class="w3-input errValidation" v-model="iOffsets[idx0]" min="-Infinity" max="Infinity"
+                  :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
               </div>
             </div>
           </template>
@@ -133,7 +137,8 @@
             <template v-for="(item, idx) in cLang.algorithms[sAlgorithm].params">
               <div class="w3-col s6">
                 <label v-html="item.name"></label>
-                <input class="w3-input errValidation" v-model="params[idx]" :mTab="cLang.mTabs.params" :sID="item.name" :min="item.min" :max="item.max">
+                <input class="w3-input errValidation" v-model="params[idx]" :mTab="cLang.mTabs.params" :sID="item.name"
+                  :min="item.min" :max="item.max">
               </div>
             </template>
           </div>
@@ -156,16 +161,27 @@
             {{item.name}}
             <div class="w3-border w3-border-theme w3-padding-16 w3-container">
               <template v-for="(item1, idx1) in fGens[idx]">
-                <label v-html="cLang.fGens.sType"></label>
-                <select class="w3-select" v-model="item1.sType">
-                  <option v-for="(item, idx) in cLang.fGens.sTypes" :value="idx" v-html="item.name">
-                  </option>
-                </select>
-                <template v-for="(item2, idx2) in item1.params">
-                  <label v-html="cLang.fGens.params[idx2].name"></label>
-                  <input class="w3-input errValidation" v-model="fGens[idx][idx1].params[idx2]" :mTab="cLang.mTabs.fGens" :sID="item.name+'['+(idx1+1)+']'+cLang.fGens.params[idx2].name"
-                    :min="cLang.fGens.params[idx2].min" :max="cLang.fGens.params[idx2].max">
-                </template>
+                <div class="gridASpace">
+                  <div>
+                    <label v-html="cLang.fGens.sType"></label>
+                    <select class="w3-select" v-model="fGens[idx][idx1].sType">
+                      <option v-for="(item, idx) in cLang.fGens.sTypes" :value="idx" v-html="item.name">
+                      </option>
+                    </select>
+                  </div>
+                  <template v-for="(item2, idx2) in item1.params">
+                    <div>
+                      <label v-html="cLang.fGens.params[idx2].name"></label>
+                      <input class="w3-input errValidation" v-model="fGens[idx][idx1].params[idx2].val"
+                        :mTab="cLang.mTabs.fGens" :sID="item.name+'; ['+(idx1+1)+']; '+cLang.fGens.params[idx2].name"
+                        :min="cLang.fGens.params[idx2].min" :max="cLang.fGens.params[idx2].max">
+                    </div>
+                  </template>
+                  <div>
+                    <input class="w3-check" type="checkbox" v-model="fGens[idx][idx1].iSignal" :id="'iSignalLabel_'+ idx + '_' + idx1">
+                    <label v-html="cLang.fGens.iSignal" :for="'iSignalLabel_'+ idx + '_' + idx1"></label>
+                  </div>
+                </div>
               </template>
             </div>
           </template>
@@ -210,12 +226,12 @@
                 <tbody>
                   <template v-for="(item, idx) in errors">
                     <tr>
-                        <td v-html="item.mTab"></td>
-                        <td v-html="item.sID"></td>
-                        <td v-html="item.val"></td>
-                        <td v-html="item.min"></td>
-                        <td v-html="item.max"></td>
-                      </tr>
+                      <td v-html="item.mTab"></td>
+                      <td v-html="item.sID"></td>
+                      <td v-html="item.val"></td>
+                      <td v-html="item.min"></td>
+                      <td v-html="item.max"></td>
+                    </tr>
                   </template>
                 </tbody>
               </table>
@@ -232,8 +248,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-MML-AM_CHTML"
     integrity="sha256-nlrDrBTHxJJlDDX22AS33xYI1OJHnGMDhiYMSe2U0e0=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.min.js" integrity="sha256-D/MkugLuxx4Xx0Kb92cUhpxlCMhUvQ0eOtEL8Ol23jM=" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="js.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.min.js"
+    integrity="sha256-D/MkugLuxx4Xx0Kb92cUhpxlCMhUvQ0eOtEL8Ol23jM=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="js.min.js?v=4"></script>
 </body>
 
 </html>
