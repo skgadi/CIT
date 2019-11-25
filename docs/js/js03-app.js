@@ -101,7 +101,12 @@ var app = new Vue({
   },
   methods: {
     addToFGens: function (a, b) {
-      this.fGens[a].splice(b, 0, Object.assign({}, this.dFGen));
+      this.fGens[a].splice(b, 0, JSON.parse(JSON.stringify(this.dFGen)));
+      this.$nextTick(this.validateInputs);
+    },
+    delAFGen: function (a, b) {
+      this.fGens[a].splice(b, 1);
+      this.$nextTick(this.validateInputs);
     },
     clearErrors: function () {
       this.$set(this, "errors", []);
@@ -197,10 +202,6 @@ var app = new Vue({
               var tempParam = this.cLang.fGens.sTypes[tempSType].params[j];
               if (this.fGens[key][ii].params[tempParam] === undefined) {
                 this.$set(this.fGens[key][ii].params, tempParam, Object.assign({}, this.cLang.fGens.params[tempParam]));
-                console.log("1 -- " + ii + ' -- '+j);
-                console.log(tempSType);
-                console.log(tempParam);
-                console.log(JSON.stringify (this.fGens[key][ii].params[tempParam]));
                 this.$nextTick(this.validateInputs);
                 return;
               }
@@ -208,9 +209,6 @@ var app = new Vue({
             var tempPresParams = Object.keys(this.fGens[key][ii].params);
             for (var j = 0; j <  tempPresParams.length; j++) {
               if (this.cLang.fGens.sTypes[tempSType].params.indexOf (tempPresParams[j])<0) {
-                console.log("2 -- " + ii + ' -- '+j);
-                console.log(tempPresParams);
-
                 this.$delete(this.fGens[key][ii].params, tempPresParams[j]);
                 this.$nextTick(this.validateInputs);
                 return;

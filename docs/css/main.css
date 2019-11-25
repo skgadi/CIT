@@ -78,23 +78,36 @@ iframe {
 
 .add-btn-fGens hr {
     position: absolute;
-    top: 10px;
+    top: -3px;
     width: 100%;
-    border: 4px solid rgb(106, 90, 205);
+    border: 2px solid rgb(106, 90, 205);
     border-radius: 4px;
     z-index: -1;
 }
 
-.add-btn-fGens div {
+.fGens-add {
     margin: 4px;
-    background-color: rgb(106, 255, 205);
-    border-width: 4px !important;
+    cursor: pointer;
 }
 
-.add-btn-fGens span {
+.fGens-add > :first-child {
+    color: rgb(106, 90, 205);
+}
+.fGens-add > :nth-child(2) {
+    color: whitesmoke;
+}
+
+.fGens-del {
+    position: absolute;
+    top: -16px;
+    right: 0;
     vertical-align: top;
     color: red;
-    position: absolute;
-    right: 0;
     cursor: pointer;
+}
+
+#chart_div {
+    width: 100%;
+    height: 500px;
+    background-color: red;
 }
