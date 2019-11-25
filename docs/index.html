@@ -91,11 +91,11 @@
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.gain"></label>
-                <input class="w3-input errValidation" v-model="oGains[idx0]" min="-Infinity" max="Infinity">
+                <input class="w3-input errValidation" v-model="oGains[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.offset"></label>
-                <input class="w3-input errValidation" v-model="oOffsets[idx0]" min="-Infinity" max="Infinity">
+                <input class="w3-input errValidation" v-model="oOffsets[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
               </div>
             </div>
           </template>
@@ -111,11 +111,11 @@
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.gain"></label>
-                <input class="w3-input errValidation" v-model="iGains[idx0]" min="-Infinity" max="Infinity">
+                <input class="w3-input errValidation" v-model="iGains[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.gain">
               </div>
               <div class="w3-col s3">
                 <label v-html="cLang.offset"></label>
-                <input class="w3-input errValidation" v-model="iOffsets[idx0]" min="-Infinity" max="Infinity">
+                <input class="w3-input errValidation" v-model="iOffsets[idx0]" min="-Infinity" max="Infinity" :mTab="cLang.mTabs.bridgeDevice" :sID="item0 + '; ' + cLang.offset">
               </div>
             </div>
           </template>
