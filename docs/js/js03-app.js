@@ -21,6 +21,8 @@ var app = new Vue({
     params: {},
     fGens: {},
     errors: [],
+    plots: {},
+    pHeight: 500,
     defaults: {
       sInputs: "analog",
       iGains: 1,
@@ -36,9 +38,20 @@ var app = new Vue({
     }
   },
   watch: {
+    'plots.allSelected': function (nVal, oVal) {
+      var keys = Object.keys(this.plots.signals);
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        this.plots.signals[key].selected = nVal;
+      }
+      setTimeout(() => {
+        document.getElementById('all_plots_display').indeterminate = true;
+      }, 1000);
+    },
     sAlgorithm: {
       deep: true,
       handler: function () {
+        this.resetPlots();
         this.validateInputs();
       }
     },
@@ -100,6 +113,27 @@ var app = new Vue({
     }
   },
   methods: {
+    resetPlots: function () {
+      this.$set(this, "plots", {
+        t: [],
+        signals: {},
+        allSelected: true
+      });
+      var tempPlots = this.cLang.algorithms[this.sAlgorithm].plots;
+      var tempPlotKeys = Object.keys(tempPlots);
+      for (var i = 0; i < tempPlotKeys.length; i++) {
+        var key = tempPlotKeys[i];
+        this.$set(this.plots.signals, key, {
+          name: tempPlots[key],
+          log: [],
+          selected: true,
+          color: getColorAt(i)
+        });
+      }
+    },
+    gPaletteClick: function (idx) {
+      document.getElementById('gColor_' + idx).click()
+    },
     addToFGens: function (a, b) {
       this.fGens[a].splice(b, 0, JSON.parse(JSON.stringify(this.dFGen)));
       this.$nextTick(this.validateInputs);
@@ -192,7 +226,7 @@ var app = new Vue({
         for (var i = 0; i < TempKeys.length; i++) {
           var key = TempKeys[i];
           if (this.fGens[key] === undefined || this.fGens[key].length === 0) {
-            this.$set(this.fGens, key, [Object.assign({},this.dFGen)]);
+            this.$set(this.fGens, key, [Object.assign({}, this.dFGen)]);
             this.$nextTick(this.validateInputs);
             return;
           }
@@ -207,8 +241,8 @@ var app = new Vue({
               }
             }
             var tempPresParams = Object.keys(this.fGens[key][ii].params);
-            for (var j = 0; j <  tempPresParams.length; j++) {
-              if (this.cLang.fGens.sTypes[tempSType].params.indexOf (tempPresParams[j])<0) {
+            for (var j = 0; j < tempPresParams.length; j++) {
+              if (this.cLang.fGens.sTypes[tempSType].params.indexOf(tempPresParams[j]) < 0) {
                 this.$delete(this.fGens[key][ii].params, tempPresParams[j]);
                 this.$nextTick(this.validateInputs);
                 return;
