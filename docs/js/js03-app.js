@@ -22,6 +22,9 @@ var app = new Vue({
     fGens: {},
     errors: [],
     plots: {},
+    chart: {
+      uCounter: 0
+    },
     pHeight: 500,
     defaults: {
       sInputs: "analog",
@@ -38,6 +41,11 @@ var app = new Vue({
     }
   },
   watch: {
+    'chart.uCounter': function () {
+      if (!!this.chart.ready) {
+        this.chart.view.draw(this.chart.data, this.chart.options);
+      }
+    },
     'plots.allSelected': function (nVal, oVal) {
       var keys = Object.keys(this.plots.signals);
       for (var i = 0; i < keys.length; i++) {
@@ -113,6 +121,25 @@ var app = new Vue({
     }
   },
   methods: {
+    updateChartData: function () {
+
+    },
+    resetChart: function () {
+      if (!!this.chart.ready) {
+        this.chart.data.removeColumns(0, this.chart.data.getNumberOfColumns());
+        this.chart.data.addColumn('number', 'Time');
+      }
+
+      var tempPlots = this.cLang.algorithms[this.sAlgorithm].plots;
+      var tempPlotKeys = Object.keys(tempPlots);
+      for (var i = 0; i < tempPlotKeys.length; i++) {
+        var key = tempPlotKeys[i];
+        if (!!this.chart.ready) {
+          this.chart.data.addColumn('number', key);
+        }
+      }
+      this.chart.uCounter++;
+    },
     resetPlots: function () {
       this.$set(this, "plots", {
         t: [],
@@ -130,6 +157,7 @@ var app = new Vue({
           color: getColorAt(i)
         });
       }
+      this.resetChart();
     },
     gPaletteClick: function (idx) {
       document.getElementById('gColor_' + idx).click()
