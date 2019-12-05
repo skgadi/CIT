@@ -132,6 +132,13 @@ var app = new Vue({
     }
   },
   methods: {
+    resetColors: function () {
+      var keys = Object.keys(this.plots.signals);
+      for (var i=0; i<keys.length; i++) {
+        var key = keys[i];
+        this.$set(this.plots.signals[key],"color", getColorAt(i));
+      }
+    },
     updateChartData: function () {
 
     },
