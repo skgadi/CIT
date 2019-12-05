@@ -5,12 +5,12 @@ var app = new Vue({
     sLang: "en",
     sAlgorithm: "",
     display: {
-      "mModel": false,
-      "bridgeDevice": false,
-      "params": false,
-      "fGens": false,
-      "graphs": false,
-      "errors": false
+      "mModel": true,
+      "bridgeDevice": true,
+      "params": true,
+      "fGens": true,
+      "graphs": true,
+      "errors": true
     },
     sInputs: {},
     iGains: {},
@@ -38,6 +38,11 @@ var app = new Vue({
       sType: 'step',
       params: {},
       iSignal: false
+    },
+    sim: {
+      running: false,
+      ts: 0.1,
+      tPeriod: 5
     }
   },
   watch: {
@@ -64,6 +69,12 @@ var app = new Vue({
       }
     },
     sLang: function () {},
+    sim: {
+      deep: true,
+      handler: function () {
+        this.validateInputs();
+      }
+    },
     oGains: {
       deep: true,
       handler: function () {
@@ -117,7 +128,7 @@ var app = new Vue({
       return this.lang[this.sLang];
     },
     mModel: function () {
-      return `<iframe src='https://docs.google.com/gview?url=https://cit.skgadi.com/m-models/${this.cLang.algorithms[this.sAlgorithm].documentation}&embedded=true' style='width:100%; height:300px;' frameborder='0'></iframe>`;
+      return `<embed src='https://cit.skgadi.com/m-models/${this.cLang.algorithms[this.sAlgorithm].documentation}' style='width:100%; height:500px; display: block;'/>`;
     }
   },
   methods: {

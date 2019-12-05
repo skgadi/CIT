@@ -58,18 +58,44 @@
         </div>
       </div>
     </header>
-    <div class="w3-panel">
-      <label v-html="cLang.aSelection"></label>
-      <select class="w3-select" v-model="sAlgorithm">
-        <option v-for="(item, idx) in cLang.algorithms" :value="idx" v-html="item.name"></option>
-      </select>
+    <div class="w3-padding-16">
+      <div class="w3-container">
+        <label v-html="cLang.aSelection"></label>
+        <select class="w3-select" v-model="sAlgorithm">
+          <option v-for="(item, idx) in cLang.algorithms" :value="idx" v-html="item.name"></option>
+        </select>
+      </div>
+      <br />
+      <div class="w3-row-padding">
+        <div class="w3-col s6">
+          <label v-html="cLang.sim.ts"></label>
+          <input class="w3-input errValidation" v-model="sim.ts" min="0.001" max="Infinity" :mTab="cLang.sim.name" :sID="cLang.sim.ts">
+        </div>
+        <div class="w3-col s6">
+          <label v-html="cLang.sim.tPeriod"></label>
+          <input class="w3-input errValidation" v-model="sim.tPeriod" min="0.001" max="Infinity" :mTab="cLang.sim.name" :sID="cLang.sim.tPeriod">
+        </div>
+      </div>
+      <div class="w3-panel">
+        <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple"
+          :class="(sim.running ? 'w3-orange' : 'w3-blue')">
+          <div class="w3-display-left">
+            <span class="fa-stack">
+              <i class="far fa-circle fa-stack-2x"></i>
+              <i class="fas fa-stack-1x" :class="(sim.running?'fa-stop':'fa-play')"></i>
+            </span>
+          </div>
+          <span class="w3-right" v-html="(sim.running ? cLang.sim.stop : cLang.sim.run)"></span>
+        </div>
+      </div>
     </div>
     <div>
       <div class="w3-theme mainTab w3-ripple" @click="display.mModel = !display.mModel">
         <i class="animate fas  fa-fw fa-chevron-right" :class="{rotate: display.mModel}"></i>
         <span v-html="cLang.mTabs.mModel"></span>
       </div>
-      <div class="animate" :class="(display.mModel?'un-fade':'fade')" v-html="mModel">
+      <div class="animate" :class="(display.mModel?'un-fade':'fade')">
+        <div v-html="mModel"></div>
       </div>
     </div>
     <div>
@@ -250,17 +276,27 @@
           <div id="chart_div"></div>
         </div>
         <div class="w3-padding-16">
-          <div class="w3-row">
+          <div class="w3-row-padding">
             <div class="w3-col s6 w3-center">
-              <div class=" w3-btn w3-round-xxlarge w3-ripple w3-theme">
-                <i class="fas fa-window-restore"></i>
-                <span v-html="cLang.plots.nWind"></span>
+              <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
+                <div class="w3-display-left">
+                  <span class="fa-stack">
+                    <i class="far fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-window-restore fa-stack-1x"></i>
+                  </span>
+                </div>
+                <span class="w3-right" v-html="cLang.plots.nWind"></span>
               </div>
             </div>
             <div class="w3-col s6 w3-center">
-              <div class=" w3-btn w3-round-xxlarge w3-ripple w3-theme">
-                <i class="fas fa-download"></i>
-                <span v-html="cLang.plots.sLog"></span>
+              <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
+                <div class="w3-display-right">
+                  <span class="fa-stack">
+                    <i class="far fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-download fa-stack-1x"></i>
+                  </span>
+                </div>
+                <span class="w3-left" v-html="cLang.plots.sLog"></span>
               </div>
             </div>
           </div>
