@@ -31,7 +31,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 };
 
 void InitBLE() {
-  BLEDevice::init("BLE Battery");
+  BLEDevice::init("CIT-Bridge");
   // Create the BLE Server
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());

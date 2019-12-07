@@ -43,6 +43,16 @@ var app = new Vue({
       running: false,
       ts: 0.1,
       tPeriod: 5
+    },
+    ble: {
+      sUuid: 0x181C,
+      device: null,
+      server: null,
+      service: null,
+      cAct0: null,
+      cAct1: null,
+      cSen0: null,
+      cSen1: null
     }
   },
   watch: {
@@ -116,8 +126,12 @@ var app = new Vue({
     this.$set(this, "sAlgorithm", "sResponse");
   },
   mounted: function () {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("app").style.display = "block";
+    if (!!navigator.bluetooth) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("app").style.display = "block";
+    } else {
+      document.getElementById("loading").innerHTML = "Your computer/browser doesn't support BLE.<br/>Please use a latest version of Google Chrome on a device with BLE.";
+    }
   },
   updated: function () {
     this.resetInvalidsToDefault();
@@ -132,11 +146,27 @@ var app = new Vue({
     }
   },
   methods: {
+    runButton: function () {
+      if (this.sim.running) {
+
+      } else {
+        navigator.bluetooth.requestDevice({
+            filters: [{
+              services: [this.ble.sUuid]
+            }]
+          })
+          .then(device => {
+            app.$set(app.$data.ble, "device", device);
+            run(device.gatt.connect());
+          })
+          .catch(err => {});
+      }
+    },
     resetColors: function () {
       var keys = Object.keys(this.plots.signals);
-      for (var i=0; i<keys.length; i++) {
+      for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        this.$set(this.plots.signals[key],"color", getColorAt(i));
+        this.$set(this.plots.signals[key], "color", getColorAt(i));
       }
     },
     updateChartData: function () {

@@ -77,8 +77,8 @@
         </div>
       </div>
       <div class="w3-panel">
-        <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple"
-          :class="(sim.running ? 'w3-orange' : 'w3-blue')">
+        <div class="w3-block w3-round-xxlarge w3-btn w3-display-container w3-ripple"
+          :class="(sim.running ? 'w3-orange' : 'w3-blue')" @click="runButton">
           <div class="w3-display-left">
             <span class="fa-stack">
               <i class="far fa-circle fa-stack-2x"></i>
@@ -278,7 +278,7 @@
         <div class="w3-padding-16">
           <div class="w3-row-padding">
             <div class="w3-col s6 w3-center">
-              <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
+              <div class="w3-block w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
                 <div class="w3-display-left">
                   <span class="fa-stack">
                     <i class="far fa-circle fa-stack-2x"></i>
@@ -289,7 +289,7 @@
               </div>
             </div>
             <div class="w3-col s6 w3-center">
-              <div class="w3-block w3-card w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
+              <div class="w3-block w3-round-xxlarge w3-btn w3-display-container w3-ripple w3-theme">
                 <div class="w3-display-right">
                   <span class="fa-stack">
                     <i class="far fa-circle fa-stack-2x"></i>
