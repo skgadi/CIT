@@ -6,5 +6,8 @@ async function run(server) {
     app.$set(app.$data.ble, "cSen0", await app.$data.ble.service.getCharacteristic(0x0002));
     app.$set(app.$data.ble, "cSen1", await app.$data.ble.service.getCharacteristic(0x0003));
 
-    console.log((await app.$data.ble.cSen0.readValue()).getFloat32());
+    setInterval(async function () {
+        console.log((await app.$data.ble.cSen0.readValue()));
+        console.log((await app.$data.ble.cSen1.readValue()));
+    }, 500);
 }

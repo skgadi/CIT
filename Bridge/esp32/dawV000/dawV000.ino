@@ -11,7 +11,29 @@
 #include <BLEServer.h> //Library to use BLE as server
 #include <BLE2902.h> 
 
- 
+enum CITIds {
+  TEMPERATURE,
+  HUMIDITY,
+  DC0,
+  DC1,
+  AC0,
+  AC1
+};
+
+enum CITType {
+  SENSOR,
+  ACTUATOR
+};
+
+struct CITPacket {
+  float val;
+  uint16_t id;
+  uint16_t type;
+};
+
+struct CITPlot {
+  float data[100] = {1,2,3};
+};
 
 bool _BLEClientConnected = false;
 
@@ -80,20 +102,36 @@ void InitBLE() {
 }
 
 void setup() {
-  /*Serial.begin(115200);
-  Serial.println("Battery Level Indicator - BLE");
+  Serial.begin(115200);
+  /*Serial.println("Battery Level Indicator - BLE");
   */
   InitBLE();
 }
 
-  float ACT0, ACT1;
-  float SEN0, SEN1;
+  CITPacket ACT0, ACT1;
+  CITPacket SEN0, SEN1;
+  CITPlot a, b;
 void loop() {
-  SEN0 = 0.004884004884004884 * analogRead(34) - 10.0;
-  SEN1 = 0.004884004884004884 * analogRead(35) - 10.0;
+  SEN0.val = 0.004884004884004884 * analogRead(34) - 10.0;
+  SEN1.val = 0.004884004884004884 * analogRead(35) - 10.0;
+
+  SEN0.val = SEN0.val + 0.1;
+  SEN1.val = SEN1.val + 0.1;
+
+
   
-  CHR_SEN0.setValue((uint8_t*)(&SEN0), 4);
-  CHR_SEN1.setValue((uint8_t*)(&SEN1), 4);
+  SEN0.id = DC0;
+  SEN1.id = DC1;
+
+  SEN0.type = SENSOR;
+  SEN1.type = ACTUATOR;
+  
+
+  Serial.println(sizeof(a));
+  delay(100);
+  
+  CHR_SEN0.setValue((uint8_t*)(&a), 400);
+  CHR_SEN1.setValue((uint8_t*)(&b), 400);
 /*
   BLE_DCI0.notify();
   BLE_DCI1.notify();
