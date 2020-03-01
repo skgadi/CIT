@@ -773,7 +773,7 @@ public class MainActivity extends AppCompatActivity {
         Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[0]
                 + ": "
                 +getResources().getStringArray(R.array.NAV_ITEMS_0)[0];
-        Model.NoOfInputs=1;
+        Model.NoOfInputs=2;
         Model.NoOfOutputs=2;
         Model.NoOfPastInputsRequired = 0;
         Model.NoOfPastOuputsRequired = 0;
@@ -3028,6 +3028,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isValidRead) {
                     RequestSend = true;
                     isValidRead  = false;
+                    Log.i("Inputs", "Input length : " + Input.length);
                     for (int i=0; i<Input.length; i++)
                         Input[i] = PutElementToFIFO(Input[i], RecData[i]);
                     for (int i = 0; i< PreparedSignals.length; i++)
