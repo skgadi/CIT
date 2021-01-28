@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Android-mCIT.iml" filepath="$PROJECT_DIR$/Android-mCIT.iml" group="mCIT" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mCIT.iml" filepath="$PROJECT_DIR$/mCIT.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/mCIT-app.iml" filepath="$PROJECT_DIR$/app/mCIT-app.iml" group="mCIT/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mCIT.iml" filepath="$PROJECT_DIR$/.idea/modules/mCIT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/mCIT.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/mCIT.app.iml" />
     </modules>
   </component>
 </project>

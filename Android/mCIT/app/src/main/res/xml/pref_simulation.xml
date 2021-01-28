@@ -28,16 +28,24 @@
         android:title="@string/pref_sim_stop_sim_after"
         android:dialogMessage="@string/pref_sim_stop_sim_after_desc"/>
 
-    <ListPreference
+    <!--ListPreference
         android:defaultValue="SIM"
         android:entries="@array/pref_sim_actual_sampling_time_type_entries"
         android:entryValues="@array/pref_sim_actual_sampling_time_type_values"
         android:key="sim_actual_sampling_time_type"
         android:summary="%s"
-        android:title="@string/pref_sim_actual_sampling_time_type" />
+        android:title="@string/pref_sim_actual_sampling_time_type" /-->
+
+    <ListPreference
+        android:defaultValue="NONE"
+        android:entries="@array/pref_sim_velocity_avg_type_entries"
+        android:entryValues="@array/pref_sim_velocity_avg_type_values"
+        android:key="sim_velocity_avg_type"
+        android:summary="%s"
+        android:title="@string/pref_sim_velocity_avg_type" />
 
     <EditTextPreference
-        android:defaultValue="100"
+        android:defaultValue="5"
         android:key="sim_ma_data_points"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -53,13 +61,6 @@
         android:inputType="number"
         android:title="@string/pref_sim_wma_weight"
         android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
-    <ListPreference
-        android:defaultValue="HANN"
-        android:entries="@array/pref_sim_velocity_avg_type_entries"
-        android:entryValues="@array/pref_sim_velocity_avg_type_values"
-        android:key="sim_velocity_avg_type"
-        android:summary="%s"
-        android:title="@string/pref_sim_velocity_avg_type" />
     <ListPreference
         android:defaultValue="RPM"
         android:entries="@array/pref_sim_rotation_unit_entries"

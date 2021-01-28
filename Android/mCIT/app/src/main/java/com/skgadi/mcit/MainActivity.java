@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     int LinesColor = Color.rgb(150, 65, 165);
 
 
-    long PrevEncoderValue=0;
+    int PrevEncoderValue=0;
 
 
 
@@ -448,8 +448,9 @@ public class MainActivity extends AppCompatActivity {
                 SetHomeScreenToDefaultState();
                 break;
         }
-        if (FoundItem)
+        if (FoundItem) {
             GenerateViewFromModel();
+        }
         return FoundItem;
     }
 
@@ -762,11 +763,10 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[4];
+                double[] Trajectories = new double[3];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
-                Trajectories[2] = Generated[0][0] + Generated[1][0] + Generated[2][0];
-                Trajectories[3] = Input[1][0];
+                Trajectories[2] = Input[1][0];
                 return Trajectories;
             }
         };
@@ -790,14 +790,14 @@ public class MainActivity extends AppCompatActivity {
         Model.SignalGenerators[0] = "u_1(t)";
         Model.SignalGenerators[1] = "u_2(t)";
         Model.SignalGenerators[2] = "u_3(t)";
-        Model.Figures = new Figure[2];
-        String[] TempTrajectories = new String[2];
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[1];
         TempTrajectories[0]= "Input u(t)";
-        TempTrajectories[1]= "Position \u03F4(t)";
-        Model.Figures[0] = new Figure("Input u(t) and Position \u03B8(t)", TempTrajectories);
-        TempTrajectories[0]= "Input u(t)";
-        TempTrajectories[1]= "velocity \u0460(t)";
-        Model.Figures[1] = new Figure("Input u(t) and velocity \u03C9(t)", TempTrajectories);
+        Model.Figures[0] = new Figure("Input u(t)", TempTrajectories);
+        TempTrajectories[0]= "Position \u03F4(t)";
+        Model.Figures[1] = new Figure("Position \u03B8(t)", TempTrajectories);
+        TempTrajectories[0]= "velocity \u0460(t)";
+        Model.Figures[2] = new Figure("velocity \u03C9(t)", TempTrajectories);
         Model.Parameters = new Parameter [0];
     }
 
@@ -2794,7 +2794,7 @@ public class MainActivity extends AppCompatActivity {
     private void DataRecUpdateAdio (byte[] data) {
 
     }
-    double[] VelCalcPrevForAvg = {0, 0, 0};
+    //double[] VelCalcPrevForAvg = {0, 0, 0};
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
         Log.i("Timing", "Found New data:" + new String(data));
@@ -2805,11 +2805,37 @@ public class MainActivity extends AppCompatActivity {
                 /*Log.i("Timing", "Obtained: "+Rec);
                 Log.i("Timing", "Extracted: "+Rec);*/
 
-                long PresEncoderValue=0;
-                int PresentEncoderValue = 0;
+                int PresentEncoderValue = (int) Float.parseFloat(Rec);
+                Log.i("PresentEncoderValue", Integer.toString(PresentEncoderValue));
                 double PrevRecData = RecData[0];
+                double oneStep = PresentEncoderValue - PrevEncoderValue;
+                double distance = Math.abs(oneStep);
+                if (distance > 32768) {
+                    oneStep = -Math.copySign(65536-distance, oneStep);
+                }
+                oneStep = oneStep/(getPrefInt("motor_counts_per_rev", 64)*getPrefInt("motor_gear_ratio",1));
+                double timeFactor = 1;
+                switch (getPrefString("sim_rotation_unit", "RPM")){
+                    case "RAD":
+                        oneStep = oneStep*2*Math.PI;
+                        break;
+                    case "RPM":
+                        timeFactor = 60;
+                        break;
+                    case "DEG":
+                        oneStep = oneStep*360;
+                        break;
+                };
+                RecData[0] += oneStep;
+                Model.velocityMeasurements.addANewSample((oneStep/Model.T_SForModel)*timeFactor);
+                //PutElementToFIFO(Model.velocityMeasurements.samples, (oneStep/Model.T_SForModel)*timeFactor);
+                RecData[1] =  Model.velocityMeasurements.filterOut;
+                Log.i("Calculated RecData", "-->"+RecData[0]);
+                /*long PresEncoderValue=0;
+                Log.i("Rec Text as Integer", Float.toString(Float.parseFloat(Rec)));
                 PresEncoderValue = Math.round(Float.parseFloat(Rec));
                 PresentEncoderValue = (int) ((PresEncoderValue & (0x00ff)) | (PresEncoderValue & (0x00ff00)));
+                Log.i("encoder", Rec);
                 if (Math.abs(PresentEncoderValue-PrevEncoderValue)<((getPrefInt("motor_counts_per_rev", 64)/60.0)*getPrefInt("motor_max_rpm", 11000)))
                     RecData[0] += ((PresentEncoderValue - PrevEncoderValue)/(getPrefInt("motor_counts_per_rev", 64)*1.0))*(2*Math.PI); //8384
                 else {
@@ -2817,17 +2843,17 @@ public class MainActivity extends AppCompatActivity {
                         RecData[0] += (((PresentEncoderValue - getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("motor_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
                     else
                         RecData[0] += (((PresentEncoderValue + getPrefInt("bridge_encoder_max_count", 65535)) - PrevEncoderValue) / (getPrefInt("motor_counts_per_rev", 64) * 1.0)) * (2 * Math.PI); //8384
-                }
-                switch (getPrefString("sim_rotation_unit", "RPM")){
+                }*/
+                /*switch (getPrefString("sim_rotation_unit", "RPM")){
                     case "RPM":
                         RecData[0] = RecData[0]/(2 * Math.PI);
                         break;
                     case "DEG":
                         RecData[0] = RecData[0]*180/(Math.PI);
                         break;
-                };
-                RecData[1] = (RecData[0] - PrevRecData)/Model.T_SForModel;
-                if (getPrefString("sim_rotation_unit", "RPM") == "RPM") RecData[1] = RecData[1]*60;
+                };*/
+                //RecData[1] = (RecData[0] - PrevRecData)/Model.T_SForModel;
+                /*if (getPrefString("sim_rotation_unit", "RPM") == "RPM") RecData[1] = RecData[1]*60;
                 switch (getPrefString("sim_velocity_avg_type", "SIM")) {
                     case "NONE":
                     case "HANN":
@@ -2847,8 +2873,8 @@ public class MainActivity extends AppCompatActivity {
                                 + 0.14128*VelCalcPrevForAvg[1]
                                 + 0.01168*VelCalcPrevForAvg[2];
                         break;
-                }
-                PutElementToFIFO(VelCalcPrevForAvg, RecData[1]);
+                }*/
+                //PutElementToFIFO(VelCalcPrevForAvg, RecData[1]);
                 Log.i("Timing", "PrevEncoderValue "+ PrevEncoderValue +"; PresentEncoderValue: "+ PresentEncoderValue +"; RecData: "+RecData[0]);
                 PrevEncoderValue = PresentEncoderValue;
                 isValidRead = true;
@@ -2860,7 +2886,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void RequestAIAdio() {
-        Log.i("Timing", "Sent G0");
+        //Log.i("Timing", "Sent G0");
         byte[] OutBytes= {'G', '0'};
         arduino.send(OutBytes);
     }
@@ -2883,8 +2909,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    double factorForScalingVoltage=51;
     private long ConvertFloatToIntForAO (double OutFloat) {
-        return Math.round(OutFloat * 51.0);
+        return Math.round(OutFloat * factorForScalingVoltage);
     }
 
     private byte[][] ConvertToIntTSendBytesForAdio (long Out) {
@@ -3028,7 +3055,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isValidRead) {
                     RequestSend = true;
                     isValidRead  = false;
-                    Log.i("Inputs", "Input length : " + Input.length);
+                    //Log.i("Inputs", "Input length : " + Input.length);
                     for (int i=0; i<Input.length; i++)
                         Input[i] = PutElementToFIFO(Input[i], RecData[i]);
                     for (int i = 0; i< PreparedSignals.length; i++)
@@ -3105,6 +3132,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute () {
+            //--- set the scale for voltage out ... will be used to set PWM of USB
+            factorForScalingVoltage = getPrefInt("bridge_out_limit_upper", 5);
+            //--- Prepare window calculation for velocity
+            Model.velocityMeasurements = new digitalFilter(
+                    getResources().getStringArray(R.array.TOASTS),
+                    getPrefInt("sim_ma_data_points", 10),
+                    getPrefString("sim_velocity_avg_type", "NONE")
+            );
             //--- Configuring Encoder
             int Temp_Encoder_A_Terminal = 0x61 + getPrefInt("bridge_encoder_a", 2);
             int Temp_Encoder_B_Terminal = 0x61 + getPrefInt("bridge_encoder_b", 3);
@@ -3224,6 +3259,9 @@ public class MainActivity extends AppCompatActivity {
             return ParameterValues;
         }
         protected void onCancelled() {
+            //Send 0v to the output
+            WriteToUSB(0);
+
             FillLinePoints((int)Iteration%GraphRefreshAfter);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             SetProperSimulationStatus();

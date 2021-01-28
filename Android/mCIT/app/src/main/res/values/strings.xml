@@ -148,31 +148,17 @@
     <string name="pref_sim_velocity_avg_type">Velocity filter</string>
     <string-array name="pref_sim_velocity_avg_type_entries">
         <item>None</item>
-        <item>Hann filter</item>
-        <item>Hamming filter</item>
-        <item>Blackman filter</item>
-        <item>Blackman-Harris filter</item>
-        <item>Blackman-Nuttall filter</item>
-        <item>Flat top filter</item>
-        <item>Gauss filter</item>
-        <item>Triangular filter</item>
-        <item>Bartlett filter</item>
-        <item>Bartlett-Hann filter</item>
-        <item>Kaiser filter</item>
+        <item>Simple moving average</item>
+        <item>Cumulative moving average</item>
+        <item>Weighted moving average</item>
+        <item>Exponential moving average</item>
     </string-array>
     <string-array name="pref_sim_velocity_avg_type_values">
         <item>NONE</item>
-        <item>HANN</item>
-        <item>HAMMING</item>
-        <item>BLACKMAN</item>
-        <item>BLACKMAN_HARRIS</item>
-        <item>BLACKMAN_NUTTALL</item>
-        <item>FLAT_TOP</item>
-        <item>GAUSS</item>
-        <item>TRIANGULAR</item>
-        <item>BARTLETT</item>
-        <item>BARTLETT_HANN</item>
-        <item>KAISER</item>
+        <item>SMA</item>
+        <item>CMA</item>
+        <item>WMA</item>
+        <item>EMA</item>
     </string-array>
     <string name="pref_sim_rotation_unit">Unit for angular position &amp; velocity</string>
     <string-array name="pref_sim_rotation_unit_entries">
