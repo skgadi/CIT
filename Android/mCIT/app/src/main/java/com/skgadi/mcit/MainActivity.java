@@ -398,6 +398,12 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
+    public double getPrefDouble(String key, double DefaultValue) {
+        Context context = this.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Double.valueOf(preferences.getString(key, String.valueOf(DefaultValue)));
+    }
+
     public int getPrefInt(String key, int DefaultValue) {
         Context context = this.getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -964,7 +970,7 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Input,
                     double[][] Output
             ){
-                double MaxVoltage = getPrefInt("bridge_out_limit_upper", 12);
+                double MaxVoltage = bridge_out_limit_upper;
                 double K_P = Parameters[0];
                 double K_I = Parameters[1];
                 double K_D = Parameters[2];
@@ -1057,7 +1063,7 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Input,
                     double[][] Output
             ){
-                double MaxVoltage = getPrefInt("bridge_out_limit_upper", 12);
+                double MaxVoltage = bridge_out_limit_upper;
                 double K_P = Parameters[0];
                 double K_I = Parameters[1];
                 double K_D = Parameters[2];
@@ -2795,6 +2801,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
     //double[] VelCalcPrevForAvg = {0, 0, 0};
+    private double motor_counts_per_rev = 64;
+    private double motor_gear_ratio = 1;
+    private ROTATION_UNIT sim_rotation_unit = ROTATION_UNIT.RPS;
+    private double motor_gear_and_count_factor = 64;
+    private int graph_collect_size = 200;
+    private int sim_sampling_tolerance = 1000;
+    private double sim_stop_sim_after = -1;
+    private int sim_sampling_time = 20;
+    private int graph_refresh_after = 200;
+    private double bridge_out_limit_upper = 12;
+    private int bridge_encoder_word_size = 16;
+    private double bridge_encoder_max_count_Full = 16*16;
+    private double bridge_encoder_max_count_Half = bridge_encoder_max_count_Full/2;
+    enum ROTATION_UNIT {
+        RPS,
+        RPM,
+        RAD,
+        DEG
+    }
     private void DataRecUpdate (byte[] data) {
         String Rec = PrevString + new String(data);
         Log.i("Timing", "Found New data:" + new String(data));
@@ -2810,19 +2835,19 @@ public class MainActivity extends AppCompatActivity {
                 double PrevRecData = RecData[0];
                 double oneStep = PresentEncoderValue - PrevEncoderValue;
                 double distance = Math.abs(oneStep);
-                if (distance > 32768) {
-                    oneStep = -Math.copySign(65536-distance, oneStep);
+                if (distance > bridge_encoder_max_count_Half) {
+                    oneStep = -Math.copySign(bridge_encoder_max_count_Full-distance, oneStep);
                 }
-                oneStep = oneStep/(getPrefInt("motor_counts_per_rev", 64)*getPrefInt("motor_gear_ratio",1));
+                oneStep = oneStep/motor_gear_and_count_factor;
                 double timeFactor = 1;
-                switch (getPrefString("sim_rotation_unit", "RPM")){
-                    case "RAD":
+                switch (sim_rotation_unit){
+                    case RAD:
                         oneStep = oneStep*2*Math.PI;
                         break;
-                    case "RPM":
+                    case RPM:
                         timeFactor = 60;
                         break;
-                    case "DEG":
+                    case DEG:
                         oneStep = oneStep*360;
                         break;
                 };
@@ -2914,15 +2939,17 @@ public class MainActivity extends AppCompatActivity {
         return Math.round(OutFloat * factorForScalingVoltage);
     }
 
+    private byte[][] ADIO_Outers;
     private byte[][] ConvertToIntTSendBytesForAdio (long Out) {
-        byte[][] Outers= {{'4', 'a', 0}, {'4', 'a', 0}};
-        Outers[0][1] += getPrefInt("bridge_ao_port_plus",5);
-        Outers[1][1] += getPrefInt("bridge_ao_port_minus",6);
-        if (Out>0)
-            Outers[0][2] = (byte) (Out & 0x0ff);
-        else
-            Outers[1][2] = (byte) ((-Out) & 0x0ff);
-        return Outers;
+        if (Out>0) {
+            ADIO_Outers[0][2] = (byte) (Out & 0x0ff);
+            ADIO_Outers[1][2] = 0;
+        }
+        else {
+            ADIO_Outers[0][2] = 0;
+            ADIO_Outers[1][2] = (byte) ((-Out) & 0x0ff);
+        }
+        return ADIO_Outers;
     }
     private byte[] ConvertToIntTSendBytes (long Out) {
         byte[] OutBytes= {(byte)0x31, 0,0};
@@ -2993,6 +3020,10 @@ public class MainActivity extends AppCompatActivity {
                     /*DataPointsForMA = (Iteration <= getPrefInt("sim_ma_data_points",100))
                             ? (int) Iteration
                             : getPrefInt("sim_ma_data_points",100);*/
+                    Model.T_SForModel = ReadTimes[0] - ReadTimes[1];
+
+                    /*
+
                     switch (getPrefString("sim_actual_sampling_time_type", "SIM")) {
                         case "SIM":
                             Model.T_SForModel = ReadTimes[0] - ReadTimes[1];
@@ -3047,6 +3078,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
 
+                    */
 
                     //Model.T_SForModel = ReadTimes[0] - ReadTimes[1];
                     RequestSend = false;
@@ -3089,7 +3121,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < Model.Figures.length; i++) {
                         for (int j = 0; j < Model.Figures[i].Trajectories.length; j++) {
                             if (LineCharts[i].getLineData().getDataSetByIndex(j).getEntryCount()
-                                    > getPrefInt("graph_collect_size", 200))
+                                    > graph_collect_size)
                                 LineCharts[i].getLineData().getDataSetByIndex(j).removeFirst();
                             LineCharts[i].getLineData().getDataSetByIndex(j).addEntry(new Entry(
                                     (float) Model.SimulationTime, (float) PutBetweenRange(SignalsToPlot[IterationGraphs], TrajectoryLimits[0], TrajectoryLimits[1]))
@@ -3104,22 +3136,22 @@ public class MainActivity extends AppCompatActivity {
                     Iteration++;
                 }
                 if ((Time-ReadTimes[0]) >
-                        (Model.PlannedT_S + getPrefInt("sim_sampling_tolerance", 1000)/1000.0)) {
+                        (Model.PlannedT_S + sim_sampling_tolerance/1000.0)) {
                     TimeOutError = true;
                     SimHandle.cancel(true);
                     break;
                 }
-                if (getPrefInt("sim_stop_sim_after",-1)>0)
-                    if (Model.SimulationTime>1.0*getPrefInt("sim_stop_sim_after",-1)/1000.0) {
+                if (sim_stop_sim_after>0)
+                    if (Model.SimulationTime>1.0*sim_stop_sim_after/1000.0) {
                         SimHandle.cancel(true);
                         break;
                     }
                 try {
                     Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
                 } catch (Exception e) {
-                    Model.PlannedT_S = getPrefInt("sim_sampling_time", 100)/1000.0;
+                    Model.PlannedT_S = sim_sampling_time/1000.0;
                 }
-                GraphRefreshAfter = (int) Math.round(getPrefInt("graph_refresh_after",200)/1000.0/Model.PlannedT_S);
+                GraphRefreshAfter = (int) Math.round(graph_refresh_after/1000.0/Model.PlannedT_S);
                 GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
             }
             return null;
@@ -3132,8 +3164,31 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute () {
+            //Update preferences
+
+            bridge_encoder_word_size = getPrefInt("bridge_encoder_word_size", 16);
+            bridge_encoder_max_count_Full = Math.pow(2, bridge_encoder_word_size);
+            bridge_encoder_max_count_Half = bridge_encoder_max_count_Full/2.0;
+            Log.i("encoder_max_count_Full", ""+bridge_encoder_max_count_Full);
+
+            bridge_out_limit_upper = getPrefDouble("bridge_out_limit_upper", 12);
+
+            graph_collect_size = getPrefInt("graph_collect_size", 200);
+            sim_sampling_tolerance = getPrefInt("sim_sampling_tolerance", 1000);
+            sim_stop_sim_after = getPrefDouble("sim_stop_sim_after", -1);
+            sim_sampling_time = getPrefInt("sim_sampling_time", 20);
+            graph_refresh_after = getPrefInt("graph_refresh_after", 200);
+
+            ADIO_Outers = new byte[][]{{'4', 'a', 0}, {'4', 'a', 0}};
+            ADIO_Outers[0][1] += getPrefInt("bridge_ao_port_plus",5);
+            ADIO_Outers[1][1] += getPrefInt("bridge_ao_port_minus",6);
+
+            sim_rotation_unit = ROTATION_UNIT.valueOf(getPrefString("sim_rotation_unit", "RPS"));
+            motor_counts_per_rev = getPrefInt("motor_counts_per_rev", 64);
+            motor_gear_ratio = getPrefDouble("motor_gear_ratio",1);
+            motor_gear_and_count_factor = motor_gear_ratio*motor_counts_per_rev;
             //--- set the scale for voltage out ... will be used to set PWM of USB
-            factorForScalingVoltage = getPrefInt("bridge_out_limit_upper", 5);
+            factorForScalingVoltage = 255.0/bridge_out_limit_upper;
             //--- Prepare window calculation for velocity
             Model.velocityMeasurements = new digitalFilter(
                     getResources().getStringArray(R.array.TOASTS),
@@ -3156,14 +3211,14 @@ public class MainActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             Purged = false;
             IsFirstProgressOutput = true;
-            AnalogOutLimits[0] =  -getPrefInt("bridge_out_limit_upper", 5);
-            AnalogOutLimits[1] =  getPrefInt("bridge_out_limit_upper", 5);
+            AnalogOutLimits[0] =  -bridge_out_limit_upper;
+            AnalogOutLimits[1] =  bridge_out_limit_upper;
             TrajectoryLimits[0] = -getPrefInt("graph_vertical_upper_lower_limit", 10000);
             TrajectoryLimits[1] = getPrefInt("graph_vertical_upper_lower_limit", 10000);
             try {
                 Model.PlannedT_S = Double.parseDouble(ModelSamplingTime.getText().toString())/1000.0;
             } catch (Exception e) {
-                Model.PlannedT_S = getPrefInt("sim_sampling_time", 100)/1000.0;
+                Model.PlannedT_S = sim_sampling_time/1000.0;
             }
             Input = new double[Model.NoOfInputs][Model.NoOfPastInputsRequired+1];
             Output = new double[Model.NoOfOutputs][Model.NoOfPastOuputsRequired+1];
@@ -3190,7 +3245,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                     ZoomOptions[i].setVisibility(View.GONE);
             }
-            GraphRefreshAfter = (int) Math.round(getPrefInt("graph_refresh_after",200)/1000.0/Model.PlannedT_S);
+            GraphRefreshAfter = (int) Math.round(graph_refresh_after/1000.0/Model.PlannedT_S);
             GraphRefreshAfter = GraphRefreshAfter<1?1:GraphRefreshAfter;
             PlotValues = new double[GraphRefreshAfter][OutputSignalsCount +1];
 
@@ -3281,7 +3336,7 @@ public class MainActivity extends AppCompatActivity {
                 dataSet.setDrawCircleHole(false);
                 dataSet.setDrawValues(false);
                 dataSet.setColor(ColorTable[j]);
-                dataSet.setLineWidth(Float.valueOf(getPrefInt("graph_line_thickness",1)));
+                dataSet.setLineWidth(Float.valueOf(getPrefInt("graph_line_thickness",2)));
                 if (getPrefBool("graph_cubic",false))
                     dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
             }

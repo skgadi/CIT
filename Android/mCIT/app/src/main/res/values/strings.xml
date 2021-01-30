@@ -162,11 +162,13 @@
     </string-array>
     <string name="pref_sim_rotation_unit">Unit for angular position &amp; velocity</string>
     <string-array name="pref_sim_rotation_unit_entries">
+        <item>Number of rotations &amp; Rotations per second</item>
         <item>Number of rotations &amp; Rotations per minute</item>
         <item>Radians &amp; Radians per second</item>
-        <item>Degree &amp; Degrees per second</item>
+        <item>Degrees &amp; Degrees per second</item>
     </string-array>
     <string-array name="pref_sim_rotation_unit_values">
+        <item>RPS</item>
         <item>RPM</item>
         <item>RAD</item>
         <item>DEG</item>
@@ -218,8 +220,8 @@
     <string name="pref_bridge_out_limit_lower_desc">Enter the lowest voltage that the bridge circuit can generate.</string>
     <string name="pref_bridge_out_limit_upper">Bridge circuit\'s analog output upper limit</string>
     <string name="pref_bridge_out_limit_upper_desc">Enter the highest voltage that the bridge circuit can generate.</string>
-    <string name="pref_bridge_encoder_max_count">Encoder counter unsigned maximum limint </string>
-    <string name="pref_bridge_encoder_max_count_desc">Enter unsigned maximum counter capacity</string>
+    <string name="pref_bridge_encoder_max_count">Encoder word length in bits</string>
+    <string name="pref_bridge_encoder_max_count_desc">The word size used by the bridge to store the encoder counter</string>
     <!-- Motor Window -->
     <string name="pref_header_motor">Motor settings</string>
 

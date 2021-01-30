@@ -228,7 +228,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("bridge_ao_port_plus"));
             bindPreferenceSummaryToValue(findPreference("bridge_ao_port_minus"));
             bindPreferenceSummaryToValue(findPreference("bridge_out_limit_upper"));
-            bindPreferenceSummaryToValue(findPreference("bridge_encoder_max_count"));
+            bindPreferenceSummaryToValue(findPreference("bridge_encoder_word_size"));
         }
 
         @Override
@@ -255,7 +255,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("motor_counts_per_rev"));
-            bindPreferenceSummaryToValue(findPreference("motor_max_rpm"));
+            //bindPreferenceSummaryToValue(findPreference("motor_max_rpm"));
             bindPreferenceSummaryToValue(findPreference("motor_gear_ratio"));
         }
 
