@@ -45,7 +45,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Estimation of Velocity">
+    <PreferenceCategory android:title="Velocity Estimation">
 
 
         <ListPreference
@@ -55,7 +55,9 @@
             android:key="sim_velocity_avg_type"
             android:summary="%s"
             android:title="@string/pref_sim_velocity_avg_type" />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="Parameter  for Simple, Weighted, and Exponential moving average">
         <EditTextPreference
             android:defaultValue="5"
             android:key="sim_ma_data_points"
@@ -73,6 +75,44 @@
             android:inputType="number"
             android:title="@string/pref_sim_wma_weight"
             android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Parameters for Luenberger Observer">
+        <EditTextPreference
+            android:defaultValue="8.7"
+            android:key="sim_vel_observer_a"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Motor parameter a"
+            android:dialogMessage="Type a positive number"/>
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_b"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Motor parameter b"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="30"
+            android:key="sim_vel_observer_alpha"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Location of pole on the left hand side of the axis (-\u03B1)"
+            android:dialogMessage="Type a positive number"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Parameter  for High-pass filter based estimator">
+        <EditTextPreference
+            android:defaultValue="10"
+            android:key="sim_ma_high_pass_filter_param"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Frequency (\u03B1)"
+            android:dialogMessage="Type a positive number"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

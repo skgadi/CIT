@@ -166,6 +166,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sim_sampling_tolerance"));
             bindPreferenceSummaryToValue(findPreference("sim_ma_data_points"));
             bindPreferenceSummaryToValue(findPreference("sim_stop_sim_after"));
+            bindPreferenceSummaryToValue(findPreference("sim_vel_observer_a"));
+            bindPreferenceSummaryToValue(findPreference("sim_vel_observer_b"));
+            bindPreferenceSummaryToValue(findPreference("sim_vel_observer_alpha"));
+            bindPreferenceSummaryToValue(findPreference("sim_ma_high_pass_filter_param"));
             //bindPreferenceSummaryToValue(findPreference("sim_wma_weight"));
         }
 

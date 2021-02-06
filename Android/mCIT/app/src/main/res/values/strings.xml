@@ -19,11 +19,12 @@
     <string-array name="NAV_HEADS">
         <item>System response</item>
         <item>Parameter identification</item>
-        <item>Traditional closed-loop control</item>
-        <item>Anti-windup control</item>
+        <item>PID for</item>
+        <item>PID with anti-windup for</item>
+        <item>Optimal control</item>
     </string-array>
     <string-array name="NAV_ITEMS_0">
-        <item>System response</item>
+        <item>Position and velocity</item>
     </string-array>
     <string-array name="NAV_ITEMS_1">
         <item>First-order system (Velocity)</item>
@@ -31,12 +32,15 @@
         <item>First-order system with integral action</item>
     </string-array>
     <string-array name="NAV_ITEMS_2">
-        <item>PID controller for position</item>
-        <item>PID controller for velocity</item>
+        <item>Position control</item>
+        <item>Velocity control</item>
     </string-array>
     <string-array name="NAV_ITEMS_3">
         <item>PID position controller with anti-windup</item>
         <item>PID velocity controller with anti-windup</item>
+    </string-array>
+    <string-array name="NAV_ITEMS_4">
+        <item>Linear-Quadratic Regulator (LQR)</item>
     </string-array>
 
     <string-array name="SIM_VIEW_HEADS">
@@ -152,6 +156,8 @@
         <item>Cumulative moving average</item>
         <item>Weighted moving average</item>
         <item>Exponential moving average</item>
+        <item>Luenberger Observer</item>
+        <item>High-pass filter based estimator</item>
     </string-array>
     <string-array name="pref_sim_velocity_avg_type_values">
         <item>NONE</item>
@@ -159,6 +165,8 @@
         <item>CMA</item>
         <item>WMA</item>
         <item>EMA</item>
+        <item>LOB</item>
+        <item>HPF</item>
     </string-array>
     <string name="pref_sim_rotation_unit">Unit for angular position &amp; velocity</string>
     <string-array name="pref_sim_rotation_unit_entries">
