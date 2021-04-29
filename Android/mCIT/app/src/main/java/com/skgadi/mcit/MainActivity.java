@@ -834,6 +834,8 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0; i<3; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
                 double [] OutSignals = new double[NoOfOutputs];
+                // OutSignals[1] es u
+                // OutSignals[0] es que va al motor
                 OutSignals[1] = Output[1][0] + a * E[0] + b * E[1] + c * E[2];
                 OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
                 return OutSignals;
@@ -988,23 +990,32 @@ public class MainActivity extends AppCompatActivity {
                 double Beta_3 = -2*K_P*T_SForModel + Beta_2;
                 double Beta_4 = 2*K_D;
                 double Beta_5 = T_SForModel*(2 + K_A*T_SForModel);
-                double Beta_6 = -K_A*T_SForModel*T_SForModel;
+                double Beta_6 = -2*K_A*T_SForModel*T_SForModel;
                 double Beta_7 = T_SForModel*(2 - K_A*T_SForModel);
+                // E es Error
+                // Input es Y
+                // Generated[0] es r_1
+                // Generated[1] es r_2
+                // Generated[2] es r_3
                 double[] E = new double[4];
                 for (int i=0; i<4; i++)
                     E[i] = ((Generated[0][i] + Generated[1][i] + Generated[2][i]) - Input[0][i]);
                 double [] OutSignals = new double[NoOfOutputs];
+                //OutSignals[1] es U
+                //OutSignals[0] es va al motor
+                //OutSignals[2] y Output[2] es U_s
+
                 OutSignals[1] = (
                         Beta_6*Output[1][0] + Beta_7*Output[1][1] + Beta_1*E[0] + Beta_2*E[1] + Beta_3*E[2] + Beta_4*E[3]
                 )/Beta_5 + (
-                        Output[2][0] - 2*Output[2][1] + Output[2][2]
+                        Output[2][0] + 2*Output[2][1] + Output[2][2]
                         )*K_A*T_SForModel*T_SForModel/Beta_5;
-                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
-                OutSignals[2] = OutSignals[1];
-                if (OutSignals[2]>MaxVoltage)
+                OutSignals[2] = PutBetweenRange(OutSignals[1], -MaxVoltage, MaxVoltage);
+                /*if (OutSignals[2]>MaxVoltage)
                     OutSignals[2] = MaxVoltage;
                 if (OutSignals[2]< -MaxVoltage)
-                    OutSignals[2] = -MaxVoltage;
+                    OutSignals[2] = -MaxVoltage;*/
+                OutSignals[0] = OutSignals[2] + Parameters[3] + Parameters[4] * (1-2*Math.random());
                 return OutSignals;
             }
 
@@ -1020,7 +1031,7 @@ public class MainActivity extends AppCompatActivity {
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
                 Trajectories[2] = Trajectories[0]-Input[0][0];
-                Trajectories[3] = Output[0][0];
+                Trajectories[3] = Output[2][0];
                 return Trajectories;
             }
         };
@@ -1081,7 +1092,7 @@ public class MainActivity extends AppCompatActivity {
                 double Beta_3 = -2*K_P*T_SForModel + Beta_2;
                 double Beta_4 = 2*K_D;
                 double Beta_5 = T_SForModel*(2 + K_A*T_SForModel);
-                double Beta_6 = -K_A*T_SForModel*T_SForModel;
+                double Beta_6 = -2*K_A*T_SForModel*T_SForModel;
                 double Beta_7 = T_SForModel*(2 - K_A*T_SForModel);
                 double[] E = new double[4];
                 for (int i=0; i<4; i++)
@@ -1090,14 +1101,16 @@ public class MainActivity extends AppCompatActivity {
                 OutSignals[1] = (
                         Beta_6*Output[1][0] + Beta_7*Output[1][1] + Beta_1*E[0] + Beta_2*E[1] + Beta_3*E[2] + Beta_4*E[3]
                 )/Beta_5 + (
-                        Output[2][0] - 2*Output[2][1] + Output[2][2]
+                        Output[2][0] + 2*Output[2][1] + Output[2][2]
                 )*K_A*T_SForModel*T_SForModel/Beta_5;
-                OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
-                OutSignals[2] = OutSignals[1];
+                OutSignals[2] = PutBetweenRange(OutSignals[1], -MaxVoltage, MaxVoltage);
+                //OutSignals[0] = OutSignals[1] + Parameters[3] + Parameters[4] * (1-2*Math.random());
+                /*OutSignals[2] = OutSignals[1];
                 if (OutSignals[2]>MaxVoltage)
                     OutSignals[2] = MaxVoltage;
                 if (OutSignals[2]< -MaxVoltage)
-                    OutSignals[2] = -MaxVoltage;
+                    OutSignals[2] = -MaxVoltage;*/
+                OutSignals[0] = OutSignals[2] + Parameters[3] + Parameters[4] * (1-2*Math.random());
                 return OutSignals;
             }
 
@@ -1111,9 +1124,9 @@ public class MainActivity extends AppCompatActivity {
             {
                 double[] Trajectories = new double[4];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
-                Trajectories[1] = Input[0][0];
-                Trajectories[2] = Trajectories[0]-Input[0][0];
-                Trajectories[3] = Output[0][0];
+                Trajectories[1] = Input[1][0];
+                Trajectories[2] = Trajectories[0]-Input[1][0];
+                Trajectories[3] = Output[2][0];
                 return Trajectories;
             }
         };
@@ -2868,11 +2881,13 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
+                double MaxVoltage = bridge_out_limit_upper;
+
                 double[] Trajectories = new double[4];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
                 Trajectories[2] = Trajectories[0]-Input[0][0];
-                Trajectories[3] = Output[0][0];
+                Trajectories[3] = PutBetweenRange(Output[0][0], -MaxVoltage, MaxVoltage) ;
                 return Trajectories;
             }
         };
@@ -3562,7 +3577,9 @@ public class MainActivity extends AppCompatActivity {
                     getPrefDouble("sim_vel_observer_a", 8.7),
                     getPrefDouble("sim_vel_observer_b", 1),
                     getPrefDouble("sim_vel_observer_alpha", 30),
-                    getPrefDouble("sim_ma_high_pass_filter_param", 10)
+                    getPrefDouble("sim_ma_high_pass_filter_param", 10),
+                    getPrefDouble("sim_vel_observer_k_o_1", 1),
+                    getPrefDouble("sim_vel_observer_k_o_2", 1)
             );
             //--- Configuring Encoder
             int Temp_Encoder_A_Terminal = 0x61 + getPrefInt("bridge_encoder_a", 2);

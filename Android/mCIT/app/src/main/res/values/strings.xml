@@ -156,7 +156,8 @@
         <item>Cumulative moving average</item>
         <item>Weighted moving average</item>
         <item>Exponential moving average</item>
-        <item>Luenberger Observer</item>
+        <item>Luenberger Observer (with pole location -\u03B1)</item>
+        <item>Luenberger Observer (with Gain matrix)</item>
         <item>High-pass filter based estimator</item>
     </string-array>
     <string-array name="pref_sim_velocity_avg_type_values">
@@ -165,7 +166,8 @@
         <item>CMA</item>
         <item>WMA</item>
         <item>EMA</item>
-        <item>LOB</item>
+        <item>LOB0</item>
+        <item>LOB1</item>
         <item>HPF</item>
     </string-array>
     <string name="pref_sim_rotation_unit">Unit for angular position &amp; velocity</string>

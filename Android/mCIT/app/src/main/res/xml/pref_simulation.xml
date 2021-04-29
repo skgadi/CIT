@@ -103,6 +103,22 @@
             android:inputType="numberDecimal"
             android:title="Location of pole on the left hand side of the axis (-\u03B1)"
             android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_k_o_1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="First element of Gain matrix"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_k_o_2"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Second element of Gain matrix"
+            android:dialogMessage="Type a positive number"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Parameter  for High-pass filter based estimator">
         <EditTextPreference

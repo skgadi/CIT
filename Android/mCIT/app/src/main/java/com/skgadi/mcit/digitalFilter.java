@@ -10,11 +10,12 @@ enum FILTER_TYPES {
     CMA,
     WMA,
     EMA,
-    LOB,
+    LOB0,
+    LOB1,
     HPF
 }
 public class digitalFilter {
-    public digitalFilter(String[] types, int noOfSamples, String typ, double a, double b, double alpha, double pref_HPF_alpha) {
+    public digitalFilter(String[] types, int noOfSamples, String typ, double a, double b, double alpha, double pref_HPF_alpha, double K_o_1, double K_o_2) {
         idxOfFirstEntry=noOfSamples-1;
         counter=0;
         samples = new double[noOfSamples];
@@ -26,8 +27,13 @@ public class digitalFilter {
         //Prepare the observer
         this.alpha = alpha;
         double k_1, k_2;
-        k_1 = 2*alpha-a;
-        k_2 = alpha*alpha-k_1*a;
+        if (type == FILTER_TYPES.LOB1) {
+            k_1 = K_o_1;
+            k_2 = K_o_2;
+        } else {
+            k_1 = 2*alpha-a;
+            k_2 = alpha*alpha-k_1*a;
+        }
         DMatrixRMaj A, C, A_star;
         A_star = new DMatrixRMaj(2,2);
         A_star.set(0,0,-k_1);
@@ -65,15 +71,20 @@ public class digitalFilter {
     public double WMA_den;
     public double EMA_alpha_1;
 
-    // Settings for Observer Based Filter
+    // Settings for Observer Based Filter 0
     private DMatrixRMaj B, K_e, Inv_A_star, ExpItem, X_Cap;
     DMatrixRMaj ExpAT, ExpATmI;
     private double alpha;
+
+    // Settings for Observer Based Filter 1
+
 
     // Settings for High-pass filter
     double HPF_prev_u = 0;
     double HPF_prev_y = 0;
     double HPF_alpha = 0;
+
+
 
 
 
@@ -102,7 +113,8 @@ public class digitalFilter {
                 prevValue[1] = 1+EMA_alpha_1*prevValue[1];
                 filterOut = prevValue[0]/prevValue[1];
                 break;
-            case LOB:
+            case LOB0:
+            case LOB1:
                 filterOut = X_Cap.get(1,0);
                 double exp_alpha = Math.exp(-alpha*T_S);
                 DMatrixRMaj Identity = new DMatrixRMaj(2,2);
