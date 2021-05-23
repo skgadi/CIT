@@ -15,6 +15,7 @@
         android:key="bridge_encoder_word_size"
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:visibility="gone"
         android:inputType="number"
         android:title="@string/pref_bridge_encoder_max_count"
         android:dialogMessage="@string/pref_bridge_encoder_max_count_desc"/>

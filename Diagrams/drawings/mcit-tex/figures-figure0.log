@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.8.24)  22 MAY 2021 11:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.8.24)  23 MAY 2021 17:22
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -589,17 +589,29 @@ A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
 A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 252.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 252.
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 252.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 252.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 252.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 495.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 495.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 495.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 495.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 495.
  ) 
 Here is how much of TeX's memory you used:
- 25142 strings out of 480608
- 654387 string characters out of 5907551
+ 25148 strings out of 480608
+ 654479 string characters out of 5907551
  1012125 words of memory out of 5000000
- 40621 multiletter control sequences out of 15000+600000
+ 40627 multiletter control sequences out of 15000+600000
  537095 words of font info for 42 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  82i,22n,138p,771b,902s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -611,7 +623,7 @@ pe1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2020/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmr10.pfb><c:/texlive/2020/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmr7.pfb><c:/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10
 .pfb>
-Output written on figures-figure0.pdf (1 page, 73066 bytes).
+Output written on figures-figure0.pdf (1 page, 73218 bytes).
 PDF statistics:
  43 PDF objects out of 1000 (max. 8388607)
  31 compressed objects within 1 object stream

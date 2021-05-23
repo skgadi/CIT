@@ -3,7 +3,7 @@
     <string name="app_name_full">Control &amp; Identification Toolbox for Motors</string>
     <string name="Documentation_Title">Software and hardware</string>
     <string name="DOCUMENT_IMAGE_CAPTION_00">Bridge circuit</string>
-    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit with a first order filter for testing the CIT</string>
+    <string name="DOCUMENT_IMAGE_CAPTION_01">Bridge circuit for experiments with the mCIT</string>
     <string name="DOCUMENT_IMAGE_CAPTION_02">Bridge circuit with a second order filter for testing the CIT</string>
     <string name="BUTTON_PID">PID Controller</string>
     <string name="BUTTON_IDENIFICATION0">Zero order identification</string>
@@ -17,30 +17,14 @@
     <string name="FIRMWARE">Download the firmware for Arduino from:\n\nhttps://github.com/skgadi/ControlToolbox/blob/master/Bridge/Arduino/latest.pde</string>
     <string name="OPEN_URL">Open in a browser</string>
     <string-array name="NAV_HEADS">
-        <item>System response</item>
         <item>Parameter identification</item>
-        <item>PID for</item>
+        <item>Open-loop system response</item>
         <item>PID with anti-windup for</item>
-        <item>Optimal control</item>
-    </string-array>
-    <string-array name="NAV_ITEMS_0">
-        <item>Position and velocity</item>
-    </string-array>
-    <string-array name="NAV_ITEMS_1">
-        <item>First-order system (Velocity)</item>
-        <item>Second-order system (Position)</item>
-        <item>First-order system with integral action</item>
+        <item>State-feedback control</item>
     </string-array>
     <string-array name="NAV_ITEMS_2">
         <item>Position control</item>
         <item>Velocity control</item>
-    </string-array>
-    <string-array name="NAV_ITEMS_3">
-        <item>PID position controller with anti-windup</item>
-        <item>PID velocity controller with anti-windup</item>
-    </string-array>
-    <string-array name="NAV_ITEMS_4">
-        <item>Linear-Quadratic Regulator (LQR)</item>
     </string-array>
 
     <string-array name="SIM_VIEW_HEADS">
@@ -149,16 +133,16 @@
     <string name="pref_sim_ma_data_points_desc">When simple is selected, this value is ignored.</string>
     <string name="pref_sim_wma_weight">Weight for weighted moving average</string>
     <string name="pref_sim_wma_weight_desc">In the calculation of WMA, this weight is used for the most recent and a step of 1 each previous sampling time.</string>
-    <string name="pref_sim_velocity_avg_type">Velocity filter</string>
+    <string name="pref_sim_velocity_avg_type">Method</string>
     <string-array name="pref_sim_velocity_avg_type_entries">
-        <item>None</item>
-        <item>Simple moving average</item>
-        <item>Cumulative moving average</item>
-        <item>Weighted moving average</item>
-        <item>Exponential moving average</item>
-        <item>Luenberger Observer (with pole location -\u03B1)</item>
-        <item>Luenberger Observer (with Gain matrix)</item>
-        <item>High-pass filter based estimator</item>
+        <item>Finite difference approximation (FDA)</item>
+        <item>Simple moving average of the FDA</item>
+        <item>Cumulative moving average of the FDA</item>
+        <item>Weighted moving average of the FDA</item>
+        <item>Exponential moving average of the FDA</item>
+        <item>Luenberger Observer (with pole location at -\u03B1_2)</item>
+        <item>Luenberger Observer (with Gain matrix K_o)</item>
+        <item>High-pass filter with cut-off frequency \u03B1_1</item>
     </string-array>
     <string-array name="pref_sim_velocity_avg_type_values">
         <item>NONE</item>
@@ -199,7 +183,7 @@
     <string name="pref_graph_cubic_desc">Approximates the curve to avoid sharp edges. It is not recommended when you want to observe sharp changes.</string>
     <string name="pref_graph_font_size">Font size</string>
     <string name="pref_graph_font_size_desc">Font size of the axis and legend</string>
-    <string name="pref_graph_vertical_upper_lower_limit">Upper and lower limits of the horizontal axes (\u00b1)</string>
+    <string name="pref_graph_vertical_upper_lower_limit">Upper and lower limits of the vertical axes (\u00b1)</string>
     <string name="pref_graph_vertical_upper_lower_limit_desc">The vertical axes of the graphs is limited to this value.</string>
     <string name="pref_graph_legend_form">Legend form</string>
     <string-array name="pref_graph_legend_form_entries">
