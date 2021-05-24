@@ -975,7 +975,7 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.estimates2;
+        Model.Images[0] = R.drawable.ident;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Identification of a DC motor";
@@ -1142,8 +1142,8 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[2];
-        Model.Images[0] = R.drawable.pid;
-        Model.Images[1] = R.drawable.pid;
+        Model.Images[0] = R.drawable.pidq;
+        Model.Images[1] = R.drawable.aw;
         Model.ImageNames = new String[2];
         Model.ImageNames[0] = "Closed-loop system with PID controller";
         Model.ImageNames[1] = "PID controller with anti-windup";
@@ -1232,8 +1232,8 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[2];
-        Model.Images[0] = R.drawable.pid;
-        Model.Images[1] = R.drawable.pid;
+        Model.Images[0] = R.drawable.pidv;
+        Model.Images[1] = R.drawable.aw;
         Model.ImageNames = new String[2];
         Model.ImageNames[0] = "Closed-loop system with PID controller";
         Model.ImageNames[1] = "PID controller with anti-windup";
@@ -1303,7 +1303,7 @@ public class MainActivity extends AppCompatActivity {
         Model.OutPut = new double[1];
         Model.OutPut[0]=0;
         Model.Images = new int[1];
-        Model.Images[0] = R.drawable.pid;
+        Model.Images[0] = R.drawable.fc;
         //Model.Images[1] = R.drawable.pid;
         Model.ImageNames = new String[1];
         Model.ImageNames[0] = "Closed-loop system with state-feedback";
