@@ -1,0 +1,29 @@
+# YAML 1.2
+---
+authors: 
+  -
+    affiliation: "Universidad Autónoma de Coahuila"
+    family-names: Gadi
+    given-names: "Suresh Kumar"
+    orcid: "https://orcid.org/0000-0001-7974-7825"
+cff-version: "1.1.0"
+date-released: 2021-03-10
+identifiers: 
+  - 
+    type: doi
+    value: "10.1002/cae.22145"
+  - 
+    type: url
+    value: "https://play.google.com/store/apps/details?id=com.skgadi.cit"
+  - 
+    type: url
+    value: "https://play.google.com/store/apps/details?id=com.skgadi.mcit"
+keywords: 
+  - Control
+  - Identification
+  - Arduino
+  - Android
+  - "Real time"
+message: "If you use this software, please cite it using these metadata."
+title: "Control and Identification Toolbox"
+...
