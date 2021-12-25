@@ -1,6 +1,7 @@
 package com.skgadi.cit;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     int LinesColor = Color.rgb(150, 65, 165);
 
 
-
+    double PrevReadValue = 0;
     //--- Back button handling
     @Override
     public void onBackPressed() {
@@ -299,10 +300,10 @@ public class MainActivity extends AppCompatActivity {
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_2)[0], 4);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        /*AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[3]);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 5);
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
-        AppNavDrawer.addItem(new DividerDrawerItem());*/
+        AppNavDrawer.addItem(new DividerDrawerItem());
 
 
         try {
@@ -392,6 +393,12 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
         editor.commit();
+    }
+
+    public double getPrefDouble(String key, double DefaultValue) {
+        Context context = this.getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Double.valueOf(preferences.getString(key, String.valueOf(DefaultValue)));
     }
 
     public int getPrefInt(String key, int DefaultValue) {
@@ -961,9 +968,9 @@ public class MainActivity extends AppCompatActivity {
         Model.Figures[2] = new Figure("Controller parameters", TempTrajectories);
 
         Model.Parameters = new Parameter [3];
-        Model.Parameters[0] = new Parameter("Adaptation gain>>\u03F1", 0, 1000, 1);
-        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B1_0m", 0, 100, 4);
-        Model.Parameters[2] = new Parameter("\u03B1_1m", 0, 100, 4);
+        Model.Parameters[0] = new Parameter("Adaptation gain>>\u03F1", 0, 1000, 20);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B1_0m", 0, 100, 20);
+        Model.Parameters[2] = new Parameter("\u03B1_1m", 0, 100, 20);
     }
 
     private void PrepareSecondOrderAdaptiveControlModel() {
@@ -1034,9 +1041,9 @@ public class MainActivity extends AppCompatActivity {
                 DMatrixRMaj X = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_1 = new DMatrixRMaj(2,1);
                 X_1.set(0, 0, Input[0][1]);
-                X_1.set(1, 0, (Input[0][1]-Input[0][2])/ T_SForModel);
+                X_1.set(1, 0, Input[1][1]);
                 X.set(0, 0, Input[0][0]);
-                X.set(1, 0, (Input[0][0]-Input[0][1])/ T_SForModel);
+                X.set(1, 0, Input[1][0]);
                 DMatrixRMaj E = new DMatrixRMaj(2,1);
                 DMatrixRMaj E_1 = new DMatrixRMaj(2,1);
                 CommonOps_DDRM.subtract(X, X_m, E);
@@ -1099,7 +1106,7 @@ public class MainActivity extends AppCompatActivity {
         Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[3]
                 + ": "
                 +getResources().getStringArray(R.array.NAV_ITEMS_3)[1];
-        Model.NoOfInputs=1;
+        Model.NoOfInputs=2;
         Model.NoOfOutputs=8;
         Model.NoOfPastInputsRequired = 2;
         Model.NoOfPastOuputsRequired = 1;
@@ -2537,6 +2544,15 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("Timing", "PIC data rec:" + RecData[0]);
                         break;
                 }
+                if (Model.NoOfInputs>1) {
+
+                    Model.velocityMeasurements.addANewSample(
+                            ((RecData[0] - PrevReadValue)/Model.T_SForModel),
+                            Model.T_SForModel,
+                            ValueWrittenTOUSB,
+                            RecData[0]);
+                    RecData[1] =  Model.velocityMeasurements.filterOut;
+                }
                 isValidRead = true;
             } catch (Exception e) {
                 //Log.i("Timing", "Error in parse");
@@ -2554,7 +2570,9 @@ public class MainActivity extends AppCompatActivity {
         byte[] OutBytes= {(byte)0x32,0,0,};
         arduino.send(OutBytes);
     }
+    private double ValueWrittenTOUSB; //  This will be used in velocity filter using observer
     private void WriteToUSB(double Value) {
+        ValueWrittenTOUSB = Value;
         arduino.send(ConvertToIntTSendBytesForAdio(ConvertFloatToIntForAO(Value)));
     }
 
@@ -2633,6 +2651,7 @@ public class MainActivity extends AppCompatActivity {
         int OutputSignalsCount =0;
         TextView TextViewForInstantValues[];
         String CurrentOutputValuesToDisplay[];
+        @SuppressLint("WrongThread")
         @Override
         protected Integer doInBackground(Integer... Params) {
             long StartTime = System.currentTimeMillis();
@@ -2802,6 +2821,21 @@ public class MainActivity extends AppCompatActivity {
             Input = new double[Model.NoOfInputs][Model.NoOfPastInputsRequired+1];
             Output = new double[Model.NoOfOutputs][Model.NoOfPastOuputsRequired+1];
             PreparedSignals = new double[Model.SignalGenerators.length][Model.NoOfPastGeneratedValuesRequired+1];
+            if (Model.NoOfInputs>1) {
+                Model.velocityMeasurements = new com.skgadi.mcit.digitalFilter(
+                        getResources().getStringArray(R.array.TOASTS),
+                        getPrefInt("sim_ma_data_points", 10),
+                        getPrefString("sim_velocity_avg_type", "NONE"),
+                        getPrefDouble("sim_vel_observer_a", 8.7),
+                        getPrefDouble("sim_vel_observer_b", 1),
+                        getPrefDouble("sim_vel_observer_alpha", 30),
+                        getPrefDouble("sim_ma_high_pass_filter_param", 10),
+                        getPrefDouble("sim_vel_observer_k_o_1", 1),
+                        getPrefDouble("sim_vel_observer_k_o_2", 1)
+                );
+                PrevReadValue = 0;
+            }
+
             for (int i=0; i<Input.length; i++) {
                 for (int j=0; j<Input[i].length; j++)
                     Input[i][j] = 0;

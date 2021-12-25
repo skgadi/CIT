@@ -199,4 +199,27 @@
         <item>PIC</item>
     </string-array>
 
+    <string name="pref_sim_velocity_avg_type">Method</string>
+    <string-array name="pref_sim_velocity_avg_type_entries">
+        <item>Finite difference approximation (FDA)</item>
+        <item>Simple moving average of the FDA</item>
+        <item>Cumulative moving average of the FDA</item>
+        <item>Weighted moving average of the FDA</item>
+        <item>Exponential moving average of the FDA</item>
+        <item>Luenberger Observer (with pole location at -\u03B1_2)</item>
+        <item>Luenberger Observer (with Gain matrix K_o)</item>
+        <item>High-pass filter with cut-off frequency \u03B1_1</item>
+    </string-array>
+    <string-array name="pref_sim_velocity_avg_type_values">
+        <item>NONE</item>
+        <item>SMA</item>
+        <item>CMA</item>
+        <item>WMA</item>
+        <item>EMA</item>
+        <item>LOB0</item>
+        <item>LOB1</item>
+        <item>HPF</item>
+    </string-array>
+
+
 </resources>
