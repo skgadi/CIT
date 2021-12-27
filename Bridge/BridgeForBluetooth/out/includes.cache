@@ -1,0 +1,27 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\vssga\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.6\\cores\\esp32"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\vssga\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.6\\variants\\esp32"
+  },
+  {
+    "Sourcefile": "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\out\\sketch\\BridgeForBluetooth.ino.cpp",
+    "Include": "BluetoothSerial.h",
+    "Includepath": "C:\\Users\\vssga\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\BluetoothSerial\\src"
+  },
+  {
+    "Sourcefile": "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\out\\sketch\\BridgeForBluetooth.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\vssga\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries\\BluetoothSerial\\src\\BluetoothSerial.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
