@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="100"
+        android:key="sim_sampling_time"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_sampling_time"
+        android:dialogMessage="@string/pref_sim_sampling_time_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="1000"
+        android:key="sim_sampling_tolerance"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_tolerance"
+        android:dialogMessage="@string/pref_sim_tolerance_desc"/>
+
+    <EditTextPreference
+        android:defaultValue="-1"
+        android:key="sim_stop_sim_after"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="numberSigned"
+        android:title="@string/pref_sim_stop_sim_after"
+        android:dialogMessage="@string/pref_sim_stop_sim_after_desc"/>
+
+    <ListPreference
+        android:defaultValue="SIM"
+        android:entries="@array/pref_sim_actual_sampling_time_type_entries"
+        android:entryValues="@array/pref_sim_actual_sampling_time_type_values"
+        android:key="sim_actual_sampling_time_type"
+        android:summary="%s"
+        android:title="@string/pref_sim_actual_sampling_time_type" />
+
+    <EditTextPreference
+        android:defaultValue="100"
+        android:key="sim_ma_data_points"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_ma_data_points"
+        android:dialogMessage="@string/pref_sim_ma_data_points_desc"/>
+
+    <!--EditTextPreference
+        android:defaultValue="15"
+        android:key="sim_wma_weight"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:inputType="number"
+        android:title="@string/pref_sim_wma_weight"
+        android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
+
+
+    <PreferenceCategory android:title="Velocity Estimation">
+
+
+        <ListPreference
+            android:defaultValue="NONE"
+            android:entries="@array/pref_sim_velocity_avg_type_entries"
+            android:entryValues="@array/pref_sim_velocity_avg_type_values"
+            android:key="sim_velocity_avg_type"
+            android:summary="%s"
+            android:title="@string/pref_sim_velocity_avg_type" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Parameter  for Simple, Cumulative, Weighted, and Exponential moving average">
+        <EditTextPreference
+            android:defaultValue="5"
+            android:key="sim_ma_data_points"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="number"
+            android:title="@string/pref_sim_ma_data_points"
+            android:dialogMessage="@string/pref_sim_ma_data_points_desc"/>
+
+        <!--EditTextPreference
+            android:defaultValue="15"
+            android:key="sim_wma_weight"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="number"
+            android:title="@string/pref_sim_wma_weight"
+            android:dialogMessage="@string/pref_sim_wma_weight_desc"/-->
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Parameters for Luenberger Observer">
+        <EditTextPreference
+            android:defaultValue="8.7"
+            android:key="sim_vel_observer_a"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Motor parameter a"
+            android:dialogMessage="Type a positive number"/>
+
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_b"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Motor parameter b"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="30"
+            android:key="sim_vel_observer_alpha"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="Location of the observer poles (-\u03B1_2)"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_k_o_1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="k_o1 of the observer gain matrix"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="sim_vel_observer_k_o_2"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="k_o2 of the observer gain matrix"
+            android:dialogMessage="Type a positive number"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Cut-off frequency of high-pass filter">
+        <EditTextPreference
+            android:defaultValue="10"
+            android:key="sim_ma_high_pass_filter_param"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="\u03B1_1 in rad/sec"
+            android:dialogMessage="Type a positive number"/>
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

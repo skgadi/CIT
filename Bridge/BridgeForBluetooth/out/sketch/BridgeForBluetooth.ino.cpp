@@ -20,11 +20,15 @@ void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
 */
 
 
-#line 21 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
+uint8_t recBytes[3];
+
+
+
+#line 25 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
 void setup();
-#line 40 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
+#line 46 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
 void loop();
-#line 21 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
+#line 25 "c:\\Suresh\\git\\CIT\\Bridge\\BridgeForBluetooth\\BridgeForBluetooth.ino"
 void setup() {
  
   Serial.begin(115200);
@@ -38,29 +42,38 @@ void setup() {
 
   pinMode(32, INPUT);
 
-  SerialBT.begin("CIT"); //Bluetooth device name
+  SerialBT.begin("btCIT-SKGadi"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
-  
+  SerialBT.setTimeout(1);
+
+  recBytes[2] = '\n';
 }
  
 
 void loop () {
-  if ( Serial.available())
-        SerialBT.write(Serial.read());
+  if ( Serial.available()) {
+    Serial.read();
+    recBytes[0] = 1;
+    recBytes[1] = 31;
+    
+    SerialBT.write(recBytes,3);
+  }
   if (SerialBT.available()) {
-    byte recBytes[2];
-    SerialBT.readBytes(recBytes, 2);
-    if (recBytes[0] == 0) {
+    byte recBytes1[2];
+    SerialBT.readBytes(recBytes1, 2);
+    if (recBytes1[0] == 0) {
       uint16_t adc = analogRead(32);
-      SerialBT.write( (uint8_t*) &adc , 2);
-      /*char sendItem[2];
+      //SerialBT.write( (uint8_t*) &adc , 2);
+      uint8_t sendItem[3];
       sendItem[0] = adc;
       sendItem[1] = adc>>8;
-      SerialBT.print(sendItem);*/
+      sendItem[2] = '\n';
+      SerialBT.write(sendItem,3);
     } else {
-      ledcWrite(1, recBytes[1]);
+      ledcWrite(1, recBytes1[1]);
     }
-    Serial.write(SerialBT.read());
+    //Serial.print(recBytes1[0]);
+    //Serial.print(recBytes1[1]);
   }
   delay(20);
 }
