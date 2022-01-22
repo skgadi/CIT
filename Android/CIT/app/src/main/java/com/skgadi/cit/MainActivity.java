@@ -1038,6 +1038,11 @@ public class MainActivity extends AppCompatActivity {
                 P.set(1, 0, P.get(0,1));
                 P.set(1, 1, (2*P.get(0,1)+1)/(2*a_m1));
                 P.set(0, 0, a_m1*P.get(0,1) + a_m2*P.get(1,1));
+
+                //Log.d("SKGadi", "P" + P.toString());
+                //Log.d("SKGadi", "P" + A_m_d.toString());
+                //Log.d("SKGadi", "P" + B_m_d.toString());
+
                 DMatrixRMaj X = new DMatrixRMaj(2,1);
                 DMatrixRMaj X_1 = new DMatrixRMaj(2,1);
                 X_1.set(0, 0, Input[0][1]);
@@ -1091,15 +1096,18 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[8];
+                double[] Trajectories = new double[11];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
                 Trajectories[2] = Output[1][0];
-                Trajectories[3] = Trajectories[0]-Input[0][0];
-                Trajectories[4] = Output[6][0];
-                Trajectories[5] = Output[3][0];
-                Trajectories[6] = Output[4][0];
-                Trajectories[7] = Output[5][0];
+                Trajectories[3] = Input[1][0];
+                Trajectories[4] = Output[2][0];
+                Trajectories[5] = Trajectories[0]-Input[0][0];
+                Trajectories[6] = Output[6][0];
+                Trajectories[7] = Output[0][0];
+                Trajectories[8] = Output[3][0];
+                Trajectories[9] = Output[4][0];
+                Trajectories[10] = Output[5][0];
                 return Trajectories;
             }
         };
@@ -1125,27 +1133,32 @@ public class MainActivity extends AppCompatActivity {
         Model.SignalGenerators[2] = "r_3(t)";
 
         //Figures
-        Model.Figures = new Figure[3];
+        Model.Figures = new Figure[4];
         String[] TempTrajectories = new String[3];
         TempTrajectories[0]= "Reference r(t)";
         TempTrajectories[1]= "Output y(t)";
         TempTrajectories[2]= "Reference model output y_m(t)";
         Model.Figures[0] = new Figure("Reference r(t) and Outputs y(t) & y_m(t)", TempTrajectories);
         TempTrajectories = new String[2];
-        TempTrajectories[0]= "Error e_m(t)";
-        TempTrajectories[1]= "Control u(t)";
-        Model.Figures[1] = new Figure("Error e_m(t) and Control u(t)", TempTrajectories);
+        TempTrajectories[0]= "dy/dt";
+        TempTrajectories[1]= "dy_m/dt";
+        Model.Figures[1] = new Figure("Derivative of Outputs y(t) & y_m(t)", TempTrajectories);
+        TempTrajectories = new String[3];
+        TempTrajectories[0]= "R-y";
+        TempTrajectories[1]= "Error e_m(t)";
+        TempTrajectories[2]= "Control u(t)";
+        Model.Figures[2] = new Figure("R-y, Error e_m(t) and Control u(t)", TempTrajectories);
         TempTrajectories = new String[3];
         TempTrajectories[0]= "K_c(1,1)";
         TempTrajectories[1]= "K_c(2,1)";
         TempTrajectories[2]= "L";
-        Model.Figures[2] = new Figure("Controller parameters", TempTrajectories);
+        Model.Figures[3] = new Figure("Controller parameters", TempTrajectories);
 
         Model.Parameters = new Parameter [4];
         Model.Parameters[0] = new Parameter("Adaptation gain>>\u03B3", 0, 1000, 0.1);
-        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 40);
-        Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 100);
-        Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 120);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 15);
+        Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 10);
+        Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 25);
     }
 
     private void PrepareFirstOrderIdentificationOld() {
