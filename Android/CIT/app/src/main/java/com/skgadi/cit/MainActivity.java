@@ -1096,18 +1096,17 @@ public class MainActivity extends AppCompatActivity {
                     double[][] Output
             )
             {
-                double[] Trajectories = new double[11];
+                double[] Trajectories = new double[10];
                 Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
                 Trajectories[1] = Input[0][0];
                 Trajectories[2] = Output[1][0];
                 Trajectories[3] = Input[1][0];
                 Trajectories[4] = Output[2][0];
-                Trajectories[5] = Trajectories[0]-Input[0][0];
-                Trajectories[6] = Output[6][0];
-                Trajectories[7] = Output[0][0];
-                Trajectories[8] = Output[3][0];
-                Trajectories[9] = Output[4][0];
-                Trajectories[10] = Output[5][0];
+                Trajectories[5] = Output[6][0];
+                Trajectories[6] = Output[0][0];
+                Trajectories[7] = Output[3][0];
+                Trajectories[8] = Output[4][0];
+                Trajectories[9] = Output[5][0];
                 return Trajectories;
             }
         };
@@ -1143,11 +1142,10 @@ public class MainActivity extends AppCompatActivity {
         TempTrajectories[0]= "dy/dt";
         TempTrajectories[1]= "dy_m/dt";
         Model.Figures[1] = new Figure("Derivative of Outputs y(t) & y_m(t)", TempTrajectories);
-        TempTrajectories = new String[3];
-        TempTrajectories[0]= "R-y";
-        TempTrajectories[1]= "Error e_m(t)";
-        TempTrajectories[2]= "Control u(t)";
-        Model.Figures[2] = new Figure("R-y, Error e_m(t) and Control u(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e_m(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[2] = new Figure("Error e_m(t) and Control u(t)", TempTrajectories);
         TempTrajectories = new String[3];
         TempTrajectories[0]= "K_c(1,1)";
         TempTrajectories[1]= "K_c(2,1)";
@@ -1156,9 +1154,9 @@ public class MainActivity extends AppCompatActivity {
 
         Model.Parameters = new Parameter [4];
         Model.Parameters[0] = new Parameter("Adaptation gain>>\u03B3", 0, 1000, 0.1);
-        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 15);
-        Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 10);
-        Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 25);
+        Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 10);
+        Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 25);
+        Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 15);
     }
 
     private void PrepareFirstOrderIdentificationOld() {
@@ -2564,6 +2562,8 @@ public class MainActivity extends AppCompatActivity {
                             Model.T_SForModel,
                             ValueWrittenTOUSB,
                             RecData[0]);
+                    PrevReadValue = RecData[0];
+                    //Log.d("SKGadi", "Rec[0]: "+ Model.velocityMeasurements.filterOut);
                     RecData[1] =  Model.velocityMeasurements.filterOut;
                 }
                 isValidRead = true;
@@ -2839,8 +2839,9 @@ public class MainActivity extends AppCompatActivity {
                         getResources().getStringArray(R.array.TOASTS),
                         getPrefInt("sim_ma_data_points", 10),
                         getPrefString("sim_velocity_avg_type", "NONE"),
-                        getPrefDouble("sim_vel_observer_a", 8.7),
-                        getPrefDouble("sim_vel_observer_b", 1),
+                        getPrefDouble("sim_vel_observer_beta_0", 30),
+                        getPrefDouble("sim_vel_observer_beta_1", 100),
+                        getPrefDouble("sim_vel_observer_beta_2", 100),
                         getPrefDouble("sim_vel_observer_alpha", 30),
                         getPrefDouble("sim_ma_high_pass_filter_param", 10),
                         getPrefDouble("sim_vel_observer_k_o_1", 1),

@@ -15,7 +15,7 @@ enum FILTER_TYPES {
     HPF
 }
 public class digitalFilter {
-    public digitalFilter(String[] types, int noOfSamples, String typ, double a, double b, double alpha, double pref_HPF_alpha, double K_o_1, double K_o_2) {
+    public digitalFilter(String[] types, int noOfSamples, String typ, double beta_0, double beta_1, double beta_2, double alpha, double pref_HPF_alpha, double K_o_1, double K_o_2) {
         idxOfFirstEntry=noOfSamples-1;
         counter=0;
         samples = new double[noOfSamples];
@@ -31,25 +31,25 @@ public class digitalFilter {
             k_1 = K_o_1;
             k_2 = K_o_2;
         } else {
-            k_1 = 2*alpha-a;
-            k_2 = alpha*alpha-k_1*a;
+            k_1 = 2*alpha-beta_0;
+            k_2 = alpha*alpha-k_1*beta_0-beta_1;
         }
         DMatrixRMaj A, C, A_star;
         A_star = new DMatrixRMaj(2,2);
         A_star.set(0,0,-k_1);
         A_star.set(0,1,1);
-        A_star.set(1,0,-k_2);
-        A_star.set(1,1,-a);
+        A_star.set(1,0,-k_2-beta_1);
+        A_star.set(1,1,-beta_0);
         Inv_A_star = new DMatrixRMaj(2,2);
         CommonOps_DDRM.invert(A_star, Inv_A_star);
         B = new DMatrixRMaj(2, 1);
         B.set(0,0,0);
-        B.set(1,0,b);
+        B.set(1,0,beta_2);
         K_e = new DMatrixRMaj(2,1);
         K_e.set(0,0, k_1);
         K_e.set(1,0, k_2);
         ExpItem = new DMatrixRMaj(2,2);
-        ExpItem.set(0,0,a-alpha);
+        ExpItem.set(0,0,beta_0-alpha);
         ExpItem.set(0,1,1);
         ExpItem.set(1,0,-k_2);
         ExpItem.set(1,1,k_1-alpha);

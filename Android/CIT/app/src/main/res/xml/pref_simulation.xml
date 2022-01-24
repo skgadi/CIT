@@ -89,21 +89,29 @@
 
     <PreferenceCategory android:title="Parameters for Luenberger Observer">
         <EditTextPreference
-            android:defaultValue="8.7"
-            android:key="sim_vel_observer_a"
+            android:defaultValue="30"
+            android:key="sim_vel_observer_beta_0"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:inputType="numberDecimal"
-            android:title="Motor parameter a"
+            android:title="System parameter \u00df_0"
+            android:dialogMessage="Type a positive number"/>
+        <EditTextPreference
+            android:defaultValue="100"
+            android:key="sim_vel_observer_beta_1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:title="System parameter \u00df_1"
             android:dialogMessage="Type a positive number"/>
 
         <EditTextPreference
-            android:defaultValue="1"
-            android:key="sim_vel_observer_b"
+            android:defaultValue="100"
+            android:key="sim_vel_observer_beta_2"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:inputType="numberDecimal"
-            android:title="Motor parameter b"
+            android:title="System parameter \u00df_2"
             android:dialogMessage="Type a positive number"/>
         <EditTextPreference
             android:defaultValue="30"
