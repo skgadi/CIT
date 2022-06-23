@@ -21,6 +21,7 @@
         <item>Parameter identification</item>
         <item>Traditional closed-loop control</item>
         <item>Model Reference Adaptive Control (MRAC)</item>
+        <item>Adaptive Control for Trajectory Tracking</item>
     </string-array>
     <string-array name="NAV_ITEMS_0">
         <item>System response</item>

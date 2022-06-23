@@ -305,6 +305,11 @@ public class MainActivity extends AppCompatActivity {
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
+        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[4]);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 7);
+        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 8);
+        AppNavDrawer.addItem(new DividerDrawerItem());
+
 
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -438,10 +443,16 @@ public class MainActivity extends AppCompatActivity {
                 PreparePIDModel();
                 break;
             case 5:
-                PrepareFirstOrderAdaptiveControlModel();
+                PrepareFirstOrderMRACModel();
                 break;
             case 6:
-                PrepareSecondOrderAdaptiveControlModel();
+                PrepareSecondOrderMRACModel();
+                break;
+            case 7:
+                PrepareFirstOrderACTTModel();
+                break;
+            case 8:
+                PrepareSecondOrderACTTModel();
                 break;
             default:
                 FoundItem = false;
@@ -873,7 +884,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[4] = new Parameter("Noise constant (d_2)", 0, 1, 0);
     }
 
-    private void PrepareFirstOrderAdaptiveControlModel() {
+    private void PrepareFirstOrderMRACModel() {
         Model = new Model() {
             @Override
             public double[] RunAlgorithms(
@@ -973,7 +984,7 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[2] = new Parameter("\u03B1_1m", 0, 100, 20);
     }
 
-    private void PrepareSecondOrderAdaptiveControlModel() {
+    private void PrepareSecondOrderMRACModel() {
         Model = new Model() {
             @Override
             public double[] RunAlgorithms(
@@ -1157,6 +1168,325 @@ public class MainActivity extends AppCompatActivity {
         Model.Parameters[1] = new Parameter("Reference Model Parameters>>\u03B2_0m", 0, 1000, 10);
         Model.Parameters[2] = new Parameter("\u03B2_1m", 0, 1000, 25);
         Model.Parameters[3] = new Parameter("\u03B2_2m", 0, 1000, 15);
+    }
+
+    private void PrepareFirstOrderACTTModel() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[0] --> u
+                    Output[1] --> theta_1
+                    Output[2] --> theta_2
+                    Output[3] --> phi_1
+                    Output[4] --> phi_2
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> y
+                    E --> e
+                */
+
+                double[] E = new double[3];
+                double[] R = new double[3];
+                for (int i=0; i<3; i++) {
+                    R[i] = Generated[0][i] + Generated[1][i] + Generated[2][i];
+                }
+                for (int i=0; i<2; i++) {
+                    E[i] = (R[i] - Input[0][i]);
+                }
+
+                double R_dot = (R[0]-R[1])/T_SForModel;
+
+
+                double Gamma_1 = Parameters[0];
+                double Gamma_2 = Parameters[1];
+                double Alpha = Parameters[2];
+                DMatrixRMaj Gamma = new DMatrixRMaj(2,2);
+                Gamma.set(0,0, Gamma_1);
+                Gamma.set(0,1, 0);
+                Gamma.set(1,0, 0);
+                Gamma.set(1,1, Gamma_2);
+
+                double phi_1 = Input[0][0];
+                double phi_2 = Alpha*E[0] + R_dot;
+                DMatrixRMaj phi_k = new DMatrixRMaj(2,1);
+                phi_k.set(0,0, phi_1);
+                phi_k.set(1,0, phi_2);
+
+                DMatrixRMaj phi_k_1 = new DMatrixRMaj(2,1);
+                phi_k_1.set(0,0, Output[3][0]);
+                phi_k_1.set(1,0, Output[4][0]);
+
+
+                DMatrixRMaj theta_k = new DMatrixRMaj(2,1);
+                DMatrixRMaj theta_k_1 = new DMatrixRMaj(2,1);
+                theta_k_1.set(0,0, Output[1][0]);
+                theta_k_1.set(1,0, Output[2][0]);
+
+                DMatrixRMaj u = new DMatrixRMaj(1,1);
+
+                Equation eq = new Equation();
+                eq.alias(u,"u", phi_k,"phi_k", phi_k_1,"phi_k_1", theta_k,"theta_k", theta_k_1,"theta_k_1", T_SForModel,"T_s", Gamma,"Gamma", E[0], "E", E[1], "E_1");
+                eq.process("theta_k = theta_k_1 + Gamma*T_s*(phi_k*E+phi_k_1*E_1)/2");
+                eq.process("u=(phi_k')*theta_k");
+
+
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                //Log.i("SKGadi","got theta_k as: "+theta_k.get(0,0) + " and " + theta_k.get(1,0));
+                //Log.i("SKGadi","got phi_k as: "+phi_k.get(0,0) + " and " + phi_k.get(1,0));
+                //Log.i("SKGadi","got u: "+u.get(0,0));
+                OutSignals[0] = u.get(0,0);
+                OutSignals[1] = theta_k.get(0,0);
+                OutSignals[2] = theta_k.get(1,0);
+                OutSignals[3] = phi_k.get(0,0);
+                OutSignals[4] = phi_k.get(1,0);
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[6];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Trajectories[0]-Input[0][0];
+                Trajectories[3] = Output[0][0];
+                Trajectories[4] = Output[1][0];
+                Trajectories[5] = Output[2][0];
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[4]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[0];
+        Model.NoOfInputs=1;
+        Model.NoOfOutputs=5;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 1;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.mrac1;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Adaptive controller";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "r_1(t)";
+        Model.SignalGenerators[1] = "r_2(t)";
+        Model.SignalGenerators[2] = "r_3(t)";
+
+        //Figures
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[2];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        Model.Figures[0] = new Figure("Reference r(t) and Outputs y(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e_m(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[1] = new Figure("Error e_m(t) and Control u(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "\u03B8_1 cap";
+        TempTrajectories[1]= "\u03B8_2 cap";
+        Model.Figures[2] = new Figure("Values for \u03B8", TempTrajectories);
+
+        Model.Parameters = new Parameter [3];
+        Model.Parameters[0] = new Parameter("Adaptation gain>>\u0393_1", 0, 1000, 10);
+        Model.Parameters[1] = new Parameter("\u0393_2", 0, 1000, 10);
+        Model.Parameters[2] = new Parameter("Convergence factor>>\u03B1", 0, 1000, 10);
+    }
+
+    private void PrepareSecondOrderACTTModel() {
+        Model = new Model() {
+            @Override
+            public double[] RunAlgorithms(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            ){
+                /*
+                    Output[0] --> u
+                    Output[1] --> theta_1
+                    Output[2] --> theta_2
+                    Output[3] --> theta_3
+                    Output[4] --> phi_1
+                    Output[5] --> phi_2
+                    Output[6] --> phi_3
+                    Output[7] --> EM_1
+                    Output[8] --> EM_2
+                    Output[9] --> R_dot
+                    Generated[0] --> R_1
+                    Generated[1] --> R_2
+                    Generated[2] --> R_3
+                    R = R_1 + R_2 + R_3
+                    Input[0] --> y
+                    Input[1] --> y_dot
+                    E --> e
+                */
+
+                double[] E = new double[3];
+                double[] R = new double[3];
+                for (int i=0; i<3; i++) {
+                    R[i] = Generated[0][i] + Generated[1][i] + Generated[2][i];
+                }
+
+                for (int i=0; i<2; i++) {
+                    E[i] = (R[i] - Input[0][i]);
+                }
+
+                double R_dot_k = (R[0]-R[1])/T_SForModel;
+                double R_dot_k_1 = Output[9][0];
+                double R_d_dot_k = (R_dot_k-R_dot_k_1)/T_SForModel;
+                double E_dot_k = R_dot_k - Input[1][0];
+
+
+
+
+                //double Alpha = Parameters[2];
+                DMatrixRMaj Gamma = new DMatrixRMaj(3,3);
+                Gamma.set(0,0, Parameters[0]);
+                Gamma.set(1,1, Parameters[1]);
+                Gamma.set(2,2, Parameters[2]);
+                DMatrixRMaj VTP = new DMatrixRMaj(1,2);
+                VTP.set(0,0,0.5/Parameters[4]);
+                VTP.set(0,0,(2*VTP.get(0,0)+1)/(2*Parameters[3]));
+
+                DMatrixRMaj EM_k = new DMatrixRMaj(2,1);
+                EM_k.set(0,0, E[0]);
+                EM_k.set(1,0, E_dot_k);
+
+                DMatrixRMaj EM_k_1 = new DMatrixRMaj(2,1);
+                EM_k_1.set(0,0, Output[7][0]);
+                EM_k_1.set(1,0, Output[8][0]);
+
+
+                DMatrixRMaj phi_k = new DMatrixRMaj(3,1);
+                phi_k.set(0,0, Input[1][0]);
+                phi_k.set(1,0, Input[0][0]);
+                phi_k.set(2,0, R_d_dot_k+Parameters[3]*E_dot_k + Parameters[4]*E[0]);
+
+                DMatrixRMaj phi_k_1 = new DMatrixRMaj(3,1);
+                phi_k_1.set(0,0, Output[4][0]);
+                phi_k_1.set(1,0, Output[5][0]);
+                phi_k_1.set(2,0, Output[6][0]);
+
+
+                DMatrixRMaj theta_k = new DMatrixRMaj(3,1);
+                DMatrixRMaj theta_k_1 = new DMatrixRMaj(3,1);
+                theta_k_1.set(0,0, Output[1][0]);
+                theta_k_1.set(1,0, Output[2][0]);
+                theta_k_1.set(2,0, Output[3][0]);
+
+
+                DMatrixRMaj u = new DMatrixRMaj(1,1);
+
+
+
+                //Log.i("SKGadi","Calc: "+R_d_dot_k+Parameters[3]*E_dot_k + Parameters[4]*E[0]);
+                //Log.i("SKGadi","theta_k: "+theta_k);
+                //Log.i("SKGadi","VTP: "+VTP);
+                //Log.i("SKGadi","GAMMA: "+Gamma);
+
+                Equation eq = new Equation();
+                eq.alias(u,"u", phi_k,"phi_k", phi_k_1,"phi_k_1", theta_k,"theta_k", VTP,"VTP", theta_k_1,"theta_k_1", T_SForModel,"T_s", Gamma,"Gamma", EM_k, "E_k", EM_k_1, "E_k_1");
+                eq.process("theta_k = theta_k_1 + Gamma*T_s*(phi_k*VTP*E_k+phi_k_1*VTP*E_k_1)/2");
+                eq.process("u=(phi_k')*theta_k");
+
+
+
+
+                double [] OutSignals = new double[NoOfOutputs];
+                //Log.i("SKGadi","theta_k: "+theta_k);
+                //Log.i("SKGadi","phi_k: "+phi_k);
+                //Log.i("SKGadi","u: "+u);
+                OutSignals[0] = u.get(0,0);
+                OutSignals[1] = theta_k.get(0,0);
+                OutSignals[2] = theta_k.get(1,0);
+                OutSignals[3] = theta_k.get(2,0);
+                OutSignals[4] = phi_k.get(0,0);
+                OutSignals[5] = phi_k.get(1,0);
+                OutSignals[6] = phi_k.get(2,0);
+                OutSignals[7] = EM_k.get(0,0);
+                OutSignals[8] = EM_k.get(1,0);
+                OutSignals[9] = R_dot_k;
+                return OutSignals;
+            }
+
+            @Override
+            public double[] OutGraphSignals(
+                    double[] Parameters,
+                    double[][] Generated,
+                    double[][] Input,
+                    double[][] Output
+            )
+            {
+                double[] Trajectories = new double[7];
+                Trajectories[0] = Generated[0][0] + Generated[1][0] + Generated[2][0];
+                Trajectories[1] = Input[0][0];
+                Trajectories[2] = Trajectories[0]-Input[0][0];
+                Trajectories[3] = Output[0][0];
+                Trajectories[4] = Output[1][0];
+                Trajectories[5] = Output[2][0];
+                Trajectories[6] = Output[3][0];
+                return Trajectories;
+            }
+        };
+        Model.ModelName = getResources().getStringArray(R.array.NAV_HEADS)[4]
+                + ": "
+                +getResources().getStringArray(R.array.NAV_ITEMS_3)[1];
+        Model.NoOfInputs=2;
+        Model.NoOfOutputs=10;
+        Model.NoOfPastInputsRequired = 2;
+        Model.NoOfPastOuputsRequired = 1;
+        Model.NoOfPastGeneratedValuesRequired = 2;
+        Model.OutPut = new double[1];
+        Model.OutPut[0]=0;
+        Model.Images = new int[1];
+        Model.Images[0] = R.drawable.mrac1;
+        Model.ImageNames = new String[1];
+        Model.ImageNames[0] = "Adaptive controller";
+        Model.SignalGenerators = new String[3];
+        Model.SignalGenerators[0] = "r_1(t)";
+        Model.SignalGenerators[1] = "r_2(t)";
+        Model.SignalGenerators[2] = "r_3(t)";
+
+        //Figures
+        Model.Figures = new Figure[3];
+        String[] TempTrajectories = new String[2];
+        TempTrajectories[0]= "Reference r(t)";
+        TempTrajectories[1]= "Output y(t)";
+        Model.Figures[0] = new Figure("Reference r(t) and Outputs y(t)", TempTrajectories);
+        TempTrajectories = new String[2];
+        TempTrajectories[0]= "Error e_m(t)";
+        TempTrajectories[1]= "Control u(t)";
+        Model.Figures[1] = new Figure("Error e_m(t) and Control u(t)", TempTrajectories);
+        TempTrajectories = new String[3];
+        TempTrajectories[0]= "\u03B8_1 cap";
+        TempTrajectories[1]= "\u03B8_2 cap";
+        TempTrajectories[2]= "\u03B8_3 cap";
+        Model.Figures[2] = new Figure("Values for \u03B8", TempTrajectories);
+
+        Model.Parameters = new Parameter [5];
+        Model.Parameters[0] = new Parameter("Adaptation gain>>\u0393_1", 0, 1000, 10);
+        Model.Parameters[1] = new Parameter("\u0393_2", 0, 1000, 10);
+        Model.Parameters[2] = new Parameter("\u0393_3", 0, 1000, 10);
+        Model.Parameters[3] = new Parameter("Convergence factor>>\u03B1_1", 0, 1000, 10);
+        Model.Parameters[4] = new Parameter("\u03B1_2", 0, 1000, 10);
     }
 
     private void PrepareFirstOrderIdentificationOld() {
