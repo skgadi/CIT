@@ -31,10 +31,12 @@
 
 % For the flow charts
 \usepackage{tikz}
-\usetikzlibrary{
-	external,
-}
-\tikzexternalize
+
+%pdflatex.exe -synctex=1 -interaction=nonstopmode -shell-escape %.tex
+%\usetikzlibrary{
+%	external,
+%}
+%\tikzexternalize
 
 \usetikzlibrary{shapes.geometric, arrows, calc, positioning}
 \tikzstyle{startstop} = [rectangle, thick, rounded corners=2.5mm, minimum width=2cm, minimum height=5mm,text centered, draw=black]
@@ -508,6 +510,159 @@
 		\label{Fig:IdentificationWithIntegralController}
 	\end{figure}
 	
+
+
+
+
+
+
+
+
+
+
+
+%----  20231122 -- Added for new article
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance = 10mm, auto]
+		\node (Reference) [align=center] {$r(t)$};
+		\node (ReferenceRight) [support, right = 0.5cm of Reference, fill,circle,scale=0.3] {};
+		\node (ReferenceRightDown) [support, below = 1.95cm of ReferenceRight, fill,circle,scale=0.3] {};
+		\node (RefModel) [block, text width = 3cm, right = 2cm of ReferenceRight] {Reference model\\ $\frac{\alpha_{1m}}{s + \alpha_{0m}}$};
+		\node (Control) [block, text width = 3cm, below = of RefModel] {Control law};
+		\node (Adaptation) [block, text width = 3cm, below = of Control, below = 5mm] {Adaptation law};
+		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (47mm, -47mm) node[]{Model rerefence adaptive control (MRAC)};
+		\node (Plant) [block, text width = 3cm, right = 15mm of Control] {Plant ($G$)};
+		\node (PlantRight) [support, right = of Plant, right = 10mm, fill,circle,scale=0.3] {};
+		\node (SummingPoint) [draw,circle, thick, right = 25mm of PlantRight, right = 5mm ]  {+};
+		
+		\path (Reference.east) -- (Reference.east) coordinate[pos=05] (Reference1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=-0.5] (Control1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=+0.5] (Control2);
+
+		\path (Adaptation.east) -- (Adaptation.north east) coordinate[pos=-0.5] (Adaptation1);
+		\path (Adaptation.east) -- (Adaptation.north east) coordinate[pos=+0.5] (Adaptation2);
+
+		
+		\draw [arrow] (Reference) -- node[anchor=south west]{}(RefModel);
+		\draw [arrow] (ReferenceRight) |- (Control);
+		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{\bf\textendash}(SummingPoint);
+		\draw [arrow] (Control) -- node [] {$u(t)$}(Plant);
+		\draw [arrow] (Plant) -- node[pos=0.65, anchor=north west]{+}
+		(SummingPoint);
+		
+		\draw [arrow] (SummingPoint) |- node[pos=-0.1, anchor=north west]{$e_m(t)$} (Adaptation);
+		\draw [arrow] (Adaptation) -| node [pos=0.2, anchor=north east]{${\hat{\gamma }}_{1}$, ${\hat{\gamma }}_{2}$}(25mm,-30mm) |- (Control1);
+		\draw [arrow] (PlantRight) |- (25mm,-9mm) |- (Control2);
+		
+		\draw [arrow] (PlantRight) |- (Adaptation2);
+		\draw [arrow] (ReferenceRightDown) |- (35mm,-50mm) -- (85mm,-50mm) |- (Adaptation1);
+
+		\node [above right = 0.1 of RefModel.east]{$y_m(t)$};
+		\node [below right = 0.1 of Plant.east]{$y(t)$};
+
+		
+		\node (Equation000) [text width = 15cm, below = 1.25cm of Adaptation, align = left] {
+			Control law:\\
+			\[u(t)={{\hat{\gamma }}_{1}}(t)r(t)+{{\hat{\gamma }}_{2}}(t)y(t)\]	
+			Adaptation law:\\
+			\begin{align}
+				{{\dot{\hat{\gamma }}}_{1}}(t)&=-\varrho {{e}_{m}}(t)r(t)\nonumber\\
+				{{\dot{\hat{\gamma }}}_{2}}(t)&=-\varrho {{e}_{m}}(t)y(t)\nonumber
+			\end{align}
+			where $e_m = y-y_m$, $\varrho>0$ is called adaptation gain and $T_S$ is sampling time.
+		};
+		\end{tikzpicture}
+		\caption{Adaptive control}
+		\label{Fig:AdaptiveControlFirstOrder_EN}
+	\end{figure}
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance = 10mm, auto]
+		
+		
+				\node (Reference) [align=center] {$r(t)$};
+		\node (ReferenceRight) [support, right = 0.5cm of Reference, fill,circle,scale=0.3] {};
+		\node (ReferenceRightDown) [support, below = 1.95cm of ReferenceRight, fill,circle,scale=0.3] {};
+		\node (RefModel) [block, text width = 3cm, right = 2cm of ReferenceRight] {Reference model\\$\frac{\beta_{2m}}{s^2 + \beta_{1m}s + \beta_{0m}}$};
+		\node (Control) [block, text width = 3cm, below = of RefModel] {Control law};
+		\node (Adaptation) [block, text width = 3cm, below = of Control, below = 5mm] {Adaptation law};
+		\draw[thick, dotted] ($(Control.north west)+(-0.3,0.3)$)  rectangle ($(Adaptation.south east)+(0.3,-0.3)$)  (47mm, -47mm) node[]{Model rerefence adaptive control (MRAC)};
+		\node (Plant) [block, text width = 3cm, right = 15mm of Control] {Plant ($G$)};
+		\node (PlantRight) [support, right = of Plant, right = 10mm, fill,circle,scale=0.3] {};
+		\node (SummingPoint) [draw,circle, thick, right = 25mm of PlantRight, right = 5mm ]  {+};
+		
+		\path (Reference.east) -- (Reference.east) coordinate[pos=05] (Reference1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=-0.5] (Control1);
+		\path (Control.west) -- (Control.north west) coordinate[pos=+0.5] (Control2);
+		
+		\path (Adaptation.east) -- (Adaptation.north east) coordinate[pos=-0.5] (Adaptation1);
+		\path (Adaptation.east) -- (Adaptation.north east) coordinate[pos=+0.5] (Adaptation2);
+		
+		
+		\draw [arrow] (Reference) -- node[anchor=south west]{}(RefModel);
+		\draw [arrow] (ReferenceRight) |- (Control);
+		\draw [arrow] (RefModel) -| node[pos=0.85, anchor = north west]{\bf\textendash}(SummingPoint);
+		\draw [arrow] (Control) -- node [] {$u(t)$}(Plant);
+		\draw [arrow] (Plant) -- node[pos=0.65, anchor=north west]{+}
+		(SummingPoint);
+		
+		\draw [arrow] (SummingPoint) |- node[pos=-0.1, anchor=north west]{$e_m(t)$} (Adaptation);
+		\draw [arrow] (Adaptation) -| node [pos=0.2, anchor=north east]{{\scriptsize ${{\overset{.}{\mathop{\widehat{\boldsymbol{K}}}}\,}_{c}}(t)$, $\dot{\hat{L}}(t)$}}(25mm,-30mm) |- (Control1);
+		\draw [arrow] (PlantRight) |- (25mm,-9mm) |- (Control2);
+		
+		\draw [arrow] (PlantRight) |- (Adaptation2);
+		\draw [arrow] (ReferenceRightDown) |- (35mm,-50mm) -- (85mm,-50mm) |- (Adaptation1);
+		
+		\node [above right = 0.1 of RefModel.east]{$y_m(t)$};
+		\node [below right = 0.1 of Plant.east]{$y(t)$};
+		
+		
+		\node (Equation000) [text width = 17cm, below = 1.25cm of Adaptation, align = left] {
+			Model:
+			\[{{\overset{.}{\mathop{\boldsymbol{x}}}\,}_{m}}(t)={{{\boldsymbol{A}}}_{mc}}{{\boldsymbol{x}}_{m}}(t)+{{{\boldsymbol{B}}}_{mc}}r(t)\]
+			\[{{\boldsymbol{A}}_{mc}}=\left[ \begin{matrix}
+			0 & 1  \\
+			-{{\beta }_{0m}} & -{{\beta }_{1m}}  \\
+			\end{matrix} \right],\qquad {{\boldsymbol{B}}_{mc}}=\left[ \begin{matrix}
+			0  \\
+			{{\beta }_{2m}}  \\
+			\end{matrix} \right],\qquad {{\boldsymbol{x}}_{m}}(t)={{[{{y}_{m}}(t),\ {{\dot{y}}_{m}}(t)]}^{T}}\]
+			
+			Control law:\\
+			\[u(t)={{\widehat{\boldsymbol{K}}}_{c}}(t)\boldsymbol{x}(t)+\hat{L}(t)r(t)\]	
+			Adaptation law:\\
+			\begin{align}
+			{{\overset{.}{\mathop{\widehat{\boldsymbol{K}}}}\,}_{c}}(t) &=\gamma \boldsymbol{B}_{mc}^{T}\mathcal{P}\boldsymbol{E}(t){{\boldsymbol{x}}^{T}}(t)\nonumber\\
+			\dot{\hat{L}}(t)&=\gamma \boldsymbol{B}_{mc}^{T}\mathcal{P}\boldsymbol{E}(t)r(t)\nonumber
+			\end{align}
+			where $T_S$ is sampling time, $\gamma>0$ is the adaptation gain, $\boldsymbol{x}(t)=[y(t), \ \dot{y}(t)]^{T}$, $\boldsymbol{E}_{m}(t)=[e_{m}(t), \ \dot{e}_{m}(t)]^{T}$, and matrix $\boldsymbol{\mathcal{P}}=\boldsymbol{\mathcal{P}}^{T}$  satisfies:
+			\[\boldsymbol{A}_{mc}^{T}\mathcal{P}+\mathcal{P}\boldsymbol{A}_{mc}^{T}=-{{\boldsymbol{I}}_{2x2}}\]
+			
+		};
+		\end{tikzpicture}
+		\caption{Adaptive control}
+		\label{Fig:AdaptiveControlSecondOrder_EN}
+	\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	%\bibliographystyle{apacite}%unsrtnat}
 	%\bibliographystyle{spbasic}      % basic style, author-year citations
 	%\bibliographystyle{spmpsci}      % mathematics and physical sciences

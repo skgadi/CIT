@@ -305,10 +305,10 @@ public class MainActivity extends AppCompatActivity {
         AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 6);
         AppNavDrawer.addItem(new DividerDrawerItem());
 
-        AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[4]);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 7);
-        AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 8);
-        AppNavDrawer.addItem(new DividerDrawerItem());
+        //AddAFolderToNavigation(getResources().getStringArray(R.array.NAV_HEADS)[4]);
+        //AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[0], 7);
+        //AddItemToNavigation(getResources().getStringArray(R.array.NAV_ITEMS_3)[1], 8);
+        //AppNavDrawer.addItem(new DividerDrawerItem());
 
 
         try {
